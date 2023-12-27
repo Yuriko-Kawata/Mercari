@@ -6,7 +6,7 @@ package com.example.productmanagementex.domain;
  * @author hiraizumi
  *         itemのformクラス
  */
-public class ItemDomain {
+public class Item {
     // id
     private Integer id;
     // 商品名
