@@ -1,5 +1,7 @@
 package com.example.productmanagementex.domain;
 
+import java.util.List;
+
 /**
  * 2023.12.27
  * 
@@ -14,7 +16,7 @@ public class Item {
     // 状態
     private Integer condition;
     // カテゴリ
-    private Integer category;
+    private List<Category> category;
     // ブランド名
     private String brand;
     // 値段
@@ -50,11 +52,11 @@ public class Item {
         this.condition = condition;
     }
 
-    public Integer getCategory() {
+    public List<Category> getCategory() {
         return category;
     }
 
-    public void setCategory(Integer category) {
+    public void setCategory(List<Category> category) {
         this.category = category;
     }
 
