@@ -24,4 +24,11 @@ public class ItemService {
         return top30List;
     }
 
+    public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
+            String grandCategory) {
+        List<Item> itemList = repository.searchItems(name, brand, parentCategory, childCategory, grandCategory);
+        List<Item> top30List = itemList.stream().limit(30).collect(Collectors.toList());
+        return top30List;
+    }
+
 }

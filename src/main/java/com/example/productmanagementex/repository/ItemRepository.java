@@ -47,7 +47,7 @@ public class ItemRepository {
             if (rs.getInt("c_id") != 0) {
                 Category category = new Category();
                 category.setId(rs.getInt("c_id"));
-                category.setId(rs.getInt("c_parent_id"));
+                category.setParentId(rs.getInt("c_parent_id"));
                 category.setName(rs.getString("c_name"));
                 category.setNameAll(rs.getString("c_name_all"));
                 category.setCategoryNumber(rs.getInt("c_category_number"));
@@ -63,34 +63,77 @@ public class ItemRepository {
 
     private final String FIND_ALL_SQL = """
             SELECT
-             i.id AS i_id,
-             i.name AS i_name,
-             i.condition AS i_condition,
-             i.category AS i_category,
-             i.brand AS i_brand,
-             i.price AS i_price,
-             i.stock AS i_stock,
-             i.shipping AS i_shipping,
-             i.description AS i_description,
-             c.id AS c_id,
-             c.parent_id AS c_parent_id,
-             c.name AS c_name,
-             c.name_all AS c_name_all,
-             c.category_number AS c_category_number
+                i.id AS i_id,
+                i.name AS i_name,
+                i.condition AS i_condition,
+                i.category AS i_category,
+                i.brand AS i_brand,
+                i.price AS i_price,
+                i.stock AS i_stock,
+                i.shipping AS i_shipping,
+                i.description AS i_description,
+                c.id AS c_id,
+                c.parent_id AS c_parent_id,
+                c.name AS c_name,
+                c.name_all AS c_name_all,
+                c.category_number AS c_category_number
             FROM
-             items AS i
+                items AS i
             LEFT OUTER JOIN
-             category AS c
+                category AS c
             ON
-             i.category = c.category_number
+                i.category = c.category_number
             ORDER BY
-             i.id, c.parent_id NULLS FIRST
+                i.id, c.parent_id NULLS FIRST
+            ;
+            """;
+
+    private final String SEARCH_SQL = """
+            SELECT
+                i.id AS i_id,
+                i.name AS i_name,
+                i.condition AS i_condition,
+                i.category AS i_category,
+                i.brand AS i_brand,
+                i.price AS i_price,
+                i.stock AS i_stock,
+                i.shipping AS i_shipping,
+                i.description AS i_description,
+                c.id AS c_id,
+                c.parent_id AS c_parent_id,
+                c.name AS c_name,
+                c.name_all AS c_name_all,
+                c.category_number AS c_category_number
+            FROM
+                items AS i
+            LEFT OUTER JOIN
+                category AS c
+            ON
+                i.category = c.category_number
+            ORDER BY
+                i.id, c.parent_id NULLS FIRST
+            WHERE
+                (:name IS NULL OR i.name = :name)
+            AND (:brand IS NULL OR i.brand = :brand)
+            AND (:parentCategory IS NULL OR c.name = :parentCategory)
+            AND (:childCategory IS NULL OR c.name = :childCategory)
+            AND (:grandCategory IS NULL OR c.name = :grandCategory)
             ;
             """;
 
     public List<Item> findAllItems() {
         SqlParameterSource param = new MapSqlParameterSource();
         List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_RESULTSET);
+        return itemList;
+    }
+
+    public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
+            String grandCategory) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
+                .addValue("parentCategory", parentCategory).addValue("childCategory", childCategory)
+                .addValue("grandCategory", grandCategory);
+        List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
+
         return itemList;
     }
 
