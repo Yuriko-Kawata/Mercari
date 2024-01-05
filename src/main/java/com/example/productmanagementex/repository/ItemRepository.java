@@ -85,6 +85,8 @@ public class ItemRepository {
                 i.category = c.category_number
             ORDER BY
                 i.id, c.parent_id NULLS FIRST
+            LIMIT
+                90
             ;
             """;
 
@@ -118,6 +120,8 @@ public class ItemRepository {
                 AND (:grandCategory IS NULL OR i.name_all LIKE :grandCategory)
             ORDER BY
                 i.id, c.parent_id NULLS FIRST
+            LIMIT
+                90
             ;
             """;
 
