@@ -19,6 +19,11 @@ public class ItemController {
     @Autowired
     private CategoryService categoryService;
 
+    @GetMapping({ "", "/" })
+    public String index() {
+        return "redirect:/itemList";
+    }
+
     @GetMapping("itemList")
     public String toItemList(Model model) {
         model.addAttribute("itemList", itemService.findAllItems());
