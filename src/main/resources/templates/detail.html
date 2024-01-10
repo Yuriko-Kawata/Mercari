@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -55,7 +55,7 @@
 
   <!-- details -->
   <div class="container">
-    <a type="button" class="btn btn-default" href="./list.html"><i
+    <a type="button" class="btn btn-default" th:href="@{itemList}"><i
         class="fa fa-reply"></i> back</a>
     <h2>Details</h2>
     <div id="details">
@@ -75,8 +75,8 @@
           </tr>
           <tr>
             <th>category</th>
-            <td th:each="category : ${item.category}">
-              <span th:text="${category.name}"></span>/
+            <td>
+              <span  th:each="category : ${item.category}" th:text="${category.name} + ' / '"></span>
             </td>
           </tr>
           <tr>

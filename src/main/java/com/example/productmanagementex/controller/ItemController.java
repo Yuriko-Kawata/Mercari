@@ -80,4 +80,9 @@ public class ItemController {
         return "list";
     }
 
+    @RequestMapping("detail")
+    public String detail(int id, Model model) {
+        model.addAttribute("item", itemService.findById(id));
+        return "detail";
+    }
 }

@@ -21,20 +21,24 @@ public class ItemService {
         return itemList;
     }
 
-    public int itemListSize(){
+    public int itemListSize() {
         return repository.itemListSize();
     }
 
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
             String grandCategory, int page) {
-        List<Item> itemList = repository.searchItems(name, brand, parentCategory, childCategory, grandCategory, page);        
+        List<Item> itemList = repository.searchItems(name, brand, parentCategory, childCategory, grandCategory, page);
         return itemList;
     }
 
     public int searchItemsSize(String name, String brand, String parentCategory, String childCategory,
-            String grandCategory){
-                int itemListSize = repository.searchItemsSize(name, brand, parentCategory, childCategory, grandCategory);
-                return itemListSize;
-            }
+            String grandCategory) {
+        int itemListSize = repository.searchItemsSize(name, brand, parentCategory, childCategory, grandCategory);
+        return itemListSize;
+    }
+
+    public Item findById(int id) {
+        return repository.findById(id);
+    }
 
 }
