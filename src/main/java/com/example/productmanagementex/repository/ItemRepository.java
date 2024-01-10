@@ -87,8 +87,12 @@ public class ItemRepository {
                 i.id, c.parent_id NULLS FIRST
             LIMIT
                 90
+            OFFSET
+                (:page - 1) * 90
             ;
             """;
+
+    private final String ITEMLIST_SIZE_SQL = "SELECT count(*) from items;";
 
     private final String SEARCH_SQL = """
             SELECT
@@ -121,35 +125,63 @@ public class ItemRepository {
                     FROM
                         category
                     WHERE
-                        name_all LIKE :category
+                        name_all LIKE :nameAll
                         )
             ORDER BY
                 i.id, c.parent_id NULLS FIRST
             LIMIT
                 90
+            OFFSET
+                (:page - 1) * 90
+            ;
+            """;
+    
+    private static final String SEARCH_ITEM_LIST_SIZE = """
+            SELECT
+                count(*)
+            FROM
+                items
+            WHERE
+                (name LIKE :name)
+                AND (:brand IS NULL OR brand LIKE :brand)
+                AND  category IN
+                    (SELECT
+                        category_number
+                    FROM
+                        category
+                    WHERE
+                        name_all LIKE :nameAll
+                        )
             ;
             """;
 
-    public List<Item> findAllItems() {
-        SqlParameterSource param = new MapSqlParameterSource();
+    public List<Item> findAllItems(int page) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_RESULTSET);
         return itemList;
     }
 
+    public int itemListSize(){
+        SqlParameterSource param = new MapSqlParameterSource();
+        return template.queryForObject(ITEMLIST_SIZE_SQL, param, Integer.class);
+    }
+
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
-            String grandCategory) {
+            String grandCategory, int page) {
         if (parentCategory != "") {
             if (childCategory != "") {
                 if (grandCategory != "") {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", parentCategory + "/" + childCategory + "/" + grandCategory);
+                            .addValue("nameAll", parentCategory + "/" + childCategory + "/" + grandCategory)
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
                 } else {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", "%" + parentCategory + "/" + childCategory + "%");
+                            .addValue("nameAll", "%" + parentCategory + "/" + childCategory + "%")
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
                 }
@@ -157,13 +189,15 @@ public class ItemRepository {
                 if (grandCategory != "") {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", "%" + parentCategory + "/%%/" + grandCategory + "%");
+                            .addValue("nameAll", "%" + parentCategory + "/%%/" + grandCategory + "%")
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
                 } else {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", parentCategory + "/%");
+                            .addValue("nameAll", parentCategory + "/%")
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
                 }
@@ -173,13 +207,15 @@ public class ItemRepository {
                 if (grandCategory != "") {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", "%/" + childCategory + "/" + grandCategory + "%");
+                            .addValue("nameAll", "%/" + childCategory + "/" + grandCategory + "%")
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
                 } else {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", "%/" + childCategory + "/%");
+                            .addValue("nameAll", "%/" + childCategory + "/%")
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
                 }
@@ -187,15 +223,82 @@ public class ItemRepository {
                 if (grandCategory != "") {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", "%/" + grandCategory);
+                            .addValue("nameAll", "%/" + grandCategory)
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
                 } else {
                     SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
                             .addValue("brand", "%" + brand + "%")
-                            .addValue("category", "%");
+                            .addValue("nameAll", "%")
+                            .addValue("page", page);
                     List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
                     return itemList;
+                }
+            }
+        }
+    }
+
+    public int searchItemsSize(String name, String brand, String parentCategory, String childCategory,
+            String grandCategory) {
+        if (parentCategory != "") {
+            if (childCategory != "") {
+                if (grandCategory != "") {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", parentCategory + "/" + childCategory + "/" + grandCategory);
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
+                } else {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", "%" + parentCategory + "/" + childCategory + "%");
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
+                }
+            } else {
+                if (grandCategory != "") {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", "%" + parentCategory + "/%%/" + grandCategory + "%");
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
+                } else {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", parentCategory + "/%");
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
+                }
+            }
+        } else {
+            if (childCategory != "") {
+                if (grandCategory != "") {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", "%/" + childCategory + "/" + grandCategory + "%");
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
+                } else {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", "%/" + childCategory + "/%");
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
+                }
+            } else {
+                if (grandCategory != "") {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", "%/" + grandCategory);
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
+                } else {
+                    SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                            .addValue("brand", "%" + brand + "%")
+                            .addValue("nameAll", "%");
+                    int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE, param, Integer.class);
+                    return itemListSize;
                 }
             }
         }

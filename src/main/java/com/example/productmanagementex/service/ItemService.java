@@ -16,15 +16,25 @@ public class ItemService {
     @Autowired
     private ItemRepository repository;
 
-    public List<Item> findAllItems() {
-        List<Item> itemList = repository.findAllItems();
+    public List<Item> findAllItems(int page) {
+        List<Item> itemList = repository.findAllItems(page);
         return itemList;
     }
 
+    public int itemListSize(){
+        return repository.itemListSize();
+    }
+
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
-            String grandCategory) {
-        List<Item> itemList = repository.searchItems(name, brand, parentCategory, childCategory, grandCategory);
+            String grandCategory, int page) {
+        List<Item> itemList = repository.searchItems(name, brand, parentCategory, childCategory, grandCategory, page);        
         return itemList;
     }
+
+    public int searchItemsSize(String name, String brand, String parentCategory, String childCategory,
+            String grandCategory){
+                int itemListSize = repository.searchItemsSize(name, brand, parentCategory, childCategory, grandCategory);
+                return itemListSize;
+            }
 
 }
