@@ -166,7 +166,7 @@
       </nav>
       <!-- ページ番号を指定して表示するフォーム -->
       <div id="select-page">
-        <form class="form-inline">
+        <form class="form-inline" th:action="@{toSearch}">
           <div class="form-group">
             <div class="input-group col-xs-6">
               <input type="number" th:max="${totalPage}" min="1" name="page" />

@@ -36,9 +36,7 @@ public class ItemController {
             session.removeAttribute("searchCondition");
         }
         model.addAttribute("itemList", itemService.findAllItems(page));
-        int itemListSize = itemService.itemListSize();
-        int totalPage = itemListSize / 30 + 1;
-        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalPage", itemService.totalPage());
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
         return "list";
@@ -50,10 +48,9 @@ public class ItemController {
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
                         form.getChildCategory(), form.getGrandCategory(), page));
-        int itemListSize = itemService.searchItemsSize(form.getName(), form.getBrand(), form.getParentCategory(),
-                form.getChildCategory(), form.getGrandCategory());
-        int totalPage = itemListSize / 30 + 1;
-        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalPage",
+                itemService.searchTotalPage(form.getName(), form.getBrand(), form.getParentCategory(),
+                        form.getChildCategory(), form.getGrandCategory()));
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
 
@@ -70,10 +67,9 @@ public class ItemController {
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
                         form.getChildCategory(), form.getGrandCategory(), page));
-        int itemListSize = itemService.searchItemsSize(form.getName(), form.getBrand(), form.getParentCategory(),
-                form.getChildCategory(), form.getGrandCategory());
-        int totalPage = itemListSize / 30 + 1;
-        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalPage",
+                itemService.searchTotalPage(form.getName(), form.getBrand(), form.getParentCategory(),
+                        form.getChildCategory(), form.getGrandCategory()));
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
 
