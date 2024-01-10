@@ -2,7 +2,7 @@
 name: Bug report
 about: バグの報告
 title: "[バグ]"
-labels: バグ, メモ
+labels: バグ
 assignees: ''
 
 ---
@@ -16,8 +16,8 @@ assignees: ''
 ## どこで発生しているか
 - 
 
-## 対策案
-- 
-
 ## 考えられる原因は
+-
+
+## 対策案
 -
