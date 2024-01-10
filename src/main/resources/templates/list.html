@@ -141,7 +141,7 @@
         </thead>
         <tbody th:each="item : ${itemList}">
           <tr>
-            <td class="item-name" th:text="${item.name}"><a href="./detail.html">item-name</a></td>
+            <td class="item-name"><a th:href="@{./detail.html(id=${item.id})}" th:text="${item.name}">item-name</a></td>
             <td class="item-price" th:text="${item.price}">item-price</td>
             <td>
               <span th:each="category : ${item.category}">
