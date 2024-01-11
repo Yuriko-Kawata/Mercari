@@ -9,6 +9,8 @@ public class User {
     private String email;
     // パスワード
     private String password;
+    // 作った人？
+    private Integer authority;
 
     public Integer getId() {
         return id;
@@ -42,9 +44,18 @@ public class User {
         this.password = password;
     }
 
+    public Integer getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(Integer authority) {
+        this.authority = authority;
+    }
+
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + "]";
+        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", authority="
+                + authority + "]";
     }
 
 }
