@@ -31,6 +31,8 @@ public class ItemController {
             String grandCategory, Model model) {
         model.addAttribute("itemList",
                 itemService.searchItems(name, brand, parentCategory, childCategory, grandCategory));
+        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+
         return "list";
     }
 

@@ -110,14 +110,14 @@ public class ItemRepository {
                 category AS c
             ON
                 i.category = c.category_number
+            WHERE
+                (:name IS NULL OR i.name LIKE :name)
+                AND (:brand IS NULL OR i.brand LIKE :brand)
+                AND (:parentCategory IS NULL OR i.name_all LIKE :parentCategory)
+                AND (:childCategory IS NULL OR i.name_all LIKE :childCategory)
+                AND (:grandCategory IS NULL OR i.name_all LIKE :grandCategory)
             ORDER BY
                 i.id, c.parent_id NULLS FIRST
-            WHERE
-                (:name IS NULL OR i.name = :name)
-            AND (:brand IS NULL OR i.brand = :brand)
-            AND (:parentCategory IS NULL OR c.name = :parentCategory)
-            AND (:childCategory IS NULL OR c.name = :childCategory)
-            AND (:grandCategory IS NULL OR c.name = :grandCategory)
             ;
             """;
 
@@ -129,9 +129,11 @@ public class ItemRepository {
 
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
             String grandCategory) {
-        SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
-                .addValue("parentCategory", parentCategory).addValue("childCategory", childCategory)
-                .addValue("grandCategory", grandCategory);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", "%" + name + "%")
+                .addValue("brand", "%" + brand + "%")
+                .addValue("parentCategory", "%" + parentCategory + "%")
+                .addValue("childCategory", "%" + childCategory + "%")
+                .addValue("grandCategory", "%" + grandCategory + "%");
         List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
 
         return itemList;
