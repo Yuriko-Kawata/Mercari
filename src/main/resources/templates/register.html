@@ -18,6 +18,13 @@
     integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
     crossorigin="anonymous" />
   <link rel="stylesheet" href="./style.css" />
+  <style>
+    .check{
+      font-size: xx-small;
+      color: red;
+      margin-left: 10px;
+    }
+  </style>
   <!-- script -->
   <script
     src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -36,16 +43,26 @@
   <!-- register form -->
   <div id="login" class="container">
     <div class="panel panel-default">
-      <div class="panel-heading">Register Account</div>
+      <div class="panel-heading">Register Account<span class="check">全項目入力必須</span></div>
       <div class="panel-body">
         <form action="#" method="POST">
+          <div class="form-group">
+            <label for="name">name</label>
+            <input type="text" class="form-control" id="name">
+          </div>
           <div class="form-group">
             <label for="mail">mail address</label>
             <input type="email" class="form-control" id="mail">
           </div>
           <div class="form-group">
             <label for="password">password</label>
-            <input type="text" class="form-control" id="password">
+            <span class="check">英大文字、英小文字、数字を１つ以上含め、８〜１６文字</span>
+            <input type="password" class="form-control" id="password">
+          </div>
+          <div class="form-group">
+            <label for="passwordCheck">password(check)</label>
+            <span class="check">passwordを再度入力してください</span>
+            <input type="password" class="form-control" id="passwordCheck">
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
         </form>
