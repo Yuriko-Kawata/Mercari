@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -62,7 +62,7 @@
 
     <!-- 検索フォーム -->
     <div id="forms">
-      <form action="" th:action="@{/searchItemList}" class="form-inline" role="form" method="post">
+      <form action="" th:action="@{/search}" class="form-inline" role="form" method="post">
         <div class="form-group">
           <input type="input" class="form-control" name="name"
             placeholder="item name" />
@@ -70,19 +70,19 @@
         <div class="form-group"><i class="fa fa-plus"></i></div>
         <div class="form-group">
           <select class="form-control" name="parentCategory">
-              <option value=""></option>
+              <option value="">[parent category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
             </div>
           </select>
           <select class="form-control" name="childCategory">
-              <option value=""></option>
+              <option value="">[child category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.parentId == 1 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
             </div>
           </select>
           <select class="form-control" name="grandCategory">
-              <option value=""></option>
+              <option value="">[grand category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}"></option>
             </div>
@@ -96,14 +96,33 @@
         <button type="submit" class="btn btn-default"><i
             class="fa fa-angle-double-right" value="検索"></i></button>
       </form>
+
+      <!-- 検索条件の表示 -->
+      <div>
+        <ul th:if="${session.searchCondition != null}">検索条件
+          <li th:if="${session.searchCondition.name != ''}" th:text="'商品名: ' + ${session.searchCondition.name}"></li>
+          <li th:if="${session.searchCondition.parentCategory != ''}" th:text="'parent category: ' + ${session.searchCondition.parentCategory}"></li>
+          <li th:if="${session.searchCondition.childCategory != ''}" th:text="'child category: ' + ${session.searchCondition.childCategory}"></li>
+          <li th:if="${session.searchCondition.grandCategory != ''}" th:text="'grand category: ' + ${session.searchCondition.grandCategory}"></li>
+          <li th:if="${session.searchCondition.brand != ''}" th:text="'ブランド名: ' + ${session.searchCondition.brand}"></li>
+        </ul>
+      </div>
+      <!-- 検索条件のリセット（一覧を表示） -->
+      <form action="" th:action="@{itemList}">
+        <div>
+          <button type="submit">検索条件のリセット</button>
+        </div>
+      </form>
     </div>
 
     <!-- pagination -->
-    <div class="pages">
+    <div id="pages">
       <nav class="page-nav">
         <ul class="pager">
-          <li class="previous"><a href="#">&larr; prev</a></li>
-          <li class="next"><a href="#">next &rarr;</a></li>
+          <form class="form-inline"></form>
+          <li class="previous" th:if="${currentPage > 1}"><a th:href="@{/toSearch(page=${currentPage-1})}">&larr; prev</a></li>
+          <li class="pageNumber" th:text="${currentPage} + ' / ' + ${totalPage} + '  page'"></li>
+          <li class="next" th:if="${currentPage < totalPage}"><a th:href="@{/toSearch(page=${currentPage+1})}">next &rarr;</a></li>
         </ul>
       </nav>
     </div>
@@ -129,7 +148,6 @@
                 <a href="" th:text="${category.name}"></a> / 
               </span>
             </td>
-            <!-- <td class="item-category"><a href="">item-category</a> / <a href="">Computers &amp; Tablets</a> / <a href="">Components&amp; Parts</a></td> -->
             <td class="item-brand" th:text="${item.brand}"><a href="">item-brand</a></td>
             <td class="item-condition" th:text="${item.condition}">item-condition</td>
           </tr>
@@ -138,11 +156,12 @@
     </div>
 
     <!-- pagination -->
-    <div class="pages">
+    <div id="pages">
       <nav class="page-nav">
         <ul class="pager">
-          <li class="previous"><a href="#">&larr; prev</a></li>
-          <li class="next"><a href="#">next &rarr;</a></li>
+          <li class="previous" th:if="${currentPage > 1}"><a th:href="@{/itemList(page=${currentPage-1})}">&larr; prev</a></li>
+          <li class="pageNumber" th:text="${currentPage} + ' / ' + ${totalPage} + '  page'"></li>
+          <li class="next" th:if="${currentPage < totalPage}"><a th:href="@{/itemList(page=${currentPage+1})}">next &rarr;</a></li>
         </ul>
       </nav>
       <!-- ページ番号を指定して表示するフォーム -->
@@ -150,10 +169,9 @@
         <form class="form-inline">
           <div class="form-group">
             <div class="input-group col-xs-6">
-              <label></label>
-              <input type="text" class="form-control" />
+              <input type="number" th:max="${totalPage}" min="1" name="page" />
               <!-- 総ページ数 -->
-              <div class="input-group-addon">/ 20</div>
+              <div class="input-group-addon" th:text="('/' + ${totalPage})"></div>
             </div>
             <div class="input-group col-xs-1">
               <button type="submit" class="btn btn-default">Go</button>

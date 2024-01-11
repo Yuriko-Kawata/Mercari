@@ -1,7 +1,6 @@
 package com.example.productmanagementex.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,18 +16,25 @@ public class ItemService {
     @Autowired
     private ItemRepository repository;
 
-    public List<Item> findAllItems() {
-        List<Item> itemList = repository.findAllItems();
-        List<Item> top30List = itemList.stream().limit(30).collect(Collectors.toList());
+    public List<Item> findAllItems(int page) {
+        List<Item> itemList = repository.findAllItems(page);
+        return itemList;
+    }
 
-        return top30List;
+    public int itemListSize(){
+        return repository.itemListSize();
     }
 
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
-            String grandCategory) {
-        List<Item> itemList = repository.searchItems(name, brand, parentCategory, childCategory, grandCategory);
-        List<Item> top30List = itemList.stream().limit(30).collect(Collectors.toList());
-        return top30List;
+            String grandCategory, int page) {
+        List<Item> itemList = repository.searchItems(name, brand, parentCategory, childCategory, grandCategory, page);        
+        return itemList;
     }
+
+    public int searchItemsSize(String name, String brand, String parentCategory, String childCategory,
+            String grandCategory){
+                int itemListSize = repository.searchItemsSize(name, brand, parentCategory, childCategory, grandCategory);
+                return itemListSize;
+            }
 
 }
