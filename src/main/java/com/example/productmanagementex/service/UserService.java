@@ -20,6 +20,6 @@ public class UserService {
         User user = new User();
         BeanUtils.copyProperties(form, user);
 
-        repository.insertUser(user.getName(), user.getEmail(), user.getPassword());
+        repository.insertUser(user.getName(), user.getMail(), user.getPassword());
     }
 }

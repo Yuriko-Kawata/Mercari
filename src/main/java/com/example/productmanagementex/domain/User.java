@@ -6,7 +6,7 @@ public class User {
     // ユーザー名
     private String name;
     // メールアドレス
-    private String email;
+    private String mail;
     // パスワード
     private String password;
     // 作った人？
@@ -28,12 +28,12 @@ public class User {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMail() {
+        return mail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 
     public String getPassword() {
@@ -54,7 +54,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", authority="
+        return "User [id=" + id + ", name=" + name + ", mail=" + mail + ", password=" + password + ", authority="
                 + authority + "]";
     }
 

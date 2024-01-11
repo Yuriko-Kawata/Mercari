@@ -13,13 +13,13 @@ import com.example.productmanagementex.form.UserForm;
 import com.example.productmanagementex.service.UserService;
 
 @Controller
-@RequestMapping("user")
+@RequestMapping("")
 public class UserController {
 
     @Autowired
     private UserService service;
 
-    @GetMapping("")
+    @GetMapping("toRegister")
     public String index(UserForm form, Model model) {
         model.addAttribute("userForm", form);
         return "register";

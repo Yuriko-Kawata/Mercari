@@ -19,7 +19,7 @@ public class UserRepository {
         User user = new User();
         user.setId(rs.getInt("id"));
         user.setName(rs.getString("name"));
-        user.setEmail(rs.getString("email"));
+        user.setMail(rs.getString("mail"));
         user.setPassword(rs.getString("password"));
         user.setAuthority(rs.getInt("authority"));
         return user;
@@ -27,14 +27,14 @@ public class UserRepository {
 
     private static final String INSERT_SQL = """
             INSERT INTO
-                users(name, email, password)
+                users(name, mail, password)
             VALUES
-                (:name, :email, :password)
+                (:name, :mail, :password)
             ;
             """;
 
-    public void insertUser(String name, String email, String password) {
-        SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("email", email)
+    public void insertUser(String name, String mail, String password) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("mail", mail)
                 .addValue("password", password);
         template.update(INSERT_SQL, param);
     }
