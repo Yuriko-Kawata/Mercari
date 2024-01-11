@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -55,7 +55,7 @@
 
   <!-- details -->
   <div class="container">
-    <a type="button" class="btn btn-default" href="./list.html"><i
+    <a type="button" class="btn btn-default" th:href="@{itemList}"><i
         class="fa fa-reply"></i> back</a>
     <h2>Details</h2>
     <div id="details">
@@ -63,36 +63,33 @@
         <tbody>
           <tr>
             <th>ID</th>
-            <td>1</td>
+            <td th:text="${item.id}"></td>
           </tr>
           <tr>
             <th>name</th>
-            <td>Razer BlackWidow Chroma Keyboard</td>
+            <td th:text="${item.name}"></td>
           </tr>
           <tr>
             <th>price</th>
-            <td>$52.0</td>
+            <td th:text="${item.price}"></td>
           </tr>
           <tr>
             <th>category</th>
-            <td>Electronics / Computers &amp; Tablets / Components &amp; Parts
+            <td>
+              <span  th:each="category : ${item.category}" th:text="${category.name} + ' / '"></span>
             </td>
           </tr>
           <tr>
             <th>brand</th>
-            <td>Razer</td>
+            <td th:text="${item.brand}"></td>
           </tr>
           <tr>
             <th>condition</th>
-            <td>3</td>
+            <td th:text="${item.condition}"></td>
           </tr>
           <tr>
             <th>description</th>
-            <td>I realized his pants are on backwards after the picture. They
-              were very dirty so I hand washed them. He has a stuffed body and
-              painted porcelain head, hands and feet. Back before clowns were
-              too scary. 9"" tall. No chips or cracks but minor paint loss in a
-              few places. Clown Circus Doll Collectible</td>
+            <td th:text="${item.description}"></td>
           </tr>
         </tbody>
       </table>

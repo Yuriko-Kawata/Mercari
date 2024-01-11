@@ -141,7 +141,7 @@
         </thead>
         <tbody th:each="item : ${itemList}">
           <tr>
-            <td class="item-name" th:text="${item.name}"><a href="./detail.html">item-name</a></td>
+            <td class="item-name"><a th:href="@{/detail(id=${item.id})}" th:text="${item.name}">item-name</a></td>
             <td class="item-price" th:text="${item.price}">item-price</td>
             <td>
               <span th:each="category : ${item.category}">
@@ -166,7 +166,7 @@
       </nav>
       <!-- ページ番号を指定して表示するフォーム -->
       <div id="select-page">
-        <form class="form-inline">
+        <form class="form-inline" th:action="@{toSearch}">
           <div class="form-group">
             <div class="input-group col-xs-6">
               <input type="number" th:max="${totalPage}" min="1" name="page" />
