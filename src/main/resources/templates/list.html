@@ -70,28 +70,19 @@
         <div class="form-group"><i class="fa fa-plus"></i></div>
         <div class="form-group">
           <select class="form-control">
-            <option>- parentCategory -</option>
-            <option>parentCategory1</option>
-            <option>parentCategory2</option>
-            <option>parentCategory3</option>
-            <option>parentCategory4</option>
-            <option>parentCategory5</option>
+            <div th:each="category : ${categoryList}" >
+              <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}"></option>
+            </div>
           </select>
           <select class="form-control">
-            <option>- childCategory -</option>
-            <option>childCategory1</option>
-            <option>childCategory2</option>
-            <option>childCategory3</option>
-            <option>childCategory4</option>
-            <option>childCategory5</option>
+            <div th:each="category : ${categoryList}" >
+              <option th:if="${category.parentId == 1 && category.nameAll == null}" th:text="${category.name}"></option>
+            </div>
           </select>
           <select class="form-control">
-            <option>- grandChild -</option>
-            <option>grandChild1</option>
-            <option>grandChild2</option>
-            <option>grandChild3</option>
-            <option>grandChild4</option>
-            <option>grandChild5</option>
+            <div th:each="category : ${categoryList}" >
+              <option th:if="${category.nameAll != null}" th:text="${category.name}"></option>
+            </div>
           </select>
         </div>
         <div class="form-group"><i class="fa fa-plus"></i></div>
@@ -130,7 +121,12 @@
           <tr>
             <td class="item-name" th:text="${item.name}"><a href="./detail.html">item-name</a></td>
             <td class="item-price" th:text="${item.price}">item-price</td>
-            <td class="item-category" th:text="${item.category}"><a href="">item-category</a> / <a href="">Computers &amp; Tablets</a> / <a href="">Components&amp; Parts</a></td>
+            <td>
+              <span th:each="category : ${item.category}">
+                <a href="" th:text="${category.name}"></a> / 
+              </span>
+            </td>
+            <!-- <td class="item-category"><a href="">item-category</a> / <a href="">Computers &amp; Tablets</a> / <a href="">Components&amp; Parts</a></td> -->
             <td class="item-brand" th:text="${item.brand}"><a href="">item-brand</a></td>
             <td class="item-condition" th:text="${item.condition}">item-condition</td>
           </tr>
