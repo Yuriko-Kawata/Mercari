@@ -102,7 +102,7 @@ public class ItemController {
             return toAddItem(itemForm, categoryForm, model);
         }
 
-        itemService.insertItem(itemForm, categoryForm);
+        itemService.addItem(itemForm, categoryForm);
 
         return "confirm";
     }
