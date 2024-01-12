@@ -182,6 +182,23 @@ public class ItemRepository {
             ;
             """;
 
+    private static final String INSERT_SQL = """
+            INSERT INTO
+                items(name, condition, category, brand, price, description, name_all)
+            VALUES
+                (:name, :condition,
+                SELECT
+                    category_number
+                FROM
+                    category
+                WHERE
+                    name_all = :nameAll
+                ,
+                :brand, :price, :description, :nameAll
+                )
+            ;
+            """;
+
     public List<Item> findAllItems(int page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_RESULTSET);
@@ -212,6 +229,14 @@ public class ItemRepository {
         List<Item> itemList = template.query(FIND_BY_ID_SQL, param, ITEM_RESULTSET);
         Item item = itemList.get(0);
         return item;
+    }
+
+    public void insertItem(Item item) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", item.getName())
+                .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
+                .addValue("price", item.getPrice()).addValue("description", item.getDescription())
+                .addValue("nameAll", item.getNameAll());
+        template.update(INSERT_SQL, param);
     }
 
 }
