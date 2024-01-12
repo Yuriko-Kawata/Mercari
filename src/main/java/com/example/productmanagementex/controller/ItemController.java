@@ -3,16 +3,20 @@ package com.example.productmanagementex.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.productmanagementex.form.CategoryForm;
+import com.example.productmanagementex.form.ItemForm;
 import com.example.productmanagementex.form.SearchForm;
 import com.example.productmanagementex.service.CategoryService;
 import com.example.productmanagementex.service.ItemService;
 
 import jakarta.servlet.http.HttpSession;
-
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequestMapping({ "", "/" })
@@ -81,4 +85,26 @@ public class ItemController {
         model.addAttribute("item", itemService.findById(id));
         return "detail";
     }
+
+    @RequestMapping("toAdd")
+    public String toAddItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
+        model.addAttribute("itemForm", itemForm);
+        model.addAttribute("categoryForm", categoryForm);
+        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+
+        return "add";
+    }
+
+    @PostMapping("add")
+    public String addItem(@Validated ItemForm itemForm, BindingResult rsItem, @Validated CategoryForm categoryForm,
+            BindingResult rsCategory, Model model) {
+        if (rsItem.hasErrors() || rsCategory.hasErrors()) {
+            return toAddItem(itemForm, categoryForm, model);
+        }
+
+        itemService.insertItem(itemForm, categoryForm);
+
+        return "confirm";
+    }
+
 }
