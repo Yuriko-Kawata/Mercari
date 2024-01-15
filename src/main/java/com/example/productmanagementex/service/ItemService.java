@@ -2,11 +2,14 @@ package com.example.productmanagementex.service;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.productmanagementex.domain.Item;
+import com.example.productmanagementex.form.CategoryForm;
+import com.example.productmanagementex.form.ItemForm;
 import com.example.productmanagementex.repository.ItemRepository;
 
 @Transactional
@@ -194,6 +197,22 @@ public class ItemService {
 
     public Item findById(int id) {
         return repository.findById(id);
+    }
+
+    public void addItem(ItemForm itemForm, CategoryForm categoryForm) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(categoryForm.getParentCategory());
+        builder.append("/");
+        builder.append(categoryForm.getChildCategory());
+        builder.append("/");
+        builder.append(categoryForm.getGrandCategory());
+        String nameAll = builder.toString();
+        Item item = new Item();
+
+        BeanUtils.copyProperties(itemForm, item);
+        item.setNameAll(nameAll);
+
+        repository.insertItem(item);
     }
 
 }

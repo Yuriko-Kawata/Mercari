@@ -29,10 +29,36 @@ public class CategoryRepository {
 
     private final String FIND_ALL_SQL = """
             SELECT
-            DISTINCT ON(parent_id, name)
                 id, parent_id, name, name_all, category_number
             FROM
                 category
+            ORDER BY
+                name, id
+            ;
+            """;
+
+    private final String CHECK_CATEGORY_SQL = """
+            SELECT count(*) FROM category WHERE name_all = :nameAll;
+            """;
+
+    private final String INSERT_SQL = """
+            INSERT INTO category (name, parent_id, name_all, category_number)
+            SELECT
+                SPLIT_PART(:nameAll, '/', position),
+                CASE
+                WHEN position = 1 THEN NULL
+                WHEN position = 2 THEN
+                    (SELECT id FROM category WHERE name = :parentCategory ORDER BY id LIMIT 1)
+                ELSE
+                    (SELECT id FROM category WHERE name = :childCategory ORDER BY id LIMIT 1)
+                END,
+                CASE
+                WHEN position = 1 OR position = 2 THEN NULL
+                ELSE :nameAll
+                END,
+                (SELECT category_number FROM category ORDER BY id DESC LIMIT 1 OFFSET 2)+1
+            FROM
+                generate_series(1, 3) AS position
             ;
             """;
 
@@ -41,4 +67,20 @@ public class CategoryRepository {
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
         return categoryList;
     }
+
+    private int toCheckCategory(String nameAll) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
+        int categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
+        return categoryCount;
+    }
+
+    public void checkCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {
+        if (toCheckCategory(nameAll) == 0) {
+            SqlParameterSource param = new MapSqlParameterSource().addValue("parentCategory", parentCategory)
+                    .addValue("childCategory", childCategory).addValue("grandCategory", grandCategory)
+                    .addValue("nameAll", nameAll);
+            template.update(INSERT_SQL, param);
+        }
+    }
+
 }

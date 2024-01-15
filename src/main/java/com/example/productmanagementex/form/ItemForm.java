@@ -1,5 +1,8 @@
 package com.example.productmanagementex.form;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 /**
  * 2023.12.27
  * 
@@ -10,20 +13,25 @@ public class ItemForm {
     // id
     private Integer id;
     // 商品名
+    @NotBlank(message = "入力は必須です")
     private String name;
     // 状態
+    @NotNull(message = "選択は必須です")
     private Integer condition;
     // カテゴリ
     private Integer category;
     // ブランド名
+    @NotBlank(message = "入力は必須です")
     private String brand;
     // 値段
+    @NotNull(message = "入力は必須です")
     private Double price;
     // 在庫
     private Integer stock;
     // 配送状態
     private Integer shipping;
     // 商品説明
+    @NotBlank(message = "入力は必須です")
     private String description;
 
     public Integer getId() {

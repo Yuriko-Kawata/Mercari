@@ -27,6 +27,8 @@ public class Item {
     private Integer shipping;
     // 商品説明
     private String description;
+    // カテゴリ名
+    private String nameAll;
 
     public Integer getId() {
         return id;
@@ -100,11 +102,19 @@ public class Item {
         this.description = description;
     }
 
+    public String getNameAll() {
+        return nameAll;
+    }
+
+    public void setNameAll(String nameAll) {
+        this.nameAll = nameAll;
+    }
+
     @Override
     public String toString() {
-        return "ItemForm [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category
-                + ", brand=" + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping
-                + ", description=" + description + "]";
+        return "Item [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category + ", brand="
+                + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping + ", description="
+                + description + ", nameAll=" + nameAll + "]";
     }
 
 }
