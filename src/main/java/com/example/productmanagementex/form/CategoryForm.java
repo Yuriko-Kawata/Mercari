@@ -1,16 +1,16 @@
 package com.example.productmanagementex.form;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public class CategoryForm {
     // 親カテゴリ
-    @NotNull(message = "選択は必須です")
+    @NotBlank(message = "選択を変更してください")
     private String parentCategory;
     // 子カテゴリ
-    @NotNull(message = "選択は必須です")
+    @NotBlank(message = "選択を変更してください")
     private String childCategory;
     // 孫カテゴリ
-    @NotNull(message = "選択は必須です")
+    @NotBlank(message = "選択を変更してください")
     private String grandCategory;
 
     public String getParentCategory() {

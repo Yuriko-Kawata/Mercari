@@ -187,12 +187,12 @@ public class ItemRepository {
                 items(name, condition, category, brand, price, description, name_all)
             VALUES
                 (:name, :condition,
-                SELECT
+                (SELECT
                     category_number
                 FROM
                     category
                 WHERE
-                    name_all = :nameAll
+                    name_all = :nameAll)
                 ,
                 :brand, :price, :description, :nameAll
                 )

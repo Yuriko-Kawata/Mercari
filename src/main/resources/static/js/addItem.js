@@ -40,34 +40,3 @@ for (const option of selectGrandElement.options) {
     seenGrandOptions.add(option.text);
     }
 };
-
-// <select> 要素とエラーメッセージ要素を取得
-const errorMessage = document.getElementById('error');
-
-// ユーザーが選択を変更したかどうかを追跡する変数
-let isParentChanged = false;
-let isChildChanged = false;
-let isGrandChanged = false;
-
-// <select> 要素にイベントリスナーを追加
-selectParentElement.addEventListener('change', () => {
-    isParentChanged = true;
-    errorMessage.style.display = 'none'; // エラーメッセージを非表示に
-});
-selectChildElement.addEventListener('change', () => {
-    isChildChanged = true;
-    errorMessage.style.display = 'none'; // エラーメッセージを非表示に
-});
-selectGrandElement.addEventListener('change', () => {
-    isGrandChanged = true;
-    errorMessage.style.display = 'none'; // エラーメッセージを非表示に
-});
-
-// フォーム送信時のイベントリスナー
-document.getElementById('add-item').addEventListener('submit', (e) => {
-    if (!(isParentChanged && isChildChanged && isGrandChanged)) {
-        // 選択が変更されていない場合、エラーメッセージを表示
-        errorMessage.style.display = 'block';
-        e.preventDefault(); // フォームの送信を防止
-    }
-});

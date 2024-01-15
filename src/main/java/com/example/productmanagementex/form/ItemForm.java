@@ -19,7 +19,6 @@ public class ItemForm {
     @NotNull(message = "選択は必須です")
     private Integer condition;
     // カテゴリ
-    @NotNull(message = "選択は必須です")
     private Integer category;
     // ブランド名
     @NotBlank(message = "入力は必須です")
