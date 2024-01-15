@@ -32,6 +32,7 @@ public class ItemForm {
     // 配送状態
     private Integer shipping;
     // 商品説明
+    @NotBlank(message = "入力は必須です")
     private String description;
 
     public Integer getId() {
