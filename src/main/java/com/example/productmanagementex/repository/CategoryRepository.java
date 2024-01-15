@@ -29,10 +29,11 @@ public class CategoryRepository {
 
     private final String FIND_ALL_SQL = """
             SELECT
-            DISTINCT ON(name, parent_id)
                 id, parent_id, name, name_all, category_number
             FROM
                 category
+            ORDER BY
+                name, id
             ;
             """;
 
