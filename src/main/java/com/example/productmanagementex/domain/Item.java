@@ -29,6 +29,8 @@ public class Item {
     private String description;
     // カテゴリ名
     private String nameAll;
+    // 状態
+    private Boolean delete;
 
     public Integer getId() {
         return id;
@@ -110,11 +112,19 @@ public class Item {
         this.nameAll = nameAll;
     }
 
+    public Boolean getDelete() {
+        return delete;
+    }
+
+    public void setDelete(Boolean delete) {
+        this.delete = delete;
+    }
+
     @Override
     public String toString() {
         return "Item [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category + ", brand="
                 + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping + ", description="
-                + description + ", nameAll=" + nameAll + "]";
+                + description + ", nameAll=" + nameAll + ", delete=" + delete + "]";
     }
 
 }
