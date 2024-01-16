@@ -18,6 +18,20 @@
     integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
     crossorigin="anonymous" />
   <link rel="stylesheet" href="./style.css" />
+  <style>
+    /* Trueの値に対するスタイル */
+    #true-value {
+        color: green; /* 緑色のテキスト */
+        font-weight: bold; /* 太字 */
+    }
+
+    /* Falseの値に対するスタイル */
+    #false-value {
+        color: red; /* 赤色のテキスト */
+        font-weight: bold; /* 太字 */
+    }
+
+  </style>
   <title>Rakus Items</title>
 </head>
 <body>
@@ -145,9 +159,17 @@
             </td>
             <td class="item-brand" th:text="${item.brand}"><a href="">item-brand</a></td>
             <td class="item-condition" th:text="${item.condition}">item-condition</td>
-            <td class="item-delete" th:if="${item.delete == false}" th:text="表示"></td>
-            <td class="item-delete" th:if="${item.delete == true}" th:text="非表示"></td>
-            <td class="item-delete"><button type="submit" th:href="@{delete}">変更</button></td>
+            <div th:if="${item.delete == false}">
+              <td class="item-delete" id="true-value">表示</td>
+              <td class="item-delete"></td>     
+            </div>
+            <div th:unless="${item.delete == false}">
+              <td class="item-delete"></td>
+              <td class="item-delete" id="false-value">非表示</td>
+            </div>
+            <form action="" th:action="@{delete(id=${item.id})}" method="post">
+              <td class="item-delete"><button type="submit" >変更</button></td>
+            </form>
           </tr>
         </tbody>
       </table>

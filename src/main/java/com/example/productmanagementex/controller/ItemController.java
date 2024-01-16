@@ -127,15 +127,7 @@ public class ItemController {
 
     @PostMapping("delete")
     public String deleteItem(int id) {
-        boolean status = itemService.getStatus(id);
-
-        if (status) {
-            status = false;
-            itemService.delete(status);
-        } else {
-            status = true;
-            itemService.delete(status);
-        }
+        itemService.delete(id);
 
         return "redirect:/itemList";
     }
