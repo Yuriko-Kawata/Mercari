@@ -179,6 +179,8 @@ public class ItemRepository {
                 i.category = c.category_number
             WHERE
                 i.id = :id
+            ORDER BY
+                c.id
             ;
             """;
 
