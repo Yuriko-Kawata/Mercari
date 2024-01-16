@@ -108,4 +108,13 @@ public class ItemController {
         return "confirm";
     }
 
+    @RequestMapping("toEdit")
+    public String toEditItem(int id, CategoryForm categoryForm, Model model) {
+        model.addAttribute("categoryForm", categoryForm);
+        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+        model.addAttribute("itemData", itemService.findById(id));
+
+        return "edit";
+    }
+
 }
