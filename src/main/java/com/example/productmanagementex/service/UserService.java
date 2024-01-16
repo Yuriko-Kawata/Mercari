@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.productmanagementex.domain.User;
-import com.example.productmanagementex.form.ItemForm;
 import com.example.productmanagementex.form.UserForm;
 import com.example.productmanagementex.repository.UserRepository;
 
@@ -25,7 +24,7 @@ public class UserService {
     }
 
     public User checkUser(UserForm form) {
-        User user = repository.findByMailAndPassword(form.getMail(), form.getPassword());
+        User user = repository.checkUser(form.getMail(), form.getPassword());
         return user;
     }
 }

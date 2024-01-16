@@ -33,10 +33,25 @@ public class UserRepository {
             ;
             """;
 
+    private static final String FIND_BY_MAIL_AND_PASSWORD_SQL = """
+            SELECT
+                id, name, mail, password, authority
+            FROM
+                users
+            WHERE
+                mail = :mail AND password = :password
+            ;
+            """;
+
     public void insertUser(String name, String mail, String password) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("mail", mail)
                 .addValue("password", password);
         template.update(INSERT_SQL, param);
     }
 
+    public User checkUser(String mail, String password) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("mail", mail).addValue("password", password);
+        User user = template.queryForObject(FIND_BY_MAIL_AND_PASSWORD_SQL, param, USER_ROW_MAPPER);
+        return user;
+    }
 }
