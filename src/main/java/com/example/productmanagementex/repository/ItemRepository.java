@@ -179,6 +179,8 @@ public class ItemRepository {
                 i.category = c.category_number
             WHERE
                 i.id = :id
+            ORDER BY
+                c.id
             ;
             """;
 
@@ -197,6 +199,17 @@ public class ItemRepository {
                 :brand, :price, :description, :nameAll
                 )
             ;
+            """;
+
+    private static final String UPDATE_SQL = """
+            UPDATE
+                items
+            SET
+                name = :name, condition = :condition,
+                category = (SELECT category_number FROM category WHERE name_all = :nameAll),
+                brand = :brand, price = :price, description = :description, name_all = :nameAll
+            WHERE
+                id = :id
             """;
 
     public List<Item> findAllItems(int page) {
@@ -237,6 +250,15 @@ public class ItemRepository {
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
                 .addValue("nameAll", item.getNameAll());
         template.update(INSERT_SQL, param);
+    }
+
+    public void updateItem(Item item) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", item.getId())
+                .addValue("name", item.getName())
+                .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
+                .addValue("price", item.getPrice()).addValue("description", item.getDescription())
+                .addValue("nameAll", item.getNameAll());
+        template.update(UPDATE_SQL, param);
     }
 
 }

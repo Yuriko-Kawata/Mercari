@@ -18,13 +18,23 @@
     integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
     crossorigin="anonymous" />
   <link rel="stylesheet" href="./style.css" />
-  <!-- script -->
-  <script
-    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script
-    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-    crossorigin="anonymous"></script>
+  <style>
+    .title{
+      display: flex;
+      align-items:last baseline;
+    }
+    .check{
+      font-size: small;
+      padding-left: 20px;
+      color: red;
+    }
+    .changed {
+      background-color: #ffff99; /* 薄い黄色の背景 */
+      border: 2px solid #ff9900; /* オレンジ色の枠線 */
+      transition: border 0.3s ease-in-out; /* アニメーション効果 */
+    }
+
+  </style>
   <title>Rakus Items</title>
 </head>
 <body>
@@ -55,71 +65,78 @@
 
   <!-- details -->
   <div id="input-main" class="container">
-    <a type="button" class="btn btn-default" href="./detail.html"><i
+    <a type="button" class="btn btn-default" href="./list.html"><i
         class="fa fa-reply"></i> back</a>
-    <h2>Edit</h2>
+    <div class="title">
+      <h2>商品編集</h2><span class="check">defaultで元の情報が表示</span>
+    </div>
 
     <!-- edit form -->
-    <form action="#" method="POST" class="form-horizontal">
+    <form action="#" th:action="@{/edit(id=${itemData.id})}" method="post" class="form-horizontal" id="edit-item">
       <!-- name -->
       <div class="form-group">
         <label for="inputName" class="col-sm-2 control-label">name</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" id="inputName" />
+          <input type="text" class="form-control" name="name" id="inputName" th:value="${itemData.name}" required/>
         </div>
       </div>
       <!-- price -->
       <div class="form-group">
         <label for="price" class="col-sm-2 control-label">price</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" id="price" />
+          <input type="number" class="form-control" name="price" id="price" th:value="${itemData.price}" required/>
         </div>
       </div>
       <!-- category -->
       <div class="form-group">
-        <label for="category" class="col-sm-2 control-label">category</label>
+        <label for="parentCategory" class="col-sm-2 control-label">parent category</label>
         <div class="col-sm-8">
-          <select class="form-control">
-            <option>- parentCategory -</option>
-            <option>parentCategory1</option>
-            <option>parentCategory2</option>
-            <option>parentCategory3</option>
-            <option>parentCategory4</option>
-            <option>parentCategory5</option>
+          <select class="form-control" name="parentCategory" id="parentCategory">
+            <div th:each="originalCategory : ${itemData.category}">
+              <option th:if="${originalCategory.parentId == 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
+            </div>
+            <div th:each="category : ${categoryList}">
+              <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+            </div>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="childCategory" class="col-sm-2 control-label">child category</label>
+        <div class="col-sm-8">
+          <select class="form-control" name="childCategory" id="childCategory">
+            <div th:each="originalCategory : ${itemData.category}">
+              <option th:if="${originalCategory.parentId != 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
+            </div>
+            <div th:each="category : ${categoryList}">
+              <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+            </div>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
+        <div class="col-sm-8">
+          <select class="form-control" name="grandCategory" id="grandCategory">
+            <div th:each="originalCategory : ${itemData.category}">
+              <option th:if="${originalCategory.nameAll != null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
+            </div>
+            <div th:each="category : ${categoryList}">
+              <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}"></option>
+            </div>
           </select>
         </div>
       </div>
       <div class="form-group">
         <label for="category" class="col-sm-2 control-label"></label>
         <div class="col-sm-8">
-          <select class="form-control">
-            <option>- childCategory -</option>
-            <option>childCategory1</option>
-            <option>childCategory2</option>
-            <option>childCategory3</option>
-            <option>childCategory4</option>
-            <option>childCategory5</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="category" class="col-sm-2 control-label"></label>
-        <div class="col-sm-8">
-          <select class="form-control">
-            <option>- grandChild -</option>
-            <option>grandChild1</option>
-            <option>grandChild2</option>
-            <option>grandChild3</option>
-            <option>grandChild4</option>
-            <option>grandChild5</option>
-          </select>
         </div>
       </div>
       <!-- brand -->
       <div class="form-group">
         <label for="brand" class="col-sm-2 control-label">brand</label>
         <div class="col-sm-8">
-          <input type="text" id="brand" class="form-control" name="brand" />
+          <input type="text" id="brand" class="form-control" name="brand" th:value="${itemData.brand}"/>
         </div>
       </div>
       <!-- condition -->
@@ -127,13 +144,13 @@
         <label for="condition" class="col-sm-2 control-label">condition</label>
         <div class="col-sm-8">
           <label for="condition1" class="radio-inline">
-            <input type="radio" name="condition" id="condition1" value="1" /> 1
+            <input type="radio" name="condition" id="condition1" value="1" th:checked="${itemData.condition == 1}" /> 1
           </label>
           <label for="condition2" class="radio-inline">
-            <input type="radio" name="condition" id="condition2" value="2" /> 2
+            <input type="radio" name="condition" id="condition2" value="2" th:checked="${itemData.condition == 2}" /> 2
           </label>
           <label for="condition3" class="radio-inline">
-            <input type="radio" name="condition" id="condition3" value="3" /> 3
+            <input type="radio" name="condition" id="condition3" value="3" th:checked="${itemData.condition == 3}" /> 3
           </label>
         </div>
       </div>
@@ -143,16 +160,28 @@
           class="col-sm-2 control-label">description</label>
         <div class="col-sm-8">
           <textarea name="description" id="description" class="form-control"
-            rows="5"></textarea>
+          rows="5" th:text="${itemData.description}"></textarea>
         </div>
       </div>
       <!-- submit button -->
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default">Submit</button>
+          <button type="submit" id="submit-button" class="btn btn-default">Submit</button>
         </div>
       </div>
     </form>
+      <!-- clear button(元の値に戻す) -->
+      <div>
+        <button type="button" id="reload-button" class="btn btn-default" th:href="@{toEdit(id=${itemData.id})}">元の情報に戻す</button>
+      </div>
   </div>
+  <!-- script -->
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <script src="js/editItem.js"></script>
 </body>
 </html>

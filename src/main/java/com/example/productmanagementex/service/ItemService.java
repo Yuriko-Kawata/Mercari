@@ -215,4 +215,20 @@ public class ItemService {
         repository.insertItem(item);
     }
 
+    public void editItem(ItemForm itemForm, CategoryForm categoryForm) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(categoryForm.getParentCategory());
+        builder.append("/");
+        builder.append(categoryForm.getChildCategory());
+        builder.append("/");
+        builder.append(categoryForm.getGrandCategory());
+        String nameAll = builder.toString();
+        Item item = new Item();
+
+        BeanUtils.copyProperties(itemForm, item);
+        item.setNameAll(nameAll);
+
+        repository.updateItem(item);
+    }
+
 }
