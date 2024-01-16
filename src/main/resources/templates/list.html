@@ -130,6 +130,8 @@
             <th>category</th>
             <th>brand</th>
             <th>cond</th>
+            <th colspan="2">delete status</th>
+            <th>change status</th>
           </tr>
         </thead>
         <tbody th:each="item : ${itemList}">
@@ -143,6 +145,9 @@
             </td>
             <td class="item-brand" th:text="${item.brand}"><a href="">item-brand</a></td>
             <td class="item-condition" th:text="${item.condition}">item-condition</td>
+            <td class="item-delete" th:if="${item.delete == false}" th:text="表示"></td>
+            <td class="item-delete" th:if="${item.delete == true}" th:text="非表示"></td>
+            <td class="item-delete"><button type="submit" th:href="@{delete}">変更</button></td>
           </tr>
         </tbody>
       </table>
