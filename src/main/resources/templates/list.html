@@ -45,7 +45,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="./list.html">Rakus Items</a>
+      <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <div>
@@ -63,7 +63,7 @@
   <div id="main" class="container-fluid">
     <!-- addItem link -->
     <div id="addItemButton">
-      <a class="btn btn-default" href="./add.html"><i
+      <a class="btn btn-default" th:href="@{toAdd}"><i
           class="fa fa-plus-square-o"></i> Add New Item</a>
     </div>
 
@@ -167,7 +167,7 @@
               <td class="item-delete"></td>
               <td class="item-delete" id="false-value">非表示</td>
             </div>
-            <form action="" th:action="@{delete(id=${item.id})}" method="post">
+            <form action="" th:action="@{delete(id=${item.id}, page=${currentPage})}" method="post">
               <td class="item-delete"><button type="submit" >変更</button></td>
             </form>
           </tr>

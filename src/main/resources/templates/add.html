@@ -42,7 +42,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="./list.html">Rakus Items</a>
+      <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <div>
@@ -59,7 +59,7 @@
 
   <!-- details -->
   <div id="input-main" class="container">
-    <a type="button" class="btn btn-default" href="./list.html"><i
+    <a type="button" class="btn btn-default" th:href="@{itemList}"><i
         class="fa fa-reply"></i> back</a>
     <div class="title">
       <h2>商品追加</h2><span class="check">全項目入力必須</span>
