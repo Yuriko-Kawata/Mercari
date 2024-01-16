@@ -126,10 +126,10 @@ public class ItemController {
     }
 
     @PostMapping("delete")
-    public String deleteItem(int id) {
+    public String deleteItem(int id, int page, Model model) {
         itemService.delete(id);
 
-        return "redirect:/itemList";
+        return toSearchPage(page, model);
     }
 
 }

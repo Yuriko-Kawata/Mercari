@@ -167,7 +167,7 @@
               <td class="item-delete"></td>
               <td class="item-delete" id="false-value">非表示</td>
             </div>
-            <form action="" th:action="@{delete(id=${item.id})}" method="post">
+            <form action="" th:action="@{delete(id=${item.id}, page=${currentPage})}" method="post">
               <td class="item-delete"><button type="submit" >変更</button></td>
             </form>
           </tr>

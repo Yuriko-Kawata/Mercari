@@ -107,6 +107,7 @@ public class ItemRepository {
                 i.stock AS i_stock,
                 i.shipping AS i_shipping,
                 i.description AS i_description,
+                i.delete AS i_delete,
                 c.id AS c_id,
                 c.parent_id AS c_parent_id,
                 c.name AS c_name,
