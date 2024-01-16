@@ -231,4 +231,13 @@ public class ItemService {
         repository.updateItem(item);
     }
 
+    public boolean getStatus(int id) {
+        boolean status = repository.getDeleteStatus(id);
+        return status;
+    }
+
+    public void delete(boolean status) {
+        repository.changeDeleteStatus(status);
+    }
+
 }
