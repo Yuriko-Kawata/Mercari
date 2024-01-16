@@ -42,6 +42,7 @@ public class ItemRepository {
                 item.setStock(rs.getInt("i_stock"));
                 item.setShipping(rs.getInt("i_shipping"));
                 item.setDescription(rs.getString("i_description"));
+                item.setDelete(rs.getBoolean("i_delete"));
                 itemBefore = itemNow;
             }
             if (rs.getInt("c_id") != 0) {
@@ -72,6 +73,7 @@ public class ItemRepository {
                 i.stock AS i_stock,
                 i.shipping AS i_shipping,
                 i.description AS i_description,
+                i.delete AS i_delete,
                 c.id AS c_id,
                 c.parent_id AS c_parent_id,
                 c.name AS c_name,
@@ -166,6 +168,7 @@ public class ItemRepository {
                 i.stock AS i_stock,
                 i.shipping AS i_shipping,
                 i.description AS i_description,
+                i.delete AS i_delete,
                 c.id AS c_id,
                 c.parent_id AS c_parent_id,
                 c.name AS c_name,
@@ -208,6 +211,15 @@ public class ItemRepository {
                 name = :name, condition = :condition,
                 category = (SELECT category_number FROM category WHERE name_all = :nameAll),
                 brand = :brand, price = :price, description = :description, name_all = :nameAll
+            WHERE
+                id = :id
+            """;
+
+    private static final String CHANGE_DELETE_SQL = """
+            UPDATE
+                items
+            SET
+                delete = NOT delete
             WHERE
                 id = :id
             """;
@@ -259,6 +271,11 @@ public class ItemRepository {
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
                 .addValue("nameAll", item.getNameAll());
         template.update(UPDATE_SQL, param);
+    }
+
+    public void changeDeleteStatus(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        template.update(CHANGE_DELETE_SQL, param);
     }
 
 }

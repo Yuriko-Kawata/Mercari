@@ -231,4 +231,8 @@ public class ItemService {
         repository.updateItem(item);
     }
 
+    public void delete(int id) {
+        repository.changeDeleteStatus(id);
+    }
+
 }

@@ -33,6 +33,8 @@ public class ItemForm {
     // 商品説明
     @NotBlank(message = "入力は必須です")
     private String description;
+    // 状態（論理削除）
+    private boolean delete;
 
     public Integer getId() {
         return id;
@@ -106,10 +108,19 @@ public class ItemForm {
         this.description = description;
     }
 
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
+    }
+
     @Override
     public String toString() {
         return "ItemForm [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category
                 + ", brand=" + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping
-                + ", description=" + description + "]";
+                + ", description=" + description + ", delete=" + delete + "]";
     }
+
 }

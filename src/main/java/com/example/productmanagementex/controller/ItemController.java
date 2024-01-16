@@ -125,4 +125,11 @@ public class ItemController {
         return "confirm";
     }
 
+    @PostMapping("delete")
+    public String deleteItem(int id) {
+        itemService.delete(id);
+
+        return "redirect:/itemList";
+    }
+
 }
