@@ -125,4 +125,19 @@ public class ItemController {
         return "confirm";
     }
 
+    @PostMapping("delete")
+    public String deleteItem(int id) {
+        boolean status = itemService.getStatus(id);
+
+        if (status) {
+            status = false;
+            itemService.delete(status);
+        } else {
+            status = true;
+            itemService.delete(status);
+        }
+
+        return "redirect:/itemList";
+    }
+
 }
