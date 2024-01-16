@@ -72,26 +72,26 @@
     </div>
 
     <!-- edit form -->
-    <form action="#" th:action="@{/edit}" method="post" class="form-horizontal" id="edit-item">
+    <form action="#" th:action="@{/edit(id=${itemData.id})}" method="post" class="form-horizontal" id="edit-item">
       <!-- name -->
       <div class="form-group">
         <label for="inputName" class="col-sm-2 control-label">name</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" id="inputName" th:value="${itemData.name}" required/>
+          <input type="text" class="form-control" name="name" id="inputName" th:value="${itemData.name}" required/>
         </div>
       </div>
       <!-- price -->
       <div class="form-group">
         <label for="price" class="col-sm-2 control-label">price</label>
         <div class="col-sm-8">
-          <input type="number" class="form-control" id="price" th:value="${itemData.price}" required/>
+          <input type="number" class="form-control" name="price" id="price" th:value="${itemData.price}" required/>
         </div>
       </div>
       <!-- category -->
       <div class="form-group">
         <label for="parentCategory" class="col-sm-2 control-label">parent category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="parentCategory">
+          <select class="form-control" name="parentCategory" id="parentCategory">
             <div th:each="originalCategory : ${itemData.category}">
               <option th:if="${originalCategory.parentId == 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
             </div>
@@ -104,7 +104,7 @@
       <div class="form-group">
         <label for="childCategory" class="col-sm-2 control-label">child category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="childCategory">
+          <select class="form-control" name="childCategory" id="childCategory">
             <div th:each="originalCategory : ${itemData.category}">
               <option th:if="${originalCategory.parentId != 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
             </div>
@@ -117,7 +117,7 @@
       <div class="form-group">
         <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="grandCategory">
+          <select class="form-control" name="grandCategory" id="grandCategory">
             <div th:each="originalCategory : ${itemData.category}">
               <option th:if="${originalCategory.nameAll != null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
             </div>
@@ -136,7 +136,7 @@
       <div class="form-group">
         <label for="brand" class="col-sm-2 control-label">brand</label>
         <div class="col-sm-8">
-          <input type="text" id="brand" class="form-control" name="brand" th:text="${itemData.brand}"/>
+          <input type="text" id="brand" class="form-control" name="brand" th:value="${itemData.brand}"/>
         </div>
       </div>
       <!-- condition -->

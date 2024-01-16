@@ -201,6 +201,17 @@ public class ItemRepository {
             ;
             """;
 
+    private static final String UPDATE_SQL = """
+            UPDATE
+                items
+            SET
+                name = :name, condition = :condition,
+                category = (SELECT category_number FROM category WHERE name_all = :nameAll),
+                brand = :brand, price = :price, description = :description, name_all = :nameAll
+            WHERE
+                id = :id
+            """;
+
     public List<Item> findAllItems(int page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_RESULTSET);
@@ -239,6 +250,15 @@ public class ItemRepository {
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
                 .addValue("nameAll", item.getNameAll());
         template.update(INSERT_SQL, param);
+    }
+
+    public void updateItem(Item item) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", item.getId())
+                .addValue("name", item.getName())
+                .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
+                .addValue("price", item.getPrice()).addValue("description", item.getDescription())
+                .addValue("nameAll", item.getNameAll());
+        template.update(UPDATE_SQL, param);
     }
 
 }
