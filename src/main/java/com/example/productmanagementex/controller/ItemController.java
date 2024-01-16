@@ -119,6 +119,7 @@ public class ItemController {
 
     @PostMapping("edit")
     public String editItem(ItemForm itemForm, CategoryForm categoryForm) {
+        categoryService.checkCategory(categoryForm);
         itemService.editItem(itemForm, categoryForm);
 
         return "confirm";
