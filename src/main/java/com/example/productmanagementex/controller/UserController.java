@@ -31,7 +31,7 @@ public class UserController {
             return toRegister(form, model);
         }
         service.registerUser(form);
-        return "confirm";
+        return "confirm/user-register-confirm";
     }
 
 }

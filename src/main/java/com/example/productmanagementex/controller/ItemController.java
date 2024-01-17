@@ -99,7 +99,7 @@ public class ItemController {
         categoryService.checkCategory(categoryForm);
         itemService.addItem(itemForm, categoryForm);
 
-        return "confirm";
+        return "confirm/add-item-confirm";
     }
 
     @RequestMapping("toEdit")
@@ -112,11 +112,12 @@ public class ItemController {
     }
 
     @PostMapping("edit")
-    public String editItem(ItemForm itemForm, CategoryForm categoryForm) {
+    public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
         categoryService.checkCategory(categoryForm);
         itemService.editItem(itemForm, categoryForm);
 
-        return "confirm";
+        model.addAttribute("itemId", itemForm.getId());
+        return "confirm/edit-item-confirm";
     }
 
     @PostMapping("delete")
