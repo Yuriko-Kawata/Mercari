@@ -18,6 +18,12 @@
     integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
     crossorigin="anonymous" />
   <link rel="stylesheet" href="./style.css" />
+  <style>
+    .logout{
+      background-color: unset;
+      border: none;
+    }
+  </style>
   <!-- script -->
   <script
     src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -43,8 +49,11 @@
     <div id="navbar" class="collapse navbar-collapse">
       <div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a id="logout" href="./login.html">Logout&nbsp;<i
-                class="fa fa-power-off"></i></a></li>
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <input type="submit" class="navbar-text logout" value="Logout"/>
+            </form>
+          </li>
         </ul>
         <p class="navbar-text navbar-right">
           <span id="loginName">user: userName</span>

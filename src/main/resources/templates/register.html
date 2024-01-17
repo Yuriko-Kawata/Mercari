@@ -81,6 +81,19 @@
         src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
-      <script src="js/passwordCheck.js"></script>
+      <script>
+        document.getElementById("register-user").addEventListener("submit", function(event) {
+          var password = document.getElementById("password").value;
+          var passwordCheck = document.getElementById("passwordCheck").value;
+          var errorMessageDiv = document.getElementById("error-message");
+
+          if (password !== passwordCheck) {
+              errorMessageDiv.textContent = "passwordの入力内容と一致しません";
+              event.preventDefault(); // フォームの送信を阻止
+          } else {
+              errorMessageDiv.textContent = ""; // エラーメッセージをクリア
+          }
+        });
+      </script>
     </body>
     </html>

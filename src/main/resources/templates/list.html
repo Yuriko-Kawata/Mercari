@@ -24,11 +24,14 @@
         color: green; /* 緑色のテキスト */
         font-weight: bold; /* 太字 */
     }
-
     /* Falseの値に対するスタイル */
     #false-value {
         color: red; /* 赤色のテキスト */
         font-weight: bold; /* 太字 */
+    }
+    .logout{
+      background-color: unset;
+      border: none;
     }
 
   </style>
@@ -50,8 +53,11 @@
     <div id="navbar" class="collapse navbar-collapse">
       <div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a id="logout" href="./login.html">Logout <i
-                class="fa fa-power-off"></i></a></li>
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <input type="submit" class="navbar-text logout" value="Logout"/>
+            </form>
+          </li>
         </ul>
         <p class="navbar-text navbar-right">
           <span id="loginName">user: userName</span>

@@ -33,7 +33,10 @@
       border: 2px solid #ff9900; /* オレンジ色の枠線 */
       transition: border 0.3s ease-in-out; /* アニメーション効果 */
     }
-
+    .logout{
+      background-color: unset;
+      border: none;
+    }
   </style>
   <title>Rakus Items</title>
 </head>
@@ -53,8 +56,11 @@
     <div id="navbar" class="collapse navbar-collapse">
       <div>
         <ul class="nav navbar-nav navbar-right">
-          <li><a id="logout" href="./login.html">Logout&nbsp;<i
-                class="fa fa-power-off"></i></a></li>
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <input type="submit" class="navbar-text logout" value="Logout"/>
+            </form>
+          </li>
         </ul>
         <p class="navbar-text navbar-right">
           <span id="loginName">user: userName</span>

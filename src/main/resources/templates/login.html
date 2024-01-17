@@ -30,7 +30,7 @@
 <body>
   <!-- navbar -->
   <nav class="navbar navbar-inverse">
-    <a class="navbar-brand" href="./list.html">Rakus Items</a>
+    <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
   </nav>
 
   <!-- login form -->
@@ -38,23 +38,22 @@
     <div class="panel panel-default">
       <div class="panel-heading">Login</div>
       <div class="panel-body">
-        <p class="text-danger">error:failed to login</p>
-        <form action="#" method="POST">
+        <form action="#" th:action="@{login}" method="post">
           <div class="form-group">
             <label for="mail">mail address</label>
-            <input type="email" class="form-control" id="mail">
+            <input type="email" class="form-control" name="username" id="mail" required>
           </div>
           <div class="form-group">
             <label for="password">password</label>
-            <input type="password" class="form-control" id="password">
+            <input type="password" class="form-control" name="password" id="password" required>
           </div>
           <button type="submit" class="btn btn-default">Login</button>
         </form>
       </div>
     </div>
     <div>
-      <a type="button" class="btn btn-default" href="./register.html"><i
-          class="fa fa-user-plus"></i>&nbsp;Register Account</a>
+      <a type="submit" class="btn btn-default" th:href="@{toRegister}"><i
+        class="fa fa-user-plus"></i>&nbsp;Register Account</a>
     </div>
   </div>
 </body>
