@@ -24,10 +24,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/home").permitAll()
+                        .requestMatchers("/", "/login", "/toRegister", "register").permitAll()
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/itemList", true)
                         .permitAll())
                 .logout((logout) -> logout.permitAll());
         return http.build();
