@@ -42,4 +42,9 @@ public class UserService {
         repository.insertUser(user.getName(), user.getMail(), user.getPassword());
     }
 
+    public User findUserByMail(String mail) {
+        User user = repository.findUserByMail(mail);
+        return user;
+    }
+
 }

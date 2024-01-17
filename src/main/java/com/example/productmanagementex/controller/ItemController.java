@@ -1,6 +1,8 @@
 package com.example.productmanagementex.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,11 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.productmanagementex.domain.User;
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.form.ItemForm;
 import com.example.productmanagementex.form.SearchForm;
 import com.example.productmanagementex.service.CategoryService;
 import com.example.productmanagementex.service.ItemService;
+import com.example.productmanagementex.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -26,6 +30,8 @@ public class ItemController {
     @Autowired
     private CategoryService categoryService;
     @Autowired
+    private UserService userService;
+    @Autowired
     private HttpSession session;
 
     @RequestMapping("itemList")
@@ -33,6 +39,12 @@ public class ItemController {
         if (session.getAttribute("searchCondition") != null) {
             session.removeAttribute("searchCondition");
         }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserMail = authentication.getName();
+        User user = userService.findUserByMail(currentUserMail);
+        session.setAttribute("userName", user.getName());
+
         model.addAttribute("itemList", itemService.findAllItems(page));
         model.addAttribute("totalPage", itemService.totalPage());
         model.addAttribute("currentPage", page);
