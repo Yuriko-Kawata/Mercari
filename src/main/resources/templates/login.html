@@ -38,13 +38,10 @@
     <div class="panel panel-default">
       <div class="panel-heading">Login</div>
       <div class="panel-body">
-        <div th:unless="${checkUser}">
-          <p class="text-danger">error:failed to login</p>
-        </div>
         <form action="#" th:action="@{login}" method="post">
           <div class="form-group">
             <label for="mail">mail address</label>
-            <input type="email" class="form-control" name="mail" id="mail" required>
+            <input type="email" class="form-control" name="username" id="mail" required>
           </div>
           <div class="form-group">
             <label for="password">password</label>

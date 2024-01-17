@@ -42,8 +42,4 @@ public class UserService {
         repository.insertUser(user.getName(), user.getMail(), user.getPassword());
     }
 
-    public User checkUser(UserForm form) {
-        User user = repository.checkUser(form.getMail(), form.getPassword());
-        return user;
-    }
 }
