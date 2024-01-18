@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- css -->
+  <link
+    href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous" />
+  <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous" />
+  <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    /* Trueの値に対するスタイル */
+    #true-value {
+        color: green; /* 緑色のテキスト */
+        font-weight: bold; /* 太字 */
+    }
+    /* Falseの値に対するスタイル */
+    #false-value {
+        color: red; /* 赤色のテキスト */
+        font-weight: bold; /* 太字 */
+    }
+    .logout{
+      background-color: unset;
+      border: none;
+    }
+    .category-table{
+      display: flex;
+      justify-content:space-around;
+    }
+    ._table{
+      border: double;
+      flex-grow: 1;
+      margin: 0 15px; 
+      padding: 20px;
+    }
+    #clear-condition{
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .title{
+      font-size: large;
+      border-bottom: 2px solid orange;
+      /* text-shadow: 2px 2px 2px #aaa;  */
+    }
+    .false{
+      font-size:larger;
+      justify-content: space-around;
+      display: flex;
+      border-style:dotted;
+      padding: 20px;
+    }
+  </style>
+  <title>Rakus Items</title>
+</head>
+<body>
+  <!-- navbar -->
+  <nav class="navbar navbar-inverse">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed"
+        data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+        aria-controls="navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <div>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <input type="submit" class="navbar-text logout" value="Logout"/>
+            </form>
+          </li>
+        </ul>
+        <p class="navbar-text navbar-right">
+          user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
+        </p>
+      </div>
+    </div>
+  </nav>
+
+  <div id="main" class="container-fluid">
+    <!-- addCategory link -->
+    <div id="addItemButton">
+      <a class="btn btn-default" th:href="@{toAddCategory}"><i
+          class="fa fa-plus-square-o"></i> Add New Category</a>
+    </div>
+
+    <!-- 検索フォーム -->
+    <div id="forms">
+      <form action="" th:action="@{/searchCategory}" class="form-inline" role="form" method="post">
+        <div class="form-group">
+          <input type="text" name="searchCategory" id="searchCategory" placeholder="カテゴリ名検索">
+        </div>
+        <div class="form-group"></div>
+        <button type="submit" id="search-button" class="btn btn-default"><i
+            class="fa fa-angle-double-right" value="検索" disable></i></button>
+      </form>
+      <div th:if="${session.categorySearchCondition != null}">
+        検索条件 ： <span th:text="${session.categorySearchCondition}"></span>
+      </div>
+
+      <!-- 検索条件のリセット（一覧を表示） -->
+      <form action="" th:action="@{categoryList}" id="clear-condition">
+        <div>
+          <button type="submit">検索条件のリセット</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="category-table">
+      <div class="parent-category-table _table">
+        <div class="title">parent category</div>
+        <!-- pagination -->
+        <div id="pages">
+          <nav class="page-nav">
+            <ul class="pager">
+              <form class="form-inline"></form>
+              <li class="previous" th:if="${session.parentCurrentPage > 1}"><a th:href="@{/toParentSearch(parentPage=${session.parentCurrentPage-1})}">&larr; prev</a></li>
+              <li class="pageNumber" th:text="${session.parentCurrentPage} + ' / ' + ${session.parentTotalPage} + '  page'"></li>
+              <li class="next" th:if="${session.parentCurrentPage < session.parentTotalPage}"><a th:href="@{/toParentSearch(parentPage=${session.parentCurrentPage+1})}">next &rarr;</a></li>
+            </ul>
+          </nav>
+        </div>
+        
+        <!-- table -->
+        <div class="table-responsive">
+          <table id="parent-category-table" class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>name</th>
+                <th>delete</th>
+              </tr>
+            </thead>
+            <tbody th:each="parentCategory : ${session.parentCategoryList}">
+              <tr>
+                <td class="parentCategory-name"><a th:href="@{/categoryDetail(id=${parentCategory.id})}" th:text="${parentCategory.name}">name</a></td>
+                <form action="" th:action="@{/deleteCategory(id=${parentCategory.id}, page=${session.ParentCurrentPage})}" method="post">
+                  <td class="item-delete"><button type="submit" >削除</button></td>
+                </form>
+              </tr>
+            </tbody>
+          </table>
+          <div th:if="${session.parentCategoryList.size() == 0}">
+              <span class="false">検索結果なし</span>
+          </div>
+        </div>
+        
+        <!-- pagination -->
+        <div id="pages">
+          <nav class="page-nav">
+            <ul class="pager">
+              <li class="previous" th:if="${session.parentCurrentPage > 1}"><a th:href="@{/toParentSearch(parentPage=${session.parentCurrentPage-1})}">&larr; prev</a></li>
+              <li class="pageNumber" th:text="${session.parentCurrentPage} + ' / ' + ${session.parentTotalPage} + '  page'"></li>
+              <li class="next" th:if="${session.parentCurrentPage < session.parentTotalPage}"><a th:href="@{/toParentSearch(parentPage=${session.parentCurrentPage+1})}">next &rarr;</a></li>
+            </ul>
+          </nav>
+          <!-- ページ番号を指定して表示するフォーム -->
+          <div id="select-page">
+            <form class="form-inline" th:action="@{toParentSearch}">
+              <div class="form-group">
+                <div class="input-group col-xs-6">
+                  <input type="number" th:max="${session.parentTotalPage}" min="1" name="parentPage" id="parent-page" />
+                  <!-- 総ページ数 -->
+                  <div class="input-group-addon" th:text="('/' + ${session.parentTotalPage})"></div>
+                </div>
+                <div class="input-group col-xs-1">
+                  <button type="submit" class="btn btn-default" id="parent-button" disabled>Go</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <div class="child-category-table _table">
+        <div class="title">child category</div>
+        <!-- pagination -->
+        <div id="pages">
+          <nav class="page-nav">
+            <ul class="pager">
+              <form class="form-inline"></form>
+              <li class="previous" th:if="${session.childCurrentPage > 1}"><a th:href="@{/toChildSearch(childPage=${session.childCurrentPage-1})}">&larr; prev</a></li>
+              <li class="pageNumber" th:text="${session.childCurrentPage} + ' / ' + ${session.childTotalPage} + '  page'"></li>
+              <li class="next" th:if="${session.childCurrentPage < session.childTotalPage}"><a th:href="@{/toChildSearch(childPage=${session.childCurrentPage+1})}">next &rarr;</a></li>
+            </ul>
+          </nav>
+        </div>
+        
+        <!-- table -->
+        <div class="table-responsive">
+          <table id="child-category-table" class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>name</th>
+                <th>parent id</th>
+                <th>delete</th>
+              </tr>
+            </thead>
+            <tbody th:each="childCategory : ${session.childCategoryList}">
+              <tr>
+                <td class="childCategory-name"><a th:href="@{/categoryDetail(id=${childCategory.id})}" th:text="${childCategory.name}">name</a></td>
+                <td class="childCategory-categoryNumber" th:text="${childCategory.parentId}"></td>
+                <form action="" th:action="@{/deleteCategory(id=${childCategory.id}, page=${session.childCurrentPage})}" method="post">
+                  <td class="item-delete"><button type="submit" >削除</button></td>
+                </form>
+              </tr>
+            </tbody>
+          </table>
+          <div th:if="${session.parentCategoryList.size() == 0}">
+            <span class="false">検索結果なし</span>
+          </div>
+        </div>
+        
+        <!-- pagination -->
+        <div id="pages">
+          <nav class="page-nav">
+            <ul class="pager">
+              <li class="previous" th:if="${session.childCurrentPage > 1}"><a th:href="@{/toChildSearch(childPage=${session.childCurrentPage-1})}">&larr; prev</a></li>
+              <li class="pageNumber" th:text="${session.childCurrentPage} + ' / ' + ${session.childTotalPage} + '  page'"></li>
+              <li class="next" th:if="${session.childCurrentPage < session.childTotalPage}"><a th:href="@{/toChildSearch(childPage=${session.childCurrentPage+1})}">next &rarr;</a></li>
+            </ul>
+          </nav>
+          <!-- ページ番号を指定して表示するフォーム -->
+          <div id="select-page">
+            <form class="form-inline" th:action="@{toChildSearch}">
+              <div class="form-group">
+                <div class="input-group col-xs-6">
+                  <input type="number" th:max="${session.childTotalPage}" min="1" name="childPage" id="child-page" />
+                  <!-- 総ページ数 -->
+                  <div class="input-group-addon" th:text="('/' + ${session.childTotalPage})"></div>
+                </div>
+                <div class="input-group col-xs-1">
+                  <button type="submit" class="btn btn-default" id="child-button" disabled>Go</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grand-category-table _table">
+        <div class="title">grand category</div>
+        <!-- pagination -->
+        <div id="pages">
+          <nav class="page-nav">
+            <ul class="pager">
+              <form class="form-inline"></form>
+              <li class="previous" th:if="${session.grandCurrentPage > 1}"><a th:href="@{/toGrandSearch(grandPage=${session.grandCurrentPage-1})}">&larr; prev</a></li>
+              <li class="pageNumber" th:text="${session.grandCurrentPage} + ' / ' + ${session.grandTotalPage} + '  page'"></li>
+              <li class="next" th:if="${session.grandCurrentPage < session.grandTotalPage}"><a th:href="@{/toGrandSearch(grandPage=${session.grandCurrentPage+1})}">next &rarr;</a></li>
+            </ul>
+          </nav>
+        </div>
+        
+        <!-- table -->
+        <div class="table-responsive">
+          <table id="parent-category-table" class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>name</th>
+                <th>parent id</th>
+                <th>delete</th>
+              </tr>
+            </thead>
+            <tbody th:each="grandCategory : ${session.grandCategoryList}">
+              <tr>
+                <td class="grandCategory-name"><a th:href="@{/categoryDetail(id=${grandCategory.id})}" th:text="${grandCategory.name}">name</a></td>
+                <td class="childCategory-categoryNumber" th:text="${grandCategory.parentId}"></td>
+                <form action="" th:action="@{/deleteCategory(id=${grandCategory.id}, page=${session.grandCurrentPage})}" method="post">
+                  <td class="item-delete"><button type="submit">削除</button></td>
+                </form>
+              </tr>
+            </tbody>
+          </table>
+          <div th:if="${session.parentCategoryList.size() == 0}">
+            <span class="false">検索結果なし</span>
+          </div>
+        </div>
+        
+        <!-- pagination -->
+        <div id="pages">
+          <nav class="page-nav">
+            <ul class="pager">
+              <li class="previous" th:if="${session.grandCurrentPage > 1}"><a th:href="@{/toGrandSearch(grandPage=${session.grandCurrentPage-1})}">&larr; prev</a></li>
+              <li class="pageNumber" th:text="${session.grandCurrentPage} + ' / ' + ${session.grandTotalPage} + '  page'"></li>
+              <li class="next" th:if="${session.grandCurrentPage < session.parentTotalPage}"><a th:href="@{/toGrandSearch(grandPage=${session.grandCurrentPage+1})}">next &rarr;</a></li>
+            </ul>
+          </nav>
+          <!-- ページ番号を指定して表示するフォーム -->
+          <div id="select-page">
+            <form class="form-inline" th:action="@{toGrandSearch}">
+              <div class="form-group">
+                <div class="input-group col-xs-6">
+                  <input type="number" th:max="${session.grandTotalPage}" min="1" name="grandPage" id="grand-page" />
+                  <!-- 総ページ数 -->
+                  <div class="input-group-addon" th:text="('/' + ${session.grandTotalPage})"></div>
+                </div>
+                <div class="input-group col-xs-1">
+                  <button type="submit" class="btn btn-default" id="grand-button" disabled>Go</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- script -->
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {      
+      document.getElementById('parent-page').addEventListener('input', function() {
+        var inputValue = this.value;
+        document.getElementById('parent-button').disabled = inputValue.trim() === '';
+      });
+      
+      document.getElementById('child-page').addEventListener('input', function() {
+        var inputValue = this.value;
+        document.getElementById('child-button').disabled = inputValue.trim() === '';
+      });
+      
+      document.getElementById('grand-page').addEventListener('input', function() {
+        var inputValue = this.value;
+        document.getElementById('grand-button').disabled = inputValue.trim() === '';
+      });
+    });
+  </script>
+</body>
+</html>
