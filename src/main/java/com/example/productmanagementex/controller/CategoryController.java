@@ -26,9 +26,10 @@ public class CategoryController {
 
     @RequestMapping("categoryList")
     public String toCategoryList(@RequestParam(defaultValue = "1") int parentPage,
-            @RequestParam(defaultValue = "1") int childPage, @RequestParam(defaultValue = "1") int grandPage) {
-        if (session.getAttribute("searchCondition") != null) {
-            session.removeAttribute("searchCondition");
+            @RequestParam(defaultValue = "1") int childPage,
+            @RequestParam(defaultValue = "1") int grandPage) {
+        if (session.getAttribute("categorySearchCondition") != null) {
+            session.removeAttribute("categorySearchCondition");
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -50,7 +51,11 @@ public class CategoryController {
 
     @RequestMapping("searchCategory")
     public String toSearchCategory(String searchCategory, @RequestParam(defaultValue = "1") int parentPage,
-            @RequestParam(defaultValue = "1") int childPage, @RequestParam(defaultValue = "1") int grandPage) {
+            @RequestParam(defaultValue = "1") int childPage,
+            @RequestParam(defaultValue = "1") int grandPage) {
+        if (searchCategory == "") {
+            return toCategoryList(parentPage, childPage, grandPage);
+        }
         session.setAttribute("categorySearchCondition", searchCategory);
         session.setAttribute("parentCategoryList",
                 categoryService.searchParentCategory(searchCategory, parentPage));

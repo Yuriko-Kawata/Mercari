@@ -69,6 +69,8 @@ public class CategoryRepository {
                 category
             WHERE
                 parent_id IS NULL AND name_all IS NULL
+            ORDER BY
+                id
             LIMIT
                 30
             OFFSET
@@ -83,6 +85,8 @@ public class CategoryRepository {
                 category
             WHERE
                 parent_id IS NOT NULL AND name_all IS NULL
+            ORDER BY
+                id
             LIMIT
                 30
             OFFSET
@@ -97,6 +101,8 @@ public class CategoryRepository {
                 category
             WHERE
                 name_all IS NOT NULL
+            ORDER BY
+                id
             LIMIT
                 30
             OFFSET
@@ -110,7 +116,7 @@ public class CategoryRepository {
             FROM
                 category
             WHERE
-            parent_id IS NULL AND name_all IS NULL
+                parent_id IS NULL AND name_all IS NULL
             ;
             """;
 
@@ -120,7 +126,7 @@ public class CategoryRepository {
             FROM
                 category
             WHERE
-            parent_id IS NOT NULL AND name_all IS NULL
+                parent_id IS NOT NULL AND name_all IS NULL
             ;
             """;
 
@@ -130,7 +136,7 @@ public class CategoryRepository {
             FROM
                 category
             WHERE
-            name_all IS NOT NULL
+                name_all IS NOT NULL
             ;
             """;
 
@@ -142,6 +148,8 @@ public class CategoryRepository {
             WHERE
                 parent_id IS NULL AND name_all IS NULL
                 AND name LIKE :name
+            ORDER BY
+                id
             LIMIT
                 30
             OFFSET
@@ -157,6 +165,8 @@ public class CategoryRepository {
             WHERE
                 parent_id IS NOT NULL AND name_all IS NULL
                 AND name LIKE :name
+            ORDER BY
+                id
             LIMIT
                 30
             OFFSET
@@ -172,6 +182,8 @@ public class CategoryRepository {
             WHERE
                 name_all IS NOT NULL
                 AND name LIKE :name
+            ORDER BY
+                id
             LIMIT
                 30
             OFFSET
@@ -187,10 +199,6 @@ public class CategoryRepository {
             WHERE
                 parent_id IS NULL AND name_all IS NULL
                 AND name LIKE :name
-            LIMIT
-                30
-            OFFSET
-                (:page - 1)* 30
             ;
             """;
 
@@ -202,10 +210,6 @@ public class CategoryRepository {
             WHERE
                 parent_id IS NOT NULL AND name_all IS NULL
                 AND name LIKE :name
-            LIMIT
-                30
-            OFFSET
-                (:page - 1)* 30
             ;
             """;
 
@@ -217,10 +221,6 @@ public class CategoryRepository {
             WHERE
                 name_all IS NOT NULL
                 AND name LIKE :name
-            LIMIT
-                30
-            OFFSET
-                (:page - 1)* 30
             ;
             """;
 
