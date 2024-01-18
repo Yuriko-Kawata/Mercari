@@ -113,9 +113,9 @@
           <nav class="page-nav">
             <ul class="pager">
               <form class="form-inline"></form>
-              <li class="previous" th:if="${parentCurrentPage > 1}"><a th:href="@{/toSearch(page=${parentCurrentPage-1})}">&larr; prev</a></li>
+              <li class="previous" th:if="${parentCurrentPage > 1}"><a th:href="@{/toSearch(parentPage=${parentCurrentPage-1})}">&larr; prev</a></li>
               <li class="pageNumber" th:text="${parentCurrentPage} + ' / ' + ${parentTotalPage} + '  page'"></li>
-              <li class="next" th:if="${parentCurrentPage < parentTotalPage}"><a th:href="@{/toSearch(page=${parentCurrentPage+1})}">next &rarr;</a></li>
+              <li class="next" th:if="${parentCurrentPage < parentTotalPage}"><a th:href="@{/toSearch(parentPage=${parentCurrentPage+1})}">next &rarr;</a></li>
             </ul>
           </nav>
         </div>
@@ -134,10 +134,10 @@
             <tbody th:each="parentCategory : ${parentCategoryList}">
               <div>親カテゴリー</div>
               <tr>
-                <td class="parentCategory-name"><a th:href="@{/detail(id=${parentCategory.id})}" th:text="${parentCategory.name}">category-name</a></td>
+                <td class="parentCategory-name"><a th:href="@{/categoryDetail(id=${parentCategory.id})}" th:text="${parentCategory.name}">category-name</a></td>
                 <td class="parentCategory-categoryNumber" th:text="${parentCategory.categoryNumber}">category-number</td>
                 <td></td>
-                <form action="" th:action="@{delete(id=${parentCategory.id}, page=${ParentCurrentPage})}" method="post">
+                <form action="" th:action="@{/deleteCategory(id=${parentCategory.id}, page=${ParentCurrentPage})}" method="post">
                   <td class="item-delete"><button type="submit" >削除</button></td>
                 </form>
               </tr>
@@ -149,17 +149,17 @@
         <div id="pages">
           <nav class="page-nav">
             <ul class="pager">
-              <li class="previous" th:if="${parentCurrentPage > 1}"><a th:href="@{/itemList(page=${parentCurrentPage-1})}">&larr; prev</a></li>
+              <li class="previous" th:if="${parentCurrentPage > 1}"><a th:href="@{/toParentSearch(parentPage=${parentCurrentPage-1})}">&larr; prev</a></li>
               <li class="pageNumber" th:text="${parentCurrentPage} + ' / ' + ${parentTotalPage} + '  page'"></li>
-              <li class="next" th:if="${parentCurrentPage < parentTotalPage}"><a th:href="@{/itemList(page=${parentCurrentPage+1})}">next &rarr;</a></li>
+              <li class="next" th:if="${parentCurrentPage < parentTotalPage}"><a th:href="@{/toParentSearch(parentPage=${parentCurrentPage+1})}">next &rarr;</a></li>
             </ul>
           </nav>
           <!-- ページ番号を指定して表示するフォーム -->
           <div id="select-page">
-            <form class="form-inline" th:action="@{toCategorySearch}">
+            <form class="form-inline" th:action="@{toParentSearch}">
               <div class="form-group">
                 <div class="input-group col-xs-6">
-                  <input type="number" th:max="${parentTotalPage}" min="1" name="page" id="page-number" />
+                  <input type="number" th:max="${parentTotalPage}" min="1" name="parentPage" id="page-number" />
                   <!-- 総ページ数 -->
                   <div class="input-group-addon" th:text="('/' + ${parentTotalPage})"></div>
                 </div>
@@ -178,9 +178,9 @@
           <nav class="page-nav">
             <ul class="pager">
               <form class="form-inline"></form>
-              <li class="previous" th:if="${childCurrentPage > 1}"><a th:href="@{/toSearch(page=${childCurrentPage-1})}">&larr; prev</a></li>
+              <li class="previous" th:if="${childCurrentPage > 1}"><a th:href="@{/toChildSearch(childPage=${childCurrentPage-1})}">&larr; prev</a></li>
               <li class="pageNumber" th:text="${childCurrentPage} + ' / ' + ${childTotalPage} + '  page'"></li>
-              <li class="next" th:if="${childCurrentPage < childTotalPage}"><a th:href="@{/toSearch(page=${childCurrentPage+1})}">next &rarr;</a></li>
+              <li class="next" th:if="${childCurrentPage < childTotalPage}"><a th:href="@{/toChildSearch(childPage=${childCurrentPage+1})}">next &rarr;</a></li>
             </ul>
           </nav>
         </div>
@@ -200,11 +200,11 @@
             <tbody th:each={childCategory : ${childCategoryList}">
               <div>子カテゴリー</div>
               <tr>
-                <td class={childCategory-name"><a th:href="@{/detail(id=${childCategory.id})}" th:text="${childCategory.name}">category-name</a></td>
+                <td class={childCategory-name"><a th:href="@{/categoryDetail(id=${childCategory.id})}" th:text="${childCategory.name}">category-name</a></td>
                 <td class={childCategory-categoryNumber" th:text="${childCategory.categoryNumber}">category-number</td>
                 <td></td>
                 <td></td>
-                <form action="" th:action="@{delete(id=${childCategory.id}, page=${childCurrentPage})}" method="post">
+                <form action="" th:action="@{deleteCategory(id=${childCategory.id}, page=${childCurrentPage})}" method="post">
                   <td class="item-delete"><button type="submit" >削除</button></td>
                 </form>
               </tr>
@@ -216,17 +216,17 @@
         <div id="pages">
           <nav class="page-nav">
             <ul class="pager">
-              <li class="previous" th:if="${childCurrentPage > 1}"><a th:href="@{/itemList(page=${childCurrentPage-1})}">&larr; prev</a></li>
+              <li class="previous" th:if="${childCurrentPage > 1}"><a th:href="@{/toChildSearch(childPage=${childCurrentPage-1})}">&larr; prev</a></li>
               <li class="pageNumber" th:text="${childCurrentPage} + ' / ' + ${childTotalPage} + '  page'"></li>
-              <li class="next" th:if="${childCurrentPage < childTotalPage}"><a th:href="@{/itemList(page=${childCurrentPage+1})}">next &rarr;</a></li>
+              <li class="next" th:if="${childCurrentPage < childTotalPage}"><a th:href="@{/toChildSearch(childPage=${childCurrentPage+1})}">next &rarr;</a></li>
             </ul>
           </nav>
           <!-- ページ番号を指定して表示するフォーム -->
           <div id="select-page">
-            <form class="form-inline" th:action="@{toCategorySearch}">
+            <form class="form-inline" th:action="@{toChildSearch}">
               <div class="form-group">
                 <div class="input-group col-xs-6">
-                  <input type="number" th:max="${childTotalPage}" min="1" name="page" id="page-number" />
+                  <input type="number" th:max="${childTotalPage}" min="1" name="childPage" id="page-number" />
                   <!-- 総ページ数 -->
                   <div class="input-group-addon" th:text="('/' + ${childTotalPage})"></div>
                 </div>
@@ -245,9 +245,9 @@
           <nav class="page-nav">
             <ul class="pager">
               <form class="form-inline"></form>
-              <li class="previous" th:if="${grandCurrentPage > 1}"><a th:href="@{/toSearch(page=${grandCurrentPage-1})}">&larr; prev</a></li>
+              <li class="previous" th:if="${grandCurrentPage > 1}"><a th:href="@{/toGrandSearch(grandPage=${grandCurrentPage-1})}">&larr; prev</a></li>
               <li class="pageNumber" th:text="${grandCurrentPage} + ' / ' + ${grandTotalPage} + '  page'"></li>
-              <li class="next" th:if="${grandCurrentPage < grandTotalPage}"><a th:href="@{/toSearch(page=${grandCurrentPage+1})}">next &rarr;</a></li>
+              <li class="next" th:if="${grandCurrentPage < grandTotalPage}"><a th:href="@{/toGrandSearch(grandPage=${grandCurrentPage+1})}">next &rarr;</a></li>
             </ul>
           </nav>
         </div>
@@ -266,9 +266,9 @@
             <tbody th:each="grandCategory : ${grandCategoryList}">
               <div>孫カテゴリー</div>
               <tr>
-                <td class="grandCategory-name"><a th:href="@{/detail(id=${grandCategory.id})}" th:text="${grandCategory.name}">category-name</a></td>
+                <td class="grandCategory-name"><a th:href="@{/categoryDetail(id=${grandCategory.id})}" th:text="${grandCategory.name}">category-name</a></td>
                 <td class="grandCategory-categoryNumber" th:text="${grandCategory.categoryNumber}">category-number</td>
-                <form action="" th:action="@{delete(id=${grandCategory.id}, page=${grandCurrentPage})}" method="post">
+                <form action="" th:action="@{deleteCategory(id=${grandCategory.id}, page=${grandCurrentPage})}" method="post">
                   <td class="item-delete"><button type="submit">削除</button></td>
                 </form>
               </tr>
@@ -280,17 +280,17 @@
         <div id="pages">
           <nav class="page-nav">
             <ul class="pager">
-              <li class="previous" th:if="${grandCurrentPage > 1}"><a th:href="@{/itemList(page=${grandCurrentPage-1})}">&larr; prev</a></li>
+              <li class="previous" th:if="${grandCurrentPage > 1}"><a th:href="@{/toGrandSearch(grandPage=${grandCurrentPage-1})}">&larr; prev</a></li>
               <li class="pageNumber" th:text="${grandCurrentPage} + ' / ' + ${grandTotalPage} + '  page'"></li>
-              <li class="next" th:if="${grandCurrentPage < parentTotalPage}"><a th:href="@{/itemList(page=${grandCurrentPage+1})}">next &rarr;</a></li>
+              <li class="next" th:if="${grandCurrentPage < parentTotalPage}"><a th:href="@{/toGrandSearch(grandPage=${grandCurrentPage+1})}">next &rarr;</a></li>
             </ul>
           </nav>
           <!-- ページ番号を指定して表示するフォーム -->
           <div id="select-page">
-            <form class="form-inline" th:action="@{toCategorySearch}">
+            <form class="form-inline" th:action="@{toGrandSearch}">
               <div class="form-group">
                 <div class="input-group col-xs-6">
-                  <input type="number" th:max="${grandtotalPage}" min="1" name="page" id="page-number" />
+                  <input type="number" th:max="${grandtotalPage}" min="1" name="grandPage" id="page-number" />
                   <!-- 総ページ数 -->
                   <div class="input-group-addon" th:text="('/' + ${grandTotalPage})"></div>
                 </div>
