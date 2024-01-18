@@ -4,19 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.productmanagementex.domain.User;
-import com.example.productmanagementex.form.CategoryForm;
-import com.example.productmanagementex.form.ItemForm;
-import com.example.productmanagementex.form.SearchForm;
 import com.example.productmanagementex.service.CategoryService;
-import com.example.productmanagementex.service.ItemService;
 import com.example.productmanagementex.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -63,19 +55,19 @@ public class CategoryController {
         session.setAttribute("parentCategoryList",
                 categoryService.searchParentCategory(searchCategory, parentPage));
         session.setAttribute("parentTotalPage",
-                userService.searchParentTotalPage(searchCategory));
+                categoryService.searchParentTotalPage(searchCategory));
         session.setAttribute("parentCurrentPage", parentPage);
 
         session.setAttribute("childCategoryList",
                 categoryService.searchChildCategory(searchCategory, childPage));
         session.setAttribute("childTotalPage",
-                userService.searchChildTotalPage(searchCategory));
+                categoryService.searchChildTotalPage(searchCategory));
         session.setAttribute("childCurrentPage", childPage);
 
         session.setAttribute("grandCategoryList",
                 categoryService.searchGrandCategory(searchCategory, grandPage));
         session.setAttribute("grandTotalPage",
-                userService.searchGrandTotalPage(searchCategory));
+                categoryService.searchGrandTotalPage(searchCategory));
         session.setAttribute("grandCurrentPage", grandPage);
 
         return "category-list";
@@ -91,7 +83,7 @@ public class CategoryController {
         }
 
         session.setAttribute("categoryList",
-                categoryService.searchCategory(searchCondition, parentPage));
+                categoryService.searchParentCategory(searchCondition, parentPage));
         session.setAttribute("parentTotalPage",
                 categoryService.searchParentTotalPage(searchCondition));
         session.setAttribute("parentCurrentPage", parentPage);

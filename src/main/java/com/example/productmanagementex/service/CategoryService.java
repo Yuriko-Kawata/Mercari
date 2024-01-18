@@ -33,4 +33,101 @@ public class CategoryService {
 
         repository.checkCategory(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory(), nameAll);
     }
+
+    public List<Category> findAllParentCategory(int page) {
+        List<Category> categoryList = repository.findAllParentCategory(page);
+        return categoryList;
+    }
+
+    public List<Category> findAllChildCategory(int page) {
+        List<Category> categoryList = repository.findAllChildCategory(page);
+        return categoryList;
+    }
+
+    public List<Category> findAllGrandCategory(int page) {
+        List<Category> categoryList = repository.findAllGrandCategory(page);
+        return categoryList;
+    }
+
+    public int totalParentPage() {
+        int totalpage = repository.parentListSize();
+        return totalpage;
+    }
+
+    public int totalChildPage() {
+        int totalpage = repository.childListSize();
+        return totalpage;
+    }
+
+    public int totalGrandPage() {
+        int totalpage = repository.grandListSize();
+        return totalpage;
+    }
+
+    public List<Category> searchParentCategory(String searchCondition, int page) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String condition = builder.toString();
+
+        List<Category> categoryList = repository.searchParentCategory(condition, page);
+        return categoryList;
+    }
+
+    public List<Category> searchChildCategory(String searchCondition, int page) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String condition = builder.toString();
+
+        List<Category> categoryList = repository.searchChildCategory(condition, page);
+        return categoryList;
+    }
+
+    public List<Category> searchGrandCategory(String searchCondition, int page) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String condition = builder.toString();
+
+        List<Category> categoryList = repository.searchGrandCategory(condition, page);
+        return categoryList;
+    }
+
+    public int searchParentTotalPage(String searchCondition) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String condition = builder.toString();
+
+        int totalpage = repository.searchParentTotalPage(condition);
+        return totalpage;
+    }
+
+    public int searchChildTotalPage(String searchCondition) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String condition = builder.toString();
+
+        int totalpage = repository.searchChildTotalPage(condition);
+        return totalpage;
+    }
+
+    public int searchGrandTotalPage(String searchCondition) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String condition = builder.toString();
+
+        int totalpage = repository.searchGrandTotalPage(condition);
+        return totalpage;
+    }
+
 }
