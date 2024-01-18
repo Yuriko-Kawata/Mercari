@@ -49,7 +49,7 @@ public class ItemController {
         model.addAttribute("totalPage", itemService.totalPage());
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
-        return "list";
+        return "item-list";
     }
 
     @RequestMapping("search")
@@ -64,7 +64,7 @@ public class ItemController {
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
 
-        return "list";
+        return "item-list";
     }
 
     @RequestMapping("toSearch")
@@ -83,7 +83,7 @@ public class ItemController {
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
 
-        return "list";
+        return "item-list";
     }
 
     @RequestMapping("detail")
