@@ -50,17 +50,20 @@ public class CategoryService {
     }
 
     public int totalParentPage() {
-        int totalpage = repository.parentListSize();
+        int totalSize = repository.parentListSize();
+        int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
     public int totalChildPage() {
-        int totalpage = repository.childListSize();
+        int totalSize = repository.childListSize();
+        int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
     public int totalGrandPage() {
-        int totalpage = repository.grandListSize();
+        int totalSize = repository.grandListSize();
+        int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
@@ -104,7 +107,8 @@ public class CategoryService {
         builder.append("%");
         String condition = builder.toString();
 
-        int totalpage = repository.searchParentTotalPage(condition);
+        int totalSize = repository.searchParentTotalPage(condition);
+        int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
@@ -115,7 +119,8 @@ public class CategoryService {
         builder.append("%");
         String condition = builder.toString();
 
-        int totalpage = repository.searchChildTotalPage(condition);
+        int totalSize = repository.searchChildTotalPage(condition);
+        int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
@@ -126,7 +131,8 @@ public class CategoryService {
         builder.append("%");
         String condition = builder.toString();
 
-        int totalpage = repository.searchGrandTotalPage(condition);
+        int totalSize = repository.searchGrandTotalPage(condition);
+        int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 

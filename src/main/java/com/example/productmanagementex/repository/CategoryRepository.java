@@ -62,6 +62,168 @@ public class CategoryRepository {
             ;
             """;
 
+    private static final String FIND_ALL_PARENT_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+                category
+            WHERE
+                parent_id IS NULL AND name_all IS NULL
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String FIND_ALL_CHILD_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+                category
+            WHERE
+                parent_id IS NOT NULL AND name_all IS NULL
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String FIND_ALL_GRAND_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+                category
+            WHERE
+                name_all IS NOT NULL
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String PARENT_SIZE_SQL = """
+            SELECT
+                count(*)
+            FROM
+                category
+            WHERE
+            parent_id IS NULL AND name_all IS NULL
+            ;
+            """;
+
+    private static final String CHILD_SIZE_SQL = """
+            SELECT
+                count(*)
+            FROM
+                category
+            WHERE
+            parent_id IS NOT NULL AND name_all IS NULL
+            ;
+            """;
+
+    private static final String GRAND_SIZE_SQL = """
+            SELECT
+                count(*)
+            FROM
+                category
+            WHERE
+            name_all IS NOT NULL
+            ;
+            """;
+
+    private static final String SEARCH_PARENT_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+            category
+            WHERE
+                parent_id IS NULL AND name_all IS NULL
+                AND name LIKE :name
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String SEARCH_CHILD_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+            category
+            WHERE
+                parent_id IS NOT NULL AND name_all IS NULL
+                AND name LIKE :name
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String SEARCH_GRAND_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+            category
+            WHERE
+                name_all IS NOT NULL
+                AND name LIKE :name
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String SEARCH_PARENT_SIZE_SQL = """
+            SELECT
+                count(*)
+            FROM
+            category
+            WHERE
+                parent_id IS NULL AND name_all IS NULL
+                AND name LIKE :name
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String SEARCH_CHILD_SIZE_SQL = """
+            SELECT
+                count(*)
+            FROM
+            category
+            WHERE
+                parent_id IS NOT NULL AND name_all IS NULL
+                AND name LIKE :name
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
+    private static final String SEARCH_GRAND_SIZE_SQL = """
+            SELECT
+                count(*)
+            FROM
+            category
+            WHERE
+                name_all IS NOT NULL
+                AND name LIKE :name
+            LIMIT
+                30
+            OFFSET
+                (:page - 1)* 30
+            ;
+            """;
+
     public List<Category> findAllUniqueCategory() {
         SqlParameterSource param = new MapSqlParameterSource();
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
@@ -81,6 +243,78 @@ public class CategoryRepository {
                     .addValue("nameAll", nameAll);
             template.update(INSERT_SQL, param);
         }
+    }
+
+    public List<Category> findAllParentCategory(int page) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
+        List<Category> categoryList = template.query(FIND_ALL_PARENT_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public List<Category> findAllChildCategory(int page) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
+        List<Category> categoryList = template.query(FIND_ALL_CHILD_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public List<Category> findAllGrandCategory(int page) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
+        List<Category> categoryList = template.query(FIND_ALL_GRAND_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public int parentListSize() {
+        SqlParameterSource param = new MapSqlParameterSource();
+        int size = template.queryForObject(PARENT_SIZE_SQL, param, Integer.class);
+        return size;
+    }
+
+    public int childListSize() {
+        SqlParameterSource param = new MapSqlParameterSource();
+        int size = template.queryForObject(CHILD_SIZE_SQL, param, Integer.class);
+        return size;
+    }
+
+    public int grandListSize() {
+        SqlParameterSource param = new MapSqlParameterSource();
+        int size = template.queryForObject(GRAND_SIZE_SQL, param, Integer.class);
+        return size;
+    }
+
+    public List<Category> searchParentCategory(String condition, int page) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", condition).addValue("page", page);
+        List<Category> categoryList = template.query(SEARCH_PARENT_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public List<Category> searchChildCategory(String condition, int page) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", condition).addValue("page", page);
+        List<Category> categoryList = template.query(SEARCH_CHILD_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public List<Category> searchGrandCategory(String condition, int page) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", condition).addValue("page", page);
+        List<Category> categoryList = template.query(SEARCH_GRAND_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public int searchParentTotalPage(String codition) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", codition);
+        int size = template.queryForObject(SEARCH_PARENT_SIZE_SQL, param, Integer.class);
+        return size;
+    }
+
+    public int searchChildTotalPage(String codition) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", codition);
+        int size = template.queryForObject(SEARCH_CHILD_SIZE_SQL, param, Integer.class);
+        return size;
+    }
+
+    public int searchGrandTotalPage(String codition) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", codition);
+        int size = template.queryForObject(SEARCH_GRAND_SIZE_SQL, param, Integer.class);
+        return size;
     }
 
 }
