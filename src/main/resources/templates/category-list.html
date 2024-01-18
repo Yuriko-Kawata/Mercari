@@ -219,7 +219,7 @@
               </tr>
             </tbody>
           </table>
-          <div th:if="${session.parentCategoryList.size() == 0}">
+          <div th:if="${session.childCategoryList.size() == 0}">
             <span class="false">検索結果なし</span>
           </div>
         </div>
@@ -285,7 +285,7 @@
               </tr>
             </tbody>
           </table>
-          <div th:if="${session.parentCategoryList.size() == 0}">
+          <div th:if="${session.grandCategoryList.size() == 0}">
             <span class="false">検索結果なし</span>
           </div>
         </div>
