@@ -22,7 +22,14 @@ public class CategoryService {
         return categoryList;
     }
 
-    public void checkCategory(CategoryForm form) {
+    public int checkCategory(CategoryForm form) {
+        if (form.getChildCategory() == null || form.getChildCategory() == "") {
+            form.setChildCategory("カテゴリ無");
+        }
+        if (form.getGrandCategory() == null || form.getGrandCategory() == "") {
+            form.setGrandCategory("カテゴリ無");
+        }
+
         StringBuilder builder = new StringBuilder();
         builder.append(form.getParentCategory());
         builder.append("/");
@@ -31,7 +38,27 @@ public class CategoryService {
         builder.append(form.getGrandCategory());
         String nameAll = builder.toString();
 
-        repository.checkCategory(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory(), nameAll);
+        int count = repository.checkCategory(nameAll);
+        return count;
+    }
+
+    public void insertCategory(CategoryForm form) {
+        if (form.getChildCategory() == null || form.getChildCategory() == "") {
+            form.setChildCategory("カテゴリ無");
+        }
+        if (form.getGrandCategory() == null || form.getGrandCategory() == "") {
+            form.setGrandCategory("カテゴリ無");
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(form.getParentCategory());
+        builder.append("/");
+        builder.append(form.getChildCategory());
+        builder.append("/");
+        builder.append(form.getGrandCategory());
+        String nameAll = builder.toString();
+
+        repository.insertCategory(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory(), nameAll);
     }
 
     public List<Category> findAllParentCategory(int page) {

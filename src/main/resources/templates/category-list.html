@@ -205,14 +205,12 @@
             <thead>
               <tr>
                 <th>name</th>
-                <th>parent id</th>
                 <th>delete</th>
               </tr>
             </thead>
             <tbody th:each="childCategory : ${session.childCategoryList}">
               <tr>
                 <td class="childCategory-name"><a th:href="@{/categoryDetail(id=${childCategory.id})}" th:text="${childCategory.name}">name</a></td>
-                <td class="childCategory-categoryNumber" th:text="${childCategory.parentId}"></td>
                 <form action="" th:action="@{/deleteCategory(id=${childCategory.id}, page=${session.childCurrentPage})}" method="post">
                   <td class="item-delete"><button type="submit" >削除</button></td>
                 </form>
@@ -271,14 +269,12 @@
             <thead>
               <tr>
                 <th>name</th>
-                <th>parent id</th>
                 <th>delete</th>
               </tr>
             </thead>
             <tbody th:each="grandCategory : ${session.grandCategoryList}">
               <tr>
                 <td class="grandCategory-name"><a th:href="@{/categoryDetail(id=${grandCategory.id})}" th:text="${grandCategory.name}">name</a></td>
-                <td class="childCategory-categoryNumber" th:text="${grandCategory.parentId}"></td>
                 <form action="" th:action="@{/deleteCategory(id=${grandCategory.id}, page=${session.grandCurrentPage})}" method="post">
                   <td class="item-delete"><button type="submit">削除</button></td>
                 </form>
