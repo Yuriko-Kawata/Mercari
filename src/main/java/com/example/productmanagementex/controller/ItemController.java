@@ -108,9 +108,11 @@ public class ItemController {
             return toAddItem(itemForm, categoryForm, model);
         }
 
-        categoryService.checkCategory(categoryForm);
-        itemService.addItem(itemForm, categoryForm);
+        if (categoryService.checkCategory(categoryForm) == 0) {
+            categoryService.insertCategory(categoryForm);
+        }
 
+        itemService.addItem(itemForm, categoryForm);
         return "confirm/add-item-confirm";
     }
 
