@@ -284,19 +284,17 @@ public class CategoryRepository {
         return categoryList;
     }
 
-    private int toCheckCategory(String nameAll) {
+    public int checkCategory(String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
         int categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
         return categoryCount;
     }
 
-    public void checkCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {
-        if (toCheckCategory(nameAll) == 0) {
-            SqlParameterSource param = new MapSqlParameterSource().addValue("parentCategory", parentCategory)
-                    .addValue("childCategory", childCategory).addValue("grandCategory", grandCategory)
-                    .addValue("nameAll", nameAll);
-            template.update(INSERT_SQL, param);
-        }
+    public void insertCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("parentCategory", parentCategory)
+                .addValue("childCategory", childCategory).addValue("grandCategory", grandCategory)
+                .addValue("nameAll", nameAll);
+        template.update(INSERT_SQL, param);
     }
 
     public List<Category> findAllParentCategory(int page) {

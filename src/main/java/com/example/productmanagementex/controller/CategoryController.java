@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.productmanagementex.domain.User;
+import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.service.CategoryService;
 import com.example.productmanagementex.service.UserService;
 
@@ -138,29 +141,24 @@ public class CategoryController {
     // return "detail";
     // }
 
-    // @RequestMapping("toAdd")
-    // public String toAddItem(ItemForm itemForm, CategoryForm categoryForm, Model
-    // model) {
-    // model.addAttribute("itemForm", itemForm);
-    // model.addAttribute("categoryForm", categoryForm);
-    // model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+    @RequestMapping("toAddCategory")
+    public String toAddCategory(CategoryForm categoryForm, Model model) {
+        model.addAttribute("categoryForm", categoryForm);
+        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
 
-    // return "add";
-    // }
+        return "add-category";
+    }
 
-    // @PostMapping("add")
-    // public String addItem(@Validated ItemForm itemForm, BindingResult rsItem,
-    // @Validated CategoryForm categoryForm,
-    // BindingResult rsCategory, Model model) {
-    // if (rsItem.hasErrors() || rsCategory.hasErrors()) {
-    // return toAddItem(itemForm, categoryForm, model);
-    // }
+    @PostMapping("addCategory")
+    public String addCategory(CategoryForm categoryForm, Model model) {
+        if (categoryService.checkCategory(categoryForm) != 0) {
+            model.addAttribute("error", true);
+            return toAddCategory(categoryForm, model);
+        }
 
-    // categoryService.checkCategory(categoryForm);
-    // itemService.addItem(itemForm, categoryForm);
-
-    // return "confirm/add-item-confirm";
-    // }
+        categoryService.insertCategory(categoryForm);
+        return "confirm/add-category-confirm";
+    }
 
     // @RequestMapping("toEdit")
     // public String toEditItem(int id, CategoryForm categoryForm, Model model) {

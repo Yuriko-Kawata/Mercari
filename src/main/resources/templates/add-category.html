@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- css -->
+  <link
+    href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous" />
+  <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous" />
+  <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    .title{
+      display: flex;
+      align-items:last baseline;
+    }
+    .sub-title{
+      width: 85px;
+      font-size:large;
+      border: double;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+    .check{
+      font-size: small;
+      padding-left: 20px;
+      color: red;
+    }
+    .logout{
+      background-color: unset;
+      border: none;
+    }
+    .infomation{
+      border: dashed;
+      padding: 30px;
+      width: 700px;
+      margin: auto;
+    }
+    .important{
+      color: red;
+    }
+  </style>
+  <title>Rakus Items</title>
+</head>
+<body>
+  <!-- navbar -->
+  <nav class="navbar navbar-inverse">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed"
+        data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+        aria-controls="navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <div>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <input type="submit" class="navbar-text logout" value="Logout"/>
+            </form>
+          </li>
+        </ul>
+        <p class="navbar-text navbar-right">
+          user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
+        </p>
+      </div>
+    </div>
+  </nav>
+
+  <!-- details -->
+  <div id="input-main" class="container">
+    <a type="button" class="btn btn-default" th:href="@{categoryList}"><i
+        class="fa fa-reply"></i> back</a>
+    <div class="title">
+      <h2>カテゴリ追加</h2>
+    </div>
+
+      <!-- add form -->
+      <form action="#" th:action="@{/addCategory}" method="post" class="form-horizontal" id="add-category">
+        <!-- category -->
+        <div class="form-group">
+          <label for="parentCategory" class="col-sm-2 control-label">parent category</label>
+          <div class="col-sm-8">
+            <input type="text" list="parentCategoryList" id="parentCategoryID" name="parentCategory">
+            <span th:if="${categoryForm.parentCategory}" th:text="'前回入力：' + ${categoryForm.parentCategory}"></span>
+            <datalist id="parentCategoryList">
+                <option th:each="category : ${categoryList}" th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+            </datalist>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="childCategory" class="col-sm-2 control-label">child category</label>
+          <div class="col-sm-8">
+            <input type="text" list="childCategoryList" id="childCategoryID" name="childCategory" disabled>
+            <span th:if="${categoryForm.childCategory}" th:text="'前回入力：' + ${categoryForm.childCategory}"></span>
+            <datalist id="childCategoryList">
+                <option th:each="category : ${categoryList}" th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+            </datalist>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
+          <div class="col-sm-8">
+            <input type="text" list="grandCategoryList" id="grandCategoryID" name="grandCategory" disabled>
+            <span th:if="${categoryForm.grandCategory}" th:text="'前回入力：' + ${categoryForm.grandCategory}"></span>
+            <datalist id="grandCategoryList">
+                <option th:each="category : ${categoryList}" th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}"></option>
+            </datalist>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="category" class="col-sm-2 control-label"></label>
+          <div class="col-sm-8">
+          </div>
+        </div>
+        <div class="text-danger" th:if="${error}">すでに存在している組み合わせです。</div>
+        <!-- submit button -->
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
+          </div>
+        </div>
+      </form>
+  </div>
+
+  <div class="infomation">
+    <div class="sub-title">注意事項</div>
+    <div>parent categoryの追加について</div>
+    <ul>
+      <li>parent categoryのみの入力で問題ありません。</li>
+    </ul>
+    <div>child categoryの追加について</div>
+    <ul>
+      <li>parent categoryの入力も必要です。</li>
+    </ul>
+    <div>grand categoryの追加について</div>
+    <ul>
+      <li>parent category, child categoryの入力も必要です。</li>
+    </ul>
+    <div class="important">
+      入力がなかった場合、「カテゴリ無」となります。<br>
+      すでに存在する組み合わせであれば、新規の追加はできません。
+    </div>
+  </div>
+  <!-- script -->
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <script src="js/addCategory.js"></script>
+  <script>
+    document.getElementById('parentCategoryID').addEventListener('input', function(){
+      var inputValue = this.value;
+      document.getElementById('childCategoryID').disabled = inputValue.trim() === '';
+    });
+    document.getElementById('childCategoryID').addEventListener('input', function(){
+      var inputValue = this.value;
+    document.getElementById('grandCategoryID').disabled = inputValue.trim() === '';
+    });
+  </script>
+</body>
+</html>
