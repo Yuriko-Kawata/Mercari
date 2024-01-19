@@ -42,6 +42,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">Register Account<span class="check">全項目入力必須</span></div>
       <div class="panel-body">
+        <div class="check" th:if="${error}">別のメールアドレスを使用してください。</div>
         <form action="#" th:action="@{register}" method="post" id="register-user" th:object="${userForm}">
           <div class="form-group">
             <label for="name">name</label>

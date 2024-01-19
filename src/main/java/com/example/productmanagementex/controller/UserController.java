@@ -30,6 +30,11 @@ public class UserController {
         if (rs.hasErrors()) {
             return toRegister(form, model);
         }
+        if (service.findUserByMail(form.getMail()) != null) {
+            model.addAttribute("error", true);
+            model.addAttribute("userForm", form);
+            return "register";
+        }
         service.registerUser(form);
         return "confirm/user-register-confirm";
     }
