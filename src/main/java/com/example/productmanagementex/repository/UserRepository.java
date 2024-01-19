@@ -1,5 +1,7 @@
 package com.example.productmanagementex.repository;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -51,7 +53,12 @@ public class UserRepository {
 
     public User findUserByMail(String mail) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("mail", mail);
-        User user = template.queryForObject(FIND_BY_MAIL_SQL, param, USER_ROW_MAPPER);
-        return user;
+        List<User> users = template.query(FIND_BY_MAIL_SQL, param, USER_ROW_MAPPER);
+        if (users.size() == 0) {
+            return null;
+        } else {
+            User user = users.get(0);
+            return user;
+        }
     }
 }
