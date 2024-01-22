@@ -24,10 +24,9 @@ public class ItemService {
         return itemList;
     }
 
-    public int totalPage() {
+    public int totalItem() {
         int itemListSize = repository.itemListSize();
-        int totalPage = itemListSize / 30 + 1;
-        return totalPage;
+        return itemListSize;
     }
 
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
@@ -37,7 +36,7 @@ public class ItemService {
         StringBuilder nameAllBuilder = new StringBuilder();
         String nameAll = null;
 
-        if (name == "") {
+        if (name == null) {
             name = "%";
         } else {
             nameBuilder.append("%");
@@ -46,18 +45,18 @@ public class ItemService {
             name = nameBuilder.toString();
         }
 
-        if (brand == "") {
+        if (brand == null) {
             brand = "%";
         } else {
             brandBuilder.append("%");
             brandBuilder.append(brand);
             brandBuilder.append("%");
-            name = brandBuilder.toString();
+            brand = brandBuilder.toString();
         }
 
         if (parentCategory != "") {
-            if (childCategory != "") {
-                if (grandCategory != "") {
+            if (childCategory != "" && childCategory != null) {
+                if (grandCategory != "" && grandCategory != null) {
                     nameAllBuilder.append(parentCategory);
                     nameAllBuilder.append("/");
                     nameAllBuilder.append(childCategory);
@@ -72,47 +71,19 @@ public class ItemService {
                     nameAll = nameAllBuilder.toString();
                 }
             } else {
-                if (grandCategory != "") {
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/%/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/%");
-                    nameAll = nameAllBuilder.toString();
-                }
+                nameAllBuilder.append(parentCategory);
+                nameAllBuilder.append("/%");
+                nameAll = nameAllBuilder.toString();
             }
         } else {
-            if (childCategory != "") {
-                if (grandCategory != "") {
-                    nameAllBuilder.append("%/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    nameAllBuilder.append("%/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/%");
-                    nameAll = nameAllBuilder.toString();
-                }
-            } else {
-                if (grandCategory != "") {
-                    nameAllBuilder.append("%/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    nameAll = "%";
-                }
-            }
+            nameAll = "%";
         }
 
         List<Item> itemList = repository.searchItems(name, brand, nameAll, page);
         return itemList;
     }
 
-    public int searchTotalPage(String name, String brand, String parentCategory, String childCategory,
+    public int searchTotalItem(String name, String brand, String parentCategory, String childCategory,
             String grandCategory) {
         StringBuilder nameBuilder = new StringBuilder();
         StringBuilder brandBuilder = new StringBuilder();
@@ -134,12 +105,12 @@ public class ItemService {
             brandBuilder.append("%");
             brandBuilder.append(brand);
             brandBuilder.append("%");
-            name = brandBuilder.toString();
+            brand = brandBuilder.toString();
         }
 
         if (parentCategory != "") {
-            if (childCategory != "") {
-                if (grandCategory != "") {
+            if (childCategory != "" && childCategory != null) {
+                if (grandCategory != "" && grandCategory != null) {
                     nameAllBuilder.append(parentCategory);
                     nameAllBuilder.append("/");
                     nameAllBuilder.append(childCategory);
@@ -154,45 +125,16 @@ public class ItemService {
                     nameAll = nameAllBuilder.toString();
                 }
             } else {
-                if (grandCategory != "") {
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/%/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/%");
-                    nameAll = nameAllBuilder.toString();
-                }
+                nameAllBuilder.append(parentCategory);
+                nameAllBuilder.append("/%");
+                nameAll = nameAllBuilder.toString();
             }
         } else {
-            if (childCategory != "") {
-                if (grandCategory != "") {
-                    nameAllBuilder.append("%/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    nameAllBuilder.append("%/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/%");
-                    nameAll = nameAllBuilder.toString();
-                }
-            } else {
-                if (grandCategory != "") {
-                    nameAllBuilder.append("%/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    nameAll = "%";
-                }
-            }
+            nameAll = "%";
         }
 
         int itemListSize = repository.searchItemsSize(name, brand, nameAll);
-        int totalPage = itemListSize / 30 + 1;
-        return totalPage;
+        return itemListSize;
     }
 
     public Item findById(int id) {

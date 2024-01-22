@@ -278,7 +278,7 @@ public class CategoryRepository {
             ;
             """;
 
-    public List<Category> findAllUniqueCategory() {
+    public List<Category> findAllCategory() {
         SqlParameterSource param = new MapSqlParameterSource();
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
         return categoryList;

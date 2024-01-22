@@ -92,7 +92,7 @@
       <form action="#" th:action="@{/addCategory}" method="post" class="form-horizontal" id="add-category">
         <!-- category -->
         <div class="form-group">
-          <label for="parentCategory" class="col-sm-2 control-label">parent category</label>
+          <label for="parentCategoryID" class="col-sm-2 control-label">parent category</label>
           <div class="col-sm-8">
             <input type="text" list="parentCategoryList" id="parentCategoryID" name="parentCategory">
             <span th:if="${categoryForm.parentCategory}" th:text="'前回入力：' + ${categoryForm.parentCategory}"></span>
@@ -102,7 +102,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="childCategory" class="col-sm-2 control-label">child category</label>
+          <label for="childCategoryID" class="col-sm-2 control-label">child category</label>
           <div class="col-sm-8">
             <input type="text" list="childCategoryList" id="childCategoryID" name="childCategory" disabled>
             <span th:if="${categoryForm.childCategory}" th:text="'前回入力：' + ${categoryForm.childCategory}"></span>
@@ -112,7 +112,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
+          <label for="grandCategoryID" class="col-sm-2 control-label">grand category</label>
           <div class="col-sm-8">
             <input type="text" list="grandCategoryList" id="grandCategoryID" name="grandCategory" disabled>
             <span th:if="${categoryForm.grandCategory}" th:text="'前回入力：' + ${categoryForm.grandCategory}"></span>

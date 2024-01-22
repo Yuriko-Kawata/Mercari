@@ -96,8 +96,27 @@ document.getElementById('childCategory').addEventListener('change', function() {
     });
 });
 
+document.getElementById('name').addEventListener('input', function() {
+    var inputValue = this.value;
+    document.getElementById('search-button').disabled = inputValue.trim() === '';
+});
+document.getElementById('parentCategory').addEventListener('input', function() {
+    var inputValue = this.value;
+    document.getElementById('childCategory').disabled = inputValue.trim() === '';
+    document.getElementById('search-button').disabled = inputValue.trim() === '';
+});
+document.getElementById('childCategory').addEventListener('input', function() {
+    var inputValue = this.value;
+    document.getElementById('grandCategory').disabled = inputValue.trim() === '';
+    document.getElementById('search-button').disabled = inputValue.trim() === '';
+});
+document.getElementById('brand').addEventListener('input', function() {
+    var inputValue = this.value;
+    document.getElementById('search-button').disabled = inputValue.trim() === '';
+});
 document.getElementById('page-number').addEventListener('input', function() {
     var inputValue = this.value;
     document.getElementById('submit-button').disabled = inputValue.trim() === '';
+    document.getElementById('search-button').disabled = inputValue.trim() === '';
 });
 

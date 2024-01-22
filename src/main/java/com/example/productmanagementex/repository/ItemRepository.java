@@ -154,7 +154,7 @@ public class ItemRepository {
                         category
                     WHERE
                         name_all LIKE :nameAll
-                        )
+                    )
             ;
             """;
 

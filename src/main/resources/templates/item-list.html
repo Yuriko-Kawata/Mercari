@@ -33,6 +33,11 @@
       background-color: unset;
       border: none;
     }
+    .current-page {
+      font-weight: bold;
+      text-shadow: 2px 2px 2px #aaa; 
+    }
+
 
   </style>
   <title>Rakus Items</title>
@@ -68,7 +73,7 @@
 
   <div id="main" class="container-fluid">
     <!-- addItem link -->
-    <div id="addItemButton">
+    <div id="addItemButton" style="text-align: right;">
       <a class="btn btn-default" th:href="@{toAdd}"><i
           class="fa fa-plus-square-o"></i> Add New Item</a>
     </div>
@@ -77,24 +82,24 @@
     <div id="forms">
       <form action="" th:action="@{/search}" class="form-inline" role="form" method="post">
         <div class="form-group">
-          <input type="input" class="form-control" name="name"
-            placeholder="item name" />
+          <input type="text" class="form-control" id="name" name="name"
+            th:field="${searchCondition.name}" placeholder="item name" />
         </div>
         <div class="form-group"><i class="fa fa-plus"></i></div>
         <div class="form-group">
-          <select class="form-control" name="parentCategory" id="parentCategory">
+          <select class="form-control" name="parentCategory" id="parentCategory" th:field="${searchCondition.parentCategory}">
               <option value="">[parent category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-parent-id="${category.id}"></option>
             </div>
           </select>
-          <select class="form-control" name="childCategory" id="childCategory">
+          <select class="form-control" name="childCategory" id="childCategory" th:field="${searchCondition.childCategory}" disabled>
               <option value="">[child category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-child-parentId="${category.parentId}" th:data-child-id="${category.id}"></option>
             </div>
           </select>
-          <select class="form-control" name="grandCategory" id="grandCategory">
+          <select class="form-control" name="grandCategory" id="grandCategory" th:field="${searchCondition.grandCategory}" disabled>
               <option value="">[grand category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
@@ -103,38 +108,25 @@
         </div>
         <div class="form-group"><i class="fa fa-plus"></i></div>
         <div class="form-group">
-          <input type="text" class="form-control" name="brand" placeholder="brand" />
+          <input type="text" class="form-control" id="brand" name="brand" th:field="${searchCondition.brand}" placeholder="brand" />
         </div>
         <div class="form-group"></div>
-        <button type="submit" class="btn btn-default"><i
-            class="fa fa-angle-double-right" value="検索"></i></button>
-      </form>
-
-      <!-- 検索条件の表示 -->
-      <div>
-        <ul th:if="${session.searchCondition != null}">検索条件
-          <li th:if="${session.searchCondition.name != ''}" th:text="'商品名: ' + ${session.searchCondition.name}"></li>
-          <li th:if="${session.searchCondition.parentCategory != ''}" th:text="'parent category: ' + ${session.searchCondition.parentCategory}"></li>
-          <li th:if="${session.searchCondition.childCategory != ''}" th:text="'child category: ' + ${session.searchCondition.childCategory}"></li>
-          <li th:if="${session.searchCondition.grandCategory != ''}" th:text="'grand category: ' + ${session.searchCondition.grandCategory}"></li>
-          <li th:if="${session.searchCondition.brand != ''}" th:text="'ブランド名: ' + ${session.searchCondition.brand}"></li>
-        </ul>
-      </div>
-      <!-- 検索条件のリセット（一覧を表示） -->
-      <form action="" th:action="@{itemList}">
-        <div>
-          <button type="submit">検索条件のリセット</button>
-        </div>
+        <button type="submit" id="search-button" class="btn btn-default" disabled><i
+            class="fa fa-angle-double-right" value="検索"></i> search</button>
       </form>
     </div>
-
+    <form action="" th:action="@{itemList}">
+      <div>
+        <button type="submit">検索条件のリセット</button>
+      </div>
+    </form>
     <!-- pagination -->
     <div id="pages">
       <nav class="page-nav">
         <ul class="pager">
           <form class="form-inline"></form>
           <li class="previous" th:if="${currentPage > 1}"><a th:href="@{/toSearch(page=${currentPage-1})}">&larr; prev</a></li>
-          <li class="pageNumber" th:text="${currentPage} + ' / ' + ${totalPage} + '  page'"></li>
+          <li th:text="'対象製品：' + ${#numbers.formatInteger(totalItemCount, 1, 'COMMA')} + '件'" ></li>
           <li class="next" th:if="${currentPage < totalPage}"><a th:href="@{/toSearch(page=${currentPage+1})}">next &rarr;</a></li>
         </ul>
       </nav>
@@ -157,7 +149,7 @@
         <tbody th:each="item : ${itemList}">
           <tr>
             <td class="item-name"><a th:href="@{/detail(id=${item.id})}" th:text="${item.name}">item-name</a></td>
-            <td class="item-price" th:text="${item.price}">item-price</td>
+            <td class="item-price" th:text="${'&#x1F4B2;&nbsp;' + item.price}">item-price</td>
             <td>
               <span th:each="category : ${item.category}">
                 <a href="" th:text="${category.name}"></a> / 
@@ -183,15 +175,38 @@
 
     <!-- pagination -->
     <div id="pages">
-      <nav class="page-nav">
-        <ul class="pager">
-          <li class="previous" th:if="${currentPage > 1}"><a th:href="@{/itemList(page=${currentPage-1})}">&larr; prev</a></li>
-          <li class="pageNumber" th:text="${currentPage} + ' / ' + ${totalPage} + '  page'"></li>
-          <li class="next" th:if="${currentPage < totalPage}"><a th:href="@{/itemList(page=${currentPage+1})}">next &rarr;</a></li>
-        </ul>
+      <nav class="page-nav" style="text-align: center;">
+        <div th:if="${currentPage <= 5}">
+          <a th:each="pageNum: ${#numbers.sequence(1, 5)}"
+                th:href="@{/toSearch(page=${pageNum})}"
+                th:class="${pageNum == currentPage} ? 'current-page' : ''"
+                th:text="${pageNum + '&nbsp;'}"></a>
+          &hellip;
+          <a th:href="@{toSearch(page=${totalPage})}" th:text="${totalPage}"></a>
+          <a th:href="@{toSearch(page=${currentPage+1})}">&gt;&gt;</a>
+        </div>
+        <div th:if="${currentPage >= 6 && currentPage+3 < totalPage}">
+          <a th:href="@{/toSearch(page=${currentPage-1})}">&lt;&lt;</a>
+          <a th:href="@{/toSearch(page=1)}">1</a>&hellip;
+          <a th:href="@{toSearch(page=${currentPage-3})}" th:text="${currentPage-3}">2</a>
+          <a th:href="@{toSearch(page=${currentPage-2})}" th:text="${currentPage-2}">3</a>
+          <a th:href="@{toSearch(page=${currentPage-1})}" th:text="${currentPage-1}">4</a>
+          <a class="current-page" th:text="${currentPage}">5</a>&hellip;
+          <a th:href="@{toSearch(page=${totalPage})}" th:text="${totalPage}">20</a>
+          <a th:href="@{/toSearch(page=${currentPage+1})}">&gt;&gt;</a>
+        </div>
+        <div th:if="${currentPage+3 >= totalPage}">
+          <a th:href="@{/toSearch(page=${currentPage-1})}">&lt;&lt;</a>
+          <a th:href="@{/toSearch(page=1)}">1</a>&hellip;
+          <a th:each="pageNum: ${#numbers.sequence(totalPage-4, totalPage)}"
+                th:href="@{/toSearch(page=${pageNum})}"
+                th:class="${pageNum == currentPage} ? 'current-page' : ''"
+                th:text="${pageNum + '&nbsp;'}"></a>
+        </div>  
       </nav>
+    </div>
       <!-- ページ番号を指定して表示するフォーム -->
-      <div id="select-page">
+      <div id="select-page" style="text-align: right;">
         <form class="form-inline" th:action="@{toSearch}">
           <div class="form-group">
             <div class="input-group col-xs-6">
