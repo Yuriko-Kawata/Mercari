@@ -75,8 +75,17 @@ public class CategoryService {
         repository.insertCategory(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory(), nameAll);
     }
 
-    public void editCategoryName(int id, String name) {
-        repository.editCategoryName(id, name);
+    public void editCategoryName(int id, String name, int parentId, String nameAll) {
+        int parentCondition = 0;
+        if (parentId != 0) {
+            if (nameAll == "") {
+                parentCondition = 1;
+            } else {
+                parentCondition = 2;
+            }
+        }
+
+        repository.editCategoryName(id, name, parentCondition);
     }
 
     public List<Category> findAllParentCategory(int page) {

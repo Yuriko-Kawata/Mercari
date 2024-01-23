@@ -47,16 +47,6 @@ public class CategoryRepository {
             ;
             """;
 
-    private final String UPDATE_NAME_SQL = """
-            UPDATE
-                category
-            SET
-                name = :name
-            WHERE
-                id = :id
-            ;
-            """;
-
     private final String INSERT_SQL = """
             INSERT INTO category (name, parent_id, name_all, category_number)
             SELECT
@@ -348,7 +338,7 @@ public class CategoryRepository {
     }
 
     public int checkCategoryName(String name, int parentCondition) {
-        // 動的にクエリ変えたいからここだけstaticじゃない
+        // 動的にクエリ変えたいからstaticじゃない
         String sql = """
                 SELECT
                     count(*)
@@ -370,9 +360,33 @@ public class CategoryRepository {
         return count;
     }
 
-    public void editCategoryName(int id, String name) {
+    public void editCategoryName(int id, String name, int parentCondition) {
+        String sql = """
+                UPDATE
+                    category
+                SET
+                    name = :name
+                WHERE
+                    name = (
+                        SELECT
+                            name
+                        FROM
+                            category
+                        WHERE
+                            id = :id
+                        )
+                """;
+
+        if (parentCondition == 0) {
+            sql += "AND parent_id IS NULL";
+        } else if (parentCondition == 1) {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NULL";
+        } else {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NOT NULL";
+        }
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name);
-        template.update(UPDATE_NAME_SQL, param);
+        template.update(sql, param);
     }
 
     public void insertCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {
