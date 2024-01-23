@@ -126,11 +126,13 @@ public class CategoryController {
         return "category-list";
     }
 
-    // @RequestMapping("detail")
-    // public String detail(int id, Model model) {
-    // model.addAttribute("item", itemService.findById(id));
-    // return "detail";
-    // }
+    @RequestMapping("categoryDetail")
+    public String categoryDetail(int id, Model model) {
+        model.addAttribute("category", categoryService.findById(id));
+        model.addAttribute("childCategoryList", categoryService.findChildCategory(id));
+        model.addAttribute("childCategoryCount", categoryService.childCategoryCount(id));
+        return "category-detail";
+    }
 
     @RequestMapping("toAddCategory")
     public String toAddCategory(CategoryForm categoryForm, Model model) {
@@ -151,12 +153,8 @@ public class CategoryController {
         return "confirm/add-category-confirm";
     }
 
-    // @RequestMapping("toEdit")
-    // public String toEditItem(int id, CategoryForm categoryForm, Model model) {
-    // model.addAttribute("categoryForm", categoryForm);
-    // model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
-    // model.addAttribute("itemData", itemService.findById(id));
-
+    // @RequestMapping("toEditCategory")
+    // public String toEditCategory(int id, Model model) {
     // return "edit";
     // }
 

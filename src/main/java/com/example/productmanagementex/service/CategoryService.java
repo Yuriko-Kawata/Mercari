@@ -163,4 +163,19 @@ public class CategoryService {
         return totalpage;
     }
 
+    public Category findById(int id) {
+        Category category = repository.findById(id);
+        return category;
+    }
+
+    public List<Category> findChildCategory(int id) {
+        List<Category> categoryList = repository.findChildCategory(id);
+        return categoryList;
+    }
+
+    public int childCategoryCount(int id) {
+        int count = repository.childCategorySize(id);
+        return count;
+    }
+
 }

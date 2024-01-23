@@ -278,6 +278,47 @@ public class CategoryRepository {
             ;
             """;
 
+    private static final String FIND_BY_ID_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+                category
+            WHERE
+                id = :id
+            ;
+            """;
+
+    private static final String FIND_CHILD_CATEGORY_SQL = """
+            SELECT
+            DISTINCT ON(name)
+                id, name, parent_id, name_all, category_number
+            FROM
+                category
+            WHERE
+                parent_id = :id
+            ORDER BY
+                name, id
+            ;
+            """;
+
+    private static final String CHILD_CATEGORY_SIZE_SQL = """
+            WITH unique_grand_category AS (
+                SELECT DISTINCT ON (name)
+                    id, name
+                FROM
+                    category
+                WHERE
+                    parent_id = :id
+                ORDER BY
+                    name, id
+            )
+            SELECT
+                count(*)
+            FROM
+                unique_grand_category
+            ;
+            """;
+
     public List<Category> findAllCategory() {
         SqlParameterSource param = new MapSqlParameterSource();
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
@@ -369,4 +410,22 @@ public class CategoryRepository {
         return size;
     }
 
+    public Category findById(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        List<Category> categoryList = template.query(FIND_BY_ID_SQL, param, CATEGORY_ROWMAPPER);
+        Category category = categoryList.get(0);
+        return category;
+    }
+
+    public List<Category> findChildCategory(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        List<Category> categoryList = template.query(FIND_CHILD_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public int childCategorySize(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        int size = template.queryForObject(CHILD_CATEGORY_SIZE_SQL, param, Integer.class);
+        return size;
+    }
 }

@@ -82,15 +82,15 @@
             <th>child count</th>
             <td th:text="${childCategoryCount}">20</td>
           </tr>
-          <tr>
+          <tr th:if="${childCategoryCount != 0}">
             <th>child category</th>
             <td>
-              <a th:each="childCategory : ${childCategoryList}" th:href="@{categoryDetail(id=${childCategory.id})}" th:text="${category.name} + ' / '">tops / pants</a>
+              <a th:each="childCategory : ${childCategoryList}" th:href="@{categoryDetail(id=${childCategory.id})}" th:text="${childCategory.name} + ' / '">tops / pants</a>
             </td>
           </tr>
         </tbody>
       </table>
-      <a type="button" class="btn btn-default" th:href="@{toCategoryEdit(id=${category.id})}"><i
+      <a type="button" class="btn btn-default" th:href="@{toEditCategory(id=${category.id})}"><i
           class="fa fa-pencil-square-o"></i>&nbsp;edit</a>
     </div>
   </div>
