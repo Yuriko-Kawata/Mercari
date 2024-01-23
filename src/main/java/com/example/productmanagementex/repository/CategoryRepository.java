@@ -48,9 +48,9 @@ public class CategoryRepository {
                 CASE
                 WHEN position = 1 THEN NULL
                 WHEN position = 2 THEN
-                    (SELECT id FROM category WHERE name = :parentCategory ORDER BY id LIMIT 1)
+                    (SELECT id FROM category WHERE name = :parentCategory AND parent_id IS NULL AND name_all IS NULL ORDER BY id LIMIT 1)
                 ELSE
-                    (SELECT id FROM category WHERE name = :childCategory ORDER BY id LIMIT 1)
+                    (SELECT id FROM category WHERE name = :childCategory AND parent_id IS NOT NULL AND name_all IS NULL ORDER BY id LIMIT 1)
                 END,
                 CASE
                 WHEN position = 1 OR position = 2 THEN NULL
@@ -278,7 +278,7 @@ public class CategoryRepository {
             ;
             """;
 
-    public List<Category> findAllUniqueCategory() {
+    public List<Category> findAllCategory() {
         SqlParameterSource param = new MapSqlParameterSource();
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
         return categoryList;

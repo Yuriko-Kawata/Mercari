@@ -36,8 +36,9 @@ public class ItemController {
 
     @RequestMapping("itemList")
     public String toItemList(@RequestParam(defaultValue = "1") int page, Model model) {
-        if (session.getAttribute("searchCondition") != null) {
-            session.removeAttribute("searchCondition");
+        SearchForm form = new SearchForm();
+        if (session.getAttribute("form") != null) {
+            session.removeAttribute("form");
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -45,43 +46,56 @@ public class ItemController {
         User user = userService.findUserByMail(currentUserMail);
         session.setAttribute("userName", user.getName());
 
+        model.addAttribute("searchCondition", form);
         model.addAttribute("itemList", itemService.findAllItems(page));
-        model.addAttribute("totalPage", itemService.totalPage());
+
+        int totalItem = itemService.totalItem();
+        int totalPage = totalItem / 30 + 1;
+
+        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);
-        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+        model.addAttribute("categoryList", categoryService.findAllCategory());
         return "item-list";
     }
 
     @RequestMapping("search")
     public String toSearch(SearchForm form, Model model, @RequestParam(defaultValue = "1") int page) {
-        session.setAttribute("searchCondition", form);
+        session.setAttribute("form", form);
+
+        model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
                         form.getChildCategory(), form.getGrandCategory(), page));
-        model.addAttribute("totalPage",
-                itemService.searchTotalPage(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory()));
+        int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
+                form.getChildCategory(), form.getGrandCategory());
+        int totalPage = totalItem / 30 + 1;
+        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);
-        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+        model.addAttribute("categoryList", categoryService.findAllCategory());
 
         return "item-list";
     }
 
     @RequestMapping("toSearch")
     public String toSearchPage(int page, Model model) {
-        SearchForm form = (SearchForm) session.getAttribute("searchCondition");
+        SearchForm form = (SearchForm) session.getAttribute("form");
         if (form == null) {
             return toItemList(page, model);
         }
 
+        model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
                         form.getChildCategory(), form.getGrandCategory(), page));
-        model.addAttribute("totalPage",
-                itemService.searchTotalPage(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory()));
+        int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
+                form.getChildCategory(), form.getGrandCategory());
+        int totalPage = totalItem / 30 + 1;
+        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);
-        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+        model.addAttribute("categoryList", categoryService.findAllCategory());
 
         return "item-list";
     }
@@ -96,7 +110,7 @@ public class ItemController {
     public String toAddItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
         model.addAttribute("itemForm", itemForm);
         model.addAttribute("categoryForm", categoryForm);
-        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+        model.addAttribute("categoryList", categoryService.findAllCategory());
 
         return "add";
     }
@@ -108,16 +122,18 @@ public class ItemController {
             return toAddItem(itemForm, categoryForm, model);
         }
 
-        categoryService.checkCategory(categoryForm);
-        itemService.addItem(itemForm, categoryForm);
+        if (categoryService.checkCategory(categoryForm) == 0) {
+            categoryService.insertCategory(categoryForm);
+        }
 
+        itemService.addItem(itemForm, categoryForm);
         return "confirm/add-item-confirm";
     }
 
     @RequestMapping("toEdit")
     public String toEditItem(int id, CategoryForm categoryForm, Model model) {
         model.addAttribute("categoryForm", categoryForm);
-        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+        model.addAttribute("categoryList", categoryService.findAllCategory());
         model.addAttribute("itemData", itemService.findById(id));
 
         return "edit";

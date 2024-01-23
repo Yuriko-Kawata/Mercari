@@ -144,7 +144,7 @@ public class CategoryController {
     @RequestMapping("toAddCategory")
     public String toAddCategory(CategoryForm categoryForm, Model model) {
         model.addAttribute("categoryForm", categoryForm);
-        model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
+        model.addAttribute("categoryList", categoryService.findAllCategory());
 
         return "add-category";
     }

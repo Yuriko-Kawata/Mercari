@@ -17,8 +17,8 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
-    public List<Category> findAllUniqueCategory() {
-        List<Category> categoryList = repository.findAllUniqueCategory();
+    public List<Category> findAllCategory() {
+        List<Category> categoryList = repository.findAllCategory();
         return categoryList;
     }
 

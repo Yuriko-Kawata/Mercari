@@ -11,6 +11,10 @@ public class SearchForm {
     private String childCategory;
     // 孫カテゴリ（３次）
     private String grandCategory;
+    // ソート要素
+    private String sort;
+    // ソート順序
+    private String order;
 
     public String getName() {
         return name;
@@ -52,10 +56,26 @@ public class SearchForm {
         this.grandCategory = grandCategory;
     }
 
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
+    public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
     @Override
     public String toString() {
         return "SearchForm [name=" + name + ", brand=" + brand + ", parentCategory=" + parentCategory
-                + ", childCategory=" + childCategory + ", grandCategory=" + grandCategory + "]";
+                + ", childCategory=" + childCategory + ", grandCategory=" + grandCategory + ", sort=" + sort
+                + ", order=" + order + "]";
     }
-
 }
