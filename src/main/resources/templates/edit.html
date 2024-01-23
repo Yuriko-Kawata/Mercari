@@ -99,10 +99,10 @@
         <div class="col-sm-8">
           <select class="form-control" name="parentCategory" id="parentCategory">
             <div th:each="originalCategory : ${itemData.category}">
-              <option th:if="${originalCategory.parentId == 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
+              <option th:if="${originalCategory.parentId == 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-parent-id="${originalCategory.id}"></option>
             </div>
             <div th:each="category : ${categoryList}">
-              <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+              <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-parent-id="${category.id}"></option>
             </div>
           </select>
         </div>
@@ -112,10 +112,10 @@
         <div class="col-sm-8">
           <select class="form-control" name="childCategory" id="childCategory">
             <div th:each="originalCategory : ${itemData.category}">
-              <option th:if="${originalCategory.parentId != 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
+              <option th:if="${originalCategory.parentId != 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-child-parentId="${originalCategory.parentId}" th:data-child-id="${originalCategory.id}"></option>
             </div>
             <div th:each="category : ${categoryList}">
-              <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+              <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-child-parentId="${category.parentId}" th:data-child-id="${category.id}"></option>
             </div>
           </select>
         </div>
@@ -125,14 +125,16 @@
         <div class="col-sm-8">
           <select class="form-control" name="grandCategory" id="grandCategory">
             <div th:each="originalCategory : ${itemData.category}">
-              <option th:if="${originalCategory.nameAll != null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}"></option>
+              <option th:if="${originalCategory.nameAll != null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-grand-id="${originalCategory.parentId}"></option>
             </div>
             <div th:each="category : ${categoryList}">
-              <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}"></option>
+              <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
             </div>
           </select>
+          <div th:if="${error}" style="color: red;">存在しないカテゴリです</div>
         </div>
       </div>
+
       <div class="form-group">
         <label for="category" class="col-sm-2 control-label"></label>
         <div class="col-sm-8">
@@ -157,6 +159,12 @@
           </label>
           <label for="condition3" class="radio-inline">
             <input type="radio" name="condition" id="condition3" value="3" th:checked="${itemData.condition == 3}" /> 3
+          </label>
+          <label for="condition4" class="radio-inline">
+            <input type="radio" name="condition" id="condition4" value="4" th:checked="${itemData.condition == 4}" /> 4
+          </label>
+          <label for="condition5" class="radio-inline">
+            <input type="radio" name="condition" id="condition5" value="5" th:checked="${itemData.condition == 5}" /> 5
           </label>
         </div>
       </div>

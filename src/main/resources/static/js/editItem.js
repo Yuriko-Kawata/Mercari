@@ -25,6 +25,7 @@ for (const option of selectChildElement.options) {
     // 新しいテキストの場合、Setに追加
     seenChildOptions.add(option.text);
     }
+
 };
 
 // <select> 要素を取得
@@ -40,6 +41,64 @@ for (const option of selectGrandElement.options) {
     seenGrandOptions.add(option.text);
     }
 };
+
+
+document.getElementById('parentCategory').addEventListener('change', function() {
+    var select = this;
+    var selectedOption = select.options[select.selectedIndex];
+    var selectedId = selectedOption.getAttribute('data-parent-id');
+    var childOptions = document.querySelectorAll('#childCategory option');
+    
+    childOptions.forEach(function(option) {
+        if (option.getAttribute('data-child-parentId') === selectedId) {
+            option.style.display = 'block'; // 親カテゴリに対応する子カテゴリを表示
+        } else {
+            option.style.display = 'none'; // それ以外の子カテゴリを非表示
+        }
+        const selectChildElement = document.getElementById('childCategory');
+        
+        // すべてのオプションを走査し、重複を追跡
+        const seenChildOptions = new Set();
+        for (const option of selectChildElement.options) {
+            if (seenChildOptions.has(option.text)) {
+                // 既に存在するテキストの場合、オプションを非表示にする
+                option.style.display = 'none';
+            }else {
+                // 新しいテキストの場合、Setに追加
+                seenChildOptions.add(option.text);
+            }
+        }
+    });
+});
+
+document.getElementById('childCategory').addEventListener('change', function() {
+    var select = this;
+    var selectedOption = select.options[select.selectedIndex];
+    var selectedId = selectedOption.getAttribute('data-child-id');
+    var grandOptions = document.querySelectorAll('#grandCategory option');
+    
+    grandOptions.forEach(function(option) {
+        if (option.getAttribute('data-grand-id') === selectedId) {
+            option.style.display = 'block'; // 親カテゴリに対応する子カテゴリを表示
+        } else {
+            option.style.display = 'none'; // それ以外の子カテゴリを非表示
+        }
+        
+        // すべてのオプションを走査し、重複を追跡
+        const seenChildOptions = new Set();
+        for (const option of selectChildElement.options) {
+            if (seenChildOptions.has(option.text)) {
+                // 既に存在するテキストの場合、オプションを非表示にする
+                option.style.display = 'none';
+            }else {
+                // 新しいテキストの場合、Setに追加
+                seenChildOptions.add(option.text);
+            }
+        }
+    });
+});
+
+
 
 document.querySelectorAll('input, select, textarea').forEach(function(element) {
     // 初期値を保存

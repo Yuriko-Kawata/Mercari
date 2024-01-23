@@ -97,7 +97,7 @@
           <select class="form-control" id="parentCategory" th:field="${categoryForm.parentCategory}">
             <div th:each="category : ${categoryList}">
               <option value="">選択を変更してください</option>
-              <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+              <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-parent-id="${category.id}"></option>
             </div>
           </select>
           <span class="text-danger" th:errors="${categoryForm.parentCategory}"></span>
@@ -106,10 +106,10 @@
       <div class="form-group">
         <label for="childCategory" class="col-sm-2 control-label">child category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="childCategory" th:field="${categoryForm.childCategory}">
+          <select class="form-control" id="childCategory" th:field="${categoryForm.childCategory}" disabled>
             <div th:each="category : ${categoryList}">
               <option value="">選択を変更してください</option>
-              <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}"></option>
+              <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-child-id="${category.id}" th:data-child-parentId="${category.parentId}"></option>
             </div>
           </select>
           <span class="text-danger" th:errors="${categoryForm.childCategory}"></span>
@@ -118,10 +118,10 @@
       <div class="form-group">
         <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="grandCategory" th:field="${categoryForm.grandCategory}">
+          <select class="form-control" id="grandCategory" th:field="${categoryForm.grandCategory}" disabled>
             <option value="">選択を変更してください</option>
             <div th:each="category : ${categoryList}">
-              <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}"></option>
+              <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
             </div>
           </select>
           <span class="text-danger" th:errors="${categoryForm.grandCategory}"></span>
