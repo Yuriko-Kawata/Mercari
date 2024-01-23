@@ -78,6 +78,10 @@
           class="fa fa-plus-square-o"></i> Add New Item</a>
     </div>
 
+    <div th:if="${totalItemCount == 0}">
+      <span style="color: red;">該当の商品はありません</span>
+    </div>
+
     <!-- 検索フォーム -->
     <div id="forms">
       <form action="" th:action="@{/search}" class="form-inline" role="form" method="post">
@@ -176,7 +180,7 @@
     </div>
 
     <!-- pagination -->
-    <div id="pages">
+    <div id="pages" th:if="${totalItemCount != 0}">
       <nav class="page-nav" style="text-align: center;">
         <div th:if="${currentPage <= 5}">
           <a th:each="pageNum: ${#numbers.sequence(1, 5)}"
