@@ -1,18 +1,14 @@
 package com.example.productmanagementex.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.productmanagementex.domain.User;
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.service.CategoryService;
-import com.example.productmanagementex.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -23,23 +19,16 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private HttpSession session;
 
     @RequestMapping("categoryList")
     public String toCategoryList(@RequestParam(defaultValue = "1") int parentPage,
             @RequestParam(defaultValue = "1") int childPage,
-            @RequestParam(defaultValue = "1") int grandPage) {
+            @RequestParam(defaultValue = "1") int grandPage, Model model) {
         if (session.getAttribute("categorySearchCondition") != null) {
             session.removeAttribute("categorySearchCondition");
         }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserMail = authentication.getName();
-        User user = userService.findUserByMail(currentUserMail);
-        session.setAttribute("userName", user.getName());
-
+        model.addAttribute("searchCondition", "");
         session.setAttribute("parentCategoryList", categoryService.findAllParentCategory(parentPage));
         session.setAttribute("childCategoryList", categoryService.findAllChildCategory(childPage));
         session.setAttribute("grandCategoryList", categoryService.findAllGrandCategory(grandPage));
@@ -55,11 +44,12 @@ public class CategoryController {
     @RequestMapping("searchCategory")
     public String toSearchCategory(String searchCategory, @RequestParam(defaultValue = "1") int parentPage,
             @RequestParam(defaultValue = "1") int childPage,
-            @RequestParam(defaultValue = "1") int grandPage) {
+            @RequestParam(defaultValue = "1") int grandPage, Model model) {
         if (searchCategory == "") {
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
         session.setAttribute("categorySearchCondition", searchCategory);
+        model.addAttribute("searchCondition", searchCategory);
         session.setAttribute("parentCategoryList",
                 categoryService.searchParentCategory(searchCategory, parentPage));
         session.setAttribute("parentTotalPage",
@@ -82,15 +72,15 @@ public class CategoryController {
     }
 
     @RequestMapping("toParentSearch")
-    public String toSearchParentPage(int parentPage) {
+    public String toSearchParentPage(int parentPage, Model model) {
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int childPage = (int) session.getAttribute("childCurrentPage");
             int grandPage = (int) session.getAttribute("grandCurrentPage");
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
-
-        session.setAttribute("categoryList",
+        model.addAttribute("searchCondition", searchCondition);
+        session.setAttribute("parentCategoryList",
                 categoryService.searchParentCategory(searchCondition, parentPage));
         session.setAttribute("parentTotalPage",
                 categoryService.searchParentTotalPage(searchCondition));
@@ -100,15 +90,15 @@ public class CategoryController {
     }
 
     @RequestMapping("toChildSearch")
-    public String toSearchChildPage(int childPage) {
+    public String toSearchChildPage(int childPage, Model model) {
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int parentPage = (int) session.getAttribute("parentCurrentPage");
             int grandPage = (int) session.getAttribute("grandCurrentPage");
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
-
-        session.setAttribute("categoryList",
+        model.addAttribute("searchCondition", searchCondition);
+        session.setAttribute("childCategoryList",
                 categoryService.searchChildCategory(searchCondition, childPage));
         session.setAttribute("childTotalPage",
                 categoryService.searchChildTotalPage(searchCondition));
@@ -118,15 +108,16 @@ public class CategoryController {
     }
 
     @RequestMapping("toGrandSearch")
-    public String toSearchGrandPage(int grandPage) {
+    public String toSearchGrandPage(int grandPage, Model model) {
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int parentPage = (int) session.getAttribute("parentCurrentPage");
             int childPage = (int) session.getAttribute("childCurrentPage");
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
 
-        session.setAttribute("categoryList",
+        model.addAttribute("searchCondition", searchCondition);
+        session.setAttribute("grandCategoryList",
                 categoryService.searchGrandCategory(searchCondition, grandPage));
         session.setAttribute("grandTotalPage",
                 categoryService.searchGrandTotalPage(searchCondition));

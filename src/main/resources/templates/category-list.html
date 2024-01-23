@@ -101,15 +101,12 @@
     <div id="forms">
       <form action="" th:action="@{/searchCategory}" class="form-inline" role="form" method="post">
         <div class="form-group">
-          <input type="text" name="searchCategory" id="searchCategory" placeholder="カテゴリ名検索">
+          <input type="text" name="searchCategory" id="searchCategory" th:value="${searchCondition}" placeholder="カテゴリ名検索">
         </div>
         <div class="form-group"></div>
         <button type="submit" id="search-button" class="btn btn-default"><i
             class="fa fa-angle-double-right" value="検索" disable></i> search</button>
       </form>
-      <div th:if="${session.categorySearchCondition != null}">
-        検索条件 ： <span th:text="${session.categorySearchCondition}"></span>
-      </div>
 
       <!-- 検索条件のリセット（一覧を表示） -->
       <form action="" th:action="@{categoryList}" id="clear-condition">

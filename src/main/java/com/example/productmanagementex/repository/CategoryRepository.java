@@ -181,7 +181,7 @@ public class CategoryRepository {
             LIMIT
                 30
             OFFSET
-                (:page - 1)* 30
+                (:page - 1) * 30
             ;
             """;
 
@@ -199,7 +199,7 @@ public class CategoryRepository {
             LIMIT
                 30
             OFFSET
-                (:page - 1)* 30
+                (:page - 1) * 30
             ;
             """;
 
@@ -217,7 +217,7 @@ public class CategoryRepository {
             LIMIT
                 30
             OFFSET
-                (:page - 1)* 30
+                (:page - 1) * 30
             ;
             """;
 
@@ -229,7 +229,7 @@ public class CategoryRepository {
                     category
                 WHERE
                     parent_id IS NULL AND name_all IS NULL
-                    AND name = :name
+                    AND name LIKE :name
                 ORDER BY
                     name, id
             )
@@ -248,7 +248,7 @@ public class CategoryRepository {
                     category
                 WHERE
                     parent_id IS NOT NULL AND name_all IS NULL
-                    AND name = :name
+                    AND name LIKE :name
                 ORDER BY
                     name, id
             )
@@ -267,7 +267,7 @@ public class CategoryRepository {
                     category
                 WHERE
                     name_all IS NOT NULL
-                    AND name = :name
+                    AND name LIKE :name
                 ORDER BY
                     name, id
             )
@@ -333,7 +333,7 @@ public class CategoryRepository {
         return size;
     }
 
-    public List<Category> searchParentCategory(String condition, int page) {
+    public List<Category> searchParentCategory(String condition, Integer page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", condition).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_PARENT_SQL, param, CATEGORY_ROWMAPPER);
         return categoryList;
