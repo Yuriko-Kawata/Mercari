@@ -122,10 +122,6 @@ public class ItemController {
             return toAddItem(itemForm, categoryForm, model);
         }
 
-        if (categoryService.checkCategory(categoryForm) == 0) {
-            categoryService.insertCategory(categoryForm);
-        }
-
         itemService.addItem(itemForm, categoryForm);
         return "confirm/add-item-confirm";
     }
@@ -141,7 +137,10 @@ public class ItemController {
 
     @PostMapping("edit")
     public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
-        categoryService.checkCategory(categoryForm);
+        if (categoryService.checkCategory(categoryForm) == 0) {
+            model.addAttribute("error", true);
+            return toEditItem(itemForm.getId(), categoryForm, model);
+        }
         itemService.editItem(itemForm, categoryForm);
 
         model.addAttribute("itemId", itemForm.getId());
