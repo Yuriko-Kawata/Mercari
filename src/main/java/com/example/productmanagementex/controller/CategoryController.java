@@ -153,20 +153,23 @@ public class CategoryController {
         return "confirm/add-category-confirm";
     }
 
-    // @RequestMapping("toEditCategory")
-    // public String toEditCategory(int id, Model model) {
-    // return "edit";
-    // }
+    @RequestMapping("toEditCategory")
+    public String toEditCategory(int id, Model model) {
+        model.addAttribute("categoryData", categoryService.findById(id));
+        return "category-edit";
+    }
 
-    // @PostMapping("edit")
-    // public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model
-    // model) {
-    // categoryService.checkCategory(categoryForm);
-    // itemService.editItem(itemForm, categoryForm);
+    @PostMapping("editCategory")
+    public String editCategory(CategoryForm form, Model model) {
+        if (categoryService.checkCategoryName(form.getName(), form.getParentId(), form.getNameAll()) != 0) {
+            model.addAttribute("error", true);
+            return toEditCategory(form.getId(), model);
+        }
+        categoryService.editCategoryName(form.getId(), form.getName());
 
-    // model.addAttribute("itemId", itemForm.getId());
-    // return "confirm/edit-item-confirm";
-    // }
+        model.addAttribute("categoryId", form.getId());
+        return "confirm/edit-category-confirm";
+    }
 
     // @PostMapping("delete")
     // public String deleteItem(int id, int page, Model model) {

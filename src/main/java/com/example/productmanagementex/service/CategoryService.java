@@ -42,6 +42,20 @@ public class CategoryService {
         return count;
     }
 
+    public int checkCategoryName(String name, int parentId, String nameAll) {
+        int parentCondition = 0;
+        if (parentId != 0) {
+            if (nameAll == "") {
+                parentCondition = 1;
+            } else {
+                parentCondition = 2;
+            }
+        }
+
+        int count = repository.checkCategoryName(name, parentCondition);
+        return count;
+    }
+
     public void insertCategory(CategoryForm form) {
         if (form.getChildCategory() == null || form.getChildCategory() == "") {
             form.setChildCategory("カテゴリ無");
@@ -59,6 +73,10 @@ public class CategoryService {
         String nameAll = builder.toString();
 
         repository.insertCategory(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory(), nameAll);
+    }
+
+    public void editCategoryName(int id, String name) {
+        repository.editCategoryName(id, name);
     }
 
     public List<Category> findAllParentCategory(int page) {

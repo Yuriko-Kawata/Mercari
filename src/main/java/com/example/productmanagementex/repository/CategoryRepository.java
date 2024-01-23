@@ -38,7 +38,23 @@ public class CategoryRepository {
             """;
 
     private final String CHECK_CATEGORY_SQL = """
-            SELECT count(*) FROM category WHERE name_all = :nameAll;
+            SELECT
+                count(*)
+            FROM
+                category
+            WHERE
+                name_all = :nameAll
+            ;
+            """;
+
+    private final String UPDATE_NAME_SQL = """
+            UPDATE
+                category
+            SET
+                name = :name
+            WHERE
+                id = :id
+            ;
             """;
 
     private final String INSERT_SQL = """
@@ -329,6 +345,34 @@ public class CategoryRepository {
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
         int categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
         return categoryCount;
+    }
+
+    public int checkCategoryName(String name, int parentCondition) {
+        // 動的にクエリ変えたいからここだけstaticじゃない
+        String sql = """
+                SELECT
+                    count(*)
+                FROM
+                    category
+                WHERE
+                    name = :name
+                """;
+
+        if (parentCondition == 0) {
+            sql += "AND parent_id IS NULL";
+        } else if (parentCondition == 1) {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NULL";
+        } else {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NOT NULL";
+        }
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", name);
+        int count = template.queryForObject(sql, param, Integer.class);
+        return count;
+    }
+
+    public void editCategoryName(int id, String name) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name);
+        template.update(UPDATE_NAME_SQL, param);
     }
 
     public void insertCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {
