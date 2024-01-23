@@ -64,7 +64,7 @@
 
   <!-- details -->
   <div class="container">
-    <a type="button" class="btn btn-default" th:href="@{itemList}"><i
+    <a type="button" class="btn btn-default" th:href="@{categoryList}"><i
         class="fa fa-reply"></i> back</a>
     <h2>Details</h2>
     <div id="details">
@@ -72,37 +72,25 @@
         <tbody>
           <tr>
             <th>ID</th>
-            <td th:text="${item.id}"></td>
+            <td th:text="${category.id}">id</td>
           </tr>
           <tr>
             <th>name</th>
-            <td th:text="${item.name}"></td>
+            <td th:text="${category.name}">name</td>
           </tr>
           <tr>
-            <th>price</th>
-            <td th:text="${item.price}"></td>
+            <th>child count</th>
+            <td th:text="${childCategoryCount}">20</td>
           </tr>
           <tr>
-            <th>category</th>
+            <th>child category</th>
             <td>
-              <span  th:each="category : ${item.category}" th:text="${category.name} + ' / '"></span>
+              <a th:each="childCategory : ${childCategoryList}" th:href="@{categoryDetail(id=${childCategory.id})}" th:text="${category.name} + ' / '">tops / pants</a>
             </td>
-          </tr>
-          <tr>
-            <th>brand</th>
-            <td th:text="${item.brand}"></td>
-          </tr>
-          <tr>
-            <th>condition</th>
-            <td th:text="${item.condition}"></td>
-          </tr>
-          <tr>
-            <th>description</th>
-            <td th:text="${item.description}"></td>
           </tr>
         </tbody>
       </table>
-      <a type="button" class="btn btn-default" th:href="@{toEdit(id=${item.id})}"><i
+      <a type="button" class="btn btn-default" th:href="@{toCategoryEdit(id=${category.id})}"><i
           class="fa fa-pencil-square-o"></i>&nbsp;edit</a>
     </div>
   </div>
