@@ -137,14 +137,16 @@
       <table id="item-table" class="table table-hover table-condensed">
         <thead>
           <tr>
-            <th>name</th>
-            <th>price</th>
-            <th>category</th>
-            <th>brand</th>
-            <th>cond</th>
-            <th colspan="2">delete status</th>
-            <th>change status</th>
-          </tr>
+            <form>
+              <th>name&nbsp;<button type="submit" th:formaction="@{sort(page=${currentPage}, sort='name', order=${order == 'asc' ? 'desc' : 'asc'})}">&udhar;</button></th>
+              <th>price&nbsp;<button type="submit" th:formaction="@{sort(page=${currentPage}, sort='price', order=${order == 'asc' ? 'desc' : 'asc'})}">&udhar;</button></th>
+              <th>category</th>
+              <th>brand</th>
+              <th>cond&nbsp;<button type="submit" th:formaction="@{sort(page=${currentPage}, sort='condition', order=${order == 'asc' ? 'desc' : 'asc'})}">&udhar;</button></th>
+              <th colspan="2">delete status</th>
+              <th>change status</th>
+            </form>
+          <tr>
         </thead>
         <tbody th:each="item : ${itemList}">
           <tr>

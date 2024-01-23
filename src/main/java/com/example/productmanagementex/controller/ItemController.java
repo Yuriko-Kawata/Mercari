@@ -37,6 +37,9 @@ public class ItemController {
     @RequestMapping("itemList")
     public String toItemList(@RequestParam(defaultValue = "1") int page, Model model) {
         SearchForm form = new SearchForm();
+        if (session.getAttribute("form") != null) {
+            session.removeAttribute("form");
+        }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserMail = authentication.getName();
