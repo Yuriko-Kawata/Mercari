@@ -146,9 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-document.getElementById('edit-item').addEventListener('submit', function(event){
-    var formData = new FormData(this);
-    
+document.getElementById('edit-item').addEventListener('submit', function(event){    
     var confirmResult = confirm("変更しますか？")
     if(!confirmResult){
         event.preventDefault();
