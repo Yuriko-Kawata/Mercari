@@ -1,7 +1,5 @@
 package com.example.productmanagementex.form;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class CategoryForm {
     // ID
     private int id;
@@ -10,13 +8,10 @@ public class CategoryForm {
     // 親カテゴリID
     private int parentId;
     // 親カテゴリ
-    @NotBlank(message = "選択を変更してください")
     private String parentCategory;
     // 子カテゴリ
-    @NotBlank(message = "選択を変更してください")
     private String childCategory;
     // 孫カテゴリ
-    @NotBlank(message = "選択を変更してください")
     private String grandCategory;
     // 全カテゴリ名
     private String nameAll;

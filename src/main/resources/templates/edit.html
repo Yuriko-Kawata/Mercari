@@ -110,7 +110,7 @@
       <div class="form-group">
         <label for="childCategory" class="col-sm-2 control-label">child category</label>
         <div class="col-sm-8">
-          <select class="form-control" name="childCategory" id="childCategory">
+          <select class="form-control" name="childCategory" id="childCategory" disabled>
             <div th:each="originalCategory : ${itemData.category}">
               <option th:if="${originalCategory.parentId != 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-child-parentId="${originalCategory.parentId}" th:data-child-id="${originalCategory.id}"></option>
             </div>
@@ -123,7 +123,7 @@
       <div class="form-group">
         <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
         <div class="col-sm-8">
-          <select class="form-control" name="grandCategory" id="grandCategory">
+          <select class="form-control" name="grandCategory" id="grandCategory" disabled>
             <div th:each="originalCategory : ${itemData.category}">
               <option th:if="${originalCategory.nameAll != null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-grand-id="${originalCategory.parentId}"></option>
             </div>

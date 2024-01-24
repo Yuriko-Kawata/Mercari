@@ -107,19 +107,17 @@ public class ItemController {
     }
 
     @RequestMapping("toAdd")
-    public String toAddItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
+    public String toAddItem(ItemForm itemForm, Model model) {
         model.addAttribute("itemForm", itemForm);
-        model.addAttribute("categoryForm", categoryForm);
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
         return "add";
     }
 
     @PostMapping("add")
-    public String addItem(@Validated ItemForm itemForm, BindingResult rsItem, @Validated CategoryForm categoryForm,
-            BindingResult rsCategory, Model model) {
-        if (rsItem.hasErrors() || rsCategory.hasErrors()) {
-            return toAddItem(itemForm, categoryForm, model);
+    public String addItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
+        if (rs.hasErrors()) {
+            return toAddItem(itemForm, model);
         }
 
         itemService.addItem(itemForm, categoryForm);
