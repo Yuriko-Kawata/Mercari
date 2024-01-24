@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- css -->
+  <link
+    href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+    crossorigin="anonymous" />
+  <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous" />
+  <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    .title{
+      display: flex;
+      align-items:last baseline;
+    }
+    .check{
+      font-size: small;
+      padding-left: 20px;
+      color: red;
+    }
+    .changed {
+      background-color: #ffff99; /* 薄い黄色の背景 */
+      border: 2px solid #ff9900; /* オレンジ色の枠線 */
+      transition: border 0.3s ease-in-out; /* アニメーション効果 */
+    }
+    .logout{
+      background-color: unset;
+      border: none;
+    }
+  </style>
+  <title>Rakus Items</title>
+</head>
+<body>
+  <!-- navbar -->
+  <nav class="navbar navbar-inverse">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed"
+        data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+        aria-controls="navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <div>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <input type="submit" class="navbar-text logout" value="Logout"/>
+            </form>
+          </li>
+        </ul>
+        <p class="navbar-text navbar-right">
+          user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
+        </p>
+      </div>
+    </div>
+  </nav>
+
+  <!-- details -->
+  <div id="input-main" class="container">
+    <a type="button" class="btn btn-default" th:href="@{categoryDetail(id=${categoryData.id})}"><i
+        class="fa fa-reply"></i> back</a>
+    <div class="title">
+      <h2>カテゴリ編集</h2><span class="check">defaultで元の情報が表示</span>
+    </div>
+
+    <!-- edit form -->
+    <form action="#" th:action="@{/editCategory(id=${categoryData.id}, parentId=${categoryData.parentId}, nameAll=${categoryData.nameAll})}" method="post" class="form-horizontal" id="edit-category">
+      <!-- name -->
+      <div class="form-group">
+        <label for="inputName" class="col-sm-2 control-label">name</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" name="name" id="inputName" th:value="${categoryData.name}" required/>
+        </div>
+      </div>
+      <!-- submit button -->
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" id="submit-button" class="btn btn-default">Submit</button>
+          <div th:if="${error}" style="color:  red;">すでに存在しているカテゴリー名です</div>
+        </div>
+      </div>
+    </form>
+      <!-- clear button(元の値に戻す) -->
+      <div>
+        <button type="button" id="reload-button" class="btn btn-default" th:href="@{toCategoryEdit(id=${categoryData.id})}">元の情報に戻す</button>
+      </div>
+  </div>
+  <!-- script -->
+  <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+  <script src="js/editCategory.js"></script>
+</body>
+</html>

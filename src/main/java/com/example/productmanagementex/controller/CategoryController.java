@@ -1,18 +1,14 @@
 package com.example.productmanagementex.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.productmanagementex.domain.User;
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.service.CategoryService;
-import com.example.productmanagementex.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -23,23 +19,16 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private HttpSession session;
 
     @RequestMapping("categoryList")
     public String toCategoryList(@RequestParam(defaultValue = "1") int parentPage,
             @RequestParam(defaultValue = "1") int childPage,
-            @RequestParam(defaultValue = "1") int grandPage) {
+            @RequestParam(defaultValue = "1") int grandPage, Model model) {
         if (session.getAttribute("categorySearchCondition") != null) {
             session.removeAttribute("categorySearchCondition");
         }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserMail = authentication.getName();
-        User user = userService.findUserByMail(currentUserMail);
-        session.setAttribute("userName", user.getName());
-
+        model.addAttribute("searchCondition", "");
         session.setAttribute("parentCategoryList", categoryService.findAllParentCategory(parentPage));
         session.setAttribute("childCategoryList", categoryService.findAllChildCategory(childPage));
         session.setAttribute("grandCategoryList", categoryService.findAllGrandCategory(grandPage));
@@ -55,11 +44,12 @@ public class CategoryController {
     @RequestMapping("searchCategory")
     public String toSearchCategory(String searchCategory, @RequestParam(defaultValue = "1") int parentPage,
             @RequestParam(defaultValue = "1") int childPage,
-            @RequestParam(defaultValue = "1") int grandPage) {
+            @RequestParam(defaultValue = "1") int grandPage, Model model) {
         if (searchCategory == "") {
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
         session.setAttribute("categorySearchCondition", searchCategory);
+        model.addAttribute("searchCondition", searchCategory);
         session.setAttribute("parentCategoryList",
                 categoryService.searchParentCategory(searchCategory, parentPage));
         session.setAttribute("parentTotalPage",
@@ -82,15 +72,15 @@ public class CategoryController {
     }
 
     @RequestMapping("toParentSearch")
-    public String toSearchParentPage(int parentPage) {
+    public String toSearchParentPage(int parentPage, Model model) {
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int childPage = (int) session.getAttribute("childCurrentPage");
             int grandPage = (int) session.getAttribute("grandCurrentPage");
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
-
-        session.setAttribute("categoryList",
+        model.addAttribute("searchCondition", searchCondition);
+        session.setAttribute("parentCategoryList",
                 categoryService.searchParentCategory(searchCondition, parentPage));
         session.setAttribute("parentTotalPage",
                 categoryService.searchParentTotalPage(searchCondition));
@@ -100,15 +90,15 @@ public class CategoryController {
     }
 
     @RequestMapping("toChildSearch")
-    public String toSearchChildPage(int childPage) {
+    public String toSearchChildPage(int childPage, Model model) {
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int parentPage = (int) session.getAttribute("parentCurrentPage");
             int grandPage = (int) session.getAttribute("grandCurrentPage");
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
-
-        session.setAttribute("categoryList",
+        model.addAttribute("searchCondition", searchCondition);
+        session.setAttribute("childCategoryList",
                 categoryService.searchChildCategory(searchCondition, childPage));
         session.setAttribute("childTotalPage",
                 categoryService.searchChildTotalPage(searchCondition));
@@ -118,15 +108,16 @@ public class CategoryController {
     }
 
     @RequestMapping("toGrandSearch")
-    public String toSearchGrandPage(int grandPage) {
+    public String toSearchGrandPage(int grandPage, Model model) {
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int parentPage = (int) session.getAttribute("parentCurrentPage");
             int childPage = (int) session.getAttribute("childCurrentPage");
-            return toCategoryList(parentPage, childPage, grandPage);
+            return toCategoryList(parentPage, childPage, grandPage, model);
         }
 
-        session.setAttribute("categoryList",
+        model.addAttribute("searchCondition", searchCondition);
+        session.setAttribute("grandCategoryList",
                 categoryService.searchGrandCategory(searchCondition, grandPage));
         session.setAttribute("grandTotalPage",
                 categoryService.searchGrandTotalPage(searchCondition));
@@ -135,11 +126,13 @@ public class CategoryController {
         return "category-list";
     }
 
-    // @RequestMapping("detail")
-    // public String detail(int id, Model model) {
-    // model.addAttribute("item", itemService.findById(id));
-    // return "detail";
-    // }
+    @RequestMapping("categoryDetail")
+    public String categoryDetail(int id, Model model) {
+        model.addAttribute("category", categoryService.findById(id));
+        model.addAttribute("childCategoryList", categoryService.findChildCategory(id));
+        model.addAttribute("childCategoryCount", categoryService.childCategoryCount(id));
+        return "category-detail";
+    }
 
     @RequestMapping("toAddCategory")
     public String toAddCategory(CategoryForm categoryForm, Model model) {
@@ -160,24 +153,23 @@ public class CategoryController {
         return "confirm/add-category-confirm";
     }
 
-    // @RequestMapping("toEdit")
-    // public String toEditItem(int id, CategoryForm categoryForm, Model model) {
-    // model.addAttribute("categoryForm", categoryForm);
-    // model.addAttribute("categoryList", categoryService.findAllUniqueCategory());
-    // model.addAttribute("itemData", itemService.findById(id));
+    @RequestMapping("toEditCategory")
+    public String toEditCategory(int id, Model model) {
+        model.addAttribute("categoryData", categoryService.findById(id));
+        return "category-edit";
+    }
 
-    // return "edit";
-    // }
+    @PostMapping("editCategory")
+    public String editCategory(CategoryForm form, Model model) {
+        if (categoryService.checkCategoryName(form.getName(), form.getParentId(), form.getNameAll()) != 0) {
+            model.addAttribute("error", true);
+            return toEditCategory(form.getId(), model);
+        }
+        categoryService.editCategoryNameAndNameAll(form.getId(), form.getName(), form.getParentId(), form.getNameAll());
 
-    // @PostMapping("edit")
-    // public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model
-    // model) {
-    // categoryService.checkCategory(categoryForm);
-    // itemService.editItem(itemForm, categoryForm);
-
-    // model.addAttribute("itemId", itemForm.getId());
-    // return "confirm/edit-item-confirm";
-    // }
+        model.addAttribute("categoryId", form.getId());
+        return "confirm/edit-item-confirm";
+    }
 
     // @PostMapping("delete")
     // public String deleteItem(int id, int page, Model model) {

@@ -37,8 +37,34 @@ public class CategoryRepository {
             ;
             """;
 
+    private static final String FIND_NAME_BY_ID_SQL = """
+            SELECT
+                name
+            FROM
+                category
+            WHERE
+                id = :id
+            ;
+            """;
+
     private final String CHECK_CATEGORY_SQL = """
-            SELECT count(*) FROM category WHERE name_all = :nameAll;
+            SELECT
+                count(*)
+            FROM
+                category
+            WHERE
+                name_all = :nameAll
+            ;
+            """;
+
+    private final String UPDATE_NAMEALL_SQL = """
+            UPDATE
+                category
+            SET
+                name_all = REPLACE(name_all, :originalName, :name)
+            WHERE
+                name_all LIKE :originalNameLike
+            ;
             """;
 
     private final String INSERT_SQL = """
@@ -181,7 +207,7 @@ public class CategoryRepository {
             LIMIT
                 30
             OFFSET
-                (:page - 1)* 30
+                (:page - 1) * 30
             ;
             """;
 
@@ -199,7 +225,7 @@ public class CategoryRepository {
             LIMIT
                 30
             OFFSET
-                (:page - 1)* 30
+                (:page - 1) * 30
             ;
             """;
 
@@ -217,7 +243,7 @@ public class CategoryRepository {
             LIMIT
                 30
             OFFSET
-                (:page - 1)* 30
+                (:page - 1) * 30
             ;
             """;
 
@@ -229,7 +255,7 @@ public class CategoryRepository {
                     category
                 WHERE
                     parent_id IS NULL AND name_all IS NULL
-                    AND name = :name
+                    AND name LIKE :name
                 ORDER BY
                     name, id
             )
@@ -248,7 +274,7 @@ public class CategoryRepository {
                     category
                 WHERE
                     parent_id IS NOT NULL AND name_all IS NULL
-                    AND name = :name
+                    AND name LIKE :name
                 ORDER BY
                     name, id
             )
@@ -267,7 +293,48 @@ public class CategoryRepository {
                     category
                 WHERE
                     name_all IS NOT NULL
-                    AND name = :name
+                    AND name LIKE :name
+                ORDER BY
+                    name, id
+            )
+            SELECT
+                count(*)
+            FROM
+                unique_grand_category
+            ;
+            """;
+
+    private static final String FIND_BY_ID_SQL = """
+            SELECT
+                id, name, parent_id, name_all, category_number
+            FROM
+                category
+            WHERE
+                id = :id
+            ;
+            """;
+
+    private static final String FIND_CHILD_CATEGORY_SQL = """
+            SELECT
+            DISTINCT ON(name)
+                id, name, parent_id, name_all, category_number
+            FROM
+                category
+            WHERE
+                parent_id = :id
+            ORDER BY
+                name, id
+            ;
+            """;
+
+    private static final String CHILD_CATEGORY_SIZE_SQL = """
+            WITH unique_grand_category AS (
+                SELECT DISTINCT ON (name)
+                    id, name
+                FROM
+                    category
+                WHERE
+                    parent_id = :id
                 ORDER BY
                     name, id
             )
@@ -284,10 +351,85 @@ public class CategoryRepository {
         return categoryList;
     }
 
+    public String findNameById(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        String name = template.queryForObject(FIND_NAME_BY_ID_SQL, param, String.class);
+        return name;
+    }
+
     public int checkCategory(String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
         int categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
         return categoryCount;
+    }
+
+    public int checkCategoryName(String name, int parentCondition) {
+        // 動的にクエリ変えたいからstaticじゃない
+        String sql = """
+                SELECT
+                    count(*)
+                FROM
+                    category
+                WHERE
+                    name = :name
+                """;
+
+        if (parentCondition == 0) {
+            sql += "AND parent_id IS NULL";
+        } else if (parentCondition == 1) {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NULL";
+        } else {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NOT NULL";
+        }
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", name);
+        int count = template.queryForObject(sql, param, Integer.class);
+        return count;
+    }
+
+    public void editCategoryName(int id, String name, int parentCondition) {
+        String sql = """
+                UPDATE
+                    category
+                SET
+                    name = :name
+                WHERE
+                    name = (
+                        SELECT
+                            name
+                        FROM
+                            category
+                        WHERE
+                            id = :id
+                        )
+                """;
+
+        if (parentCondition == 1) {
+            sql += "AND parent_id IS NULL";
+        } else if (parentCondition == 2) {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NULL";
+        } else {
+            sql += "AND parent_id IS NOT NULL AND name_all IS NOT NULL";
+        }
+
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name);
+        template.update(sql, param);
+    }
+
+    public void editCategoryNameAll(int id, String name, String originalName, String originalNameLike,
+            int parentCondition) {
+        if (parentCondition == 1) {
+            SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name)
+                    .addValue("originalName", originalName).addValue("originalNameLike", originalNameLike);
+            template.update(UPDATE_NAMEALL_SQL, param);
+        } else if (parentCondition == 2) {
+            SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name)
+                    .addValue("originalName", originalName).addValue("originalNameLike", originalNameLike);
+            template.update(UPDATE_NAMEALL_SQL, param);
+        } else {
+            SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name)
+                    .addValue("originalName", originalName).addValue("originalNameLike", originalNameLike);
+            template.update(UPDATE_NAMEALL_SQL, param);
+        }
     }
 
     public void insertCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {
@@ -333,7 +475,7 @@ public class CategoryRepository {
         return size;
     }
 
-    public List<Category> searchParentCategory(String condition, int page) {
+    public List<Category> searchParentCategory(String condition, Integer page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", condition).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_PARENT_SQL, param, CATEGORY_ROWMAPPER);
         return categoryList;
@@ -369,4 +511,22 @@ public class CategoryRepository {
         return size;
     }
 
+    public Category findById(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        List<Category> categoryList = template.query(FIND_BY_ID_SQL, param, CATEGORY_ROWMAPPER);
+        Category category = categoryList.get(0);
+        return category;
+    }
+
+    public List<Category> findChildCategory(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        List<Category> categoryList = template.query(FIND_CHILD_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
+        return categoryList;
+    }
+
+    public int childCategorySize(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        int size = template.queryForObject(CHILD_CATEGORY_SIZE_SQL, param, Integer.class);
+        return size;
+    }
 }

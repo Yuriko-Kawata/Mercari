@@ -92,7 +92,7 @@
 
   <div id="main" class="container-fluid">
     <!-- addCategory link -->
-    <div id="addItemButton">
+    <div id="addItemButton" style="text-align: right;">
       <a class="btn btn-default" th:href="@{toAddCategory}"><i
           class="fa fa-plus-square-o"></i> Add New Category</a>
     </div>
@@ -101,15 +101,12 @@
     <div id="forms">
       <form action="" th:action="@{/searchCategory}" class="form-inline" role="form" method="post">
         <div class="form-group">
-          <input type="text" name="searchCategory" id="searchCategory" placeholder="カテゴリ名検索">
+          <input type="text" name="searchCategory" id="searchCategory" th:value="${searchCondition}" placeholder="カテゴリ名検索">
         </div>
         <div class="form-group"></div>
         <button type="submit" id="search-button" class="btn btn-default"><i
-            class="fa fa-angle-double-right" value="検索" disable></i></button>
+            class="fa fa-angle-double-right" value="検索" disable></i> search</button>
       </form>
-      <div th:if="${session.categorySearchCondition != null}">
-        検索条件 ： <span th:text="${session.categorySearchCondition}"></span>
-      </div>
 
       <!-- 検索条件のリセット（一覧を表示） -->
       <form action="" th:action="@{categoryList}" id="clear-condition">
@@ -146,8 +143,8 @@
             <tbody th:each="parentCategory : ${session.parentCategoryList}">
               <tr>
                 <td class="parentCategory-name"><a th:href="@{/categoryDetail(id=${parentCategory.id})}" th:text="${parentCategory.name}">name</a></td>
-                <form action="" th:action="@{/deleteCategory(id=${parentCategory.id}, page=${session.ParentCurrentPage})}" method="post">
-                  <td class="item-delete"><button type="submit" >削除</button></td>
+                <form id="delete-submit" th:action="@{/deleteCategory(id=${parentCategory.id}, page=${session.ParentCurrentPage})}" method="post">
+                  <td class="item-delete"><button type="submit" class="delete-button">削除</button></td>
                 </form>
               </tr>
             </tbody>
@@ -210,8 +207,8 @@
             <tbody th:each="childCategory : ${session.childCategoryList}">
               <tr>
                 <td class="childCategory-name"><a th:href="@{/categoryDetail(id=${childCategory.id})}" th:text="${childCategory.name}">name</a></td>
-                <form action="" th:action="@{/deleteCategory(id=${childCategory.id}, page=${session.childCurrentPage})}" method="post">
-                  <td class="item-delete"><button type="submit" >削除</button></td>
+                <form id="delete-submit" th:action="@{/deleteCategory(id=${childCategory.id}, page=${session.childCurrentPage})}" method="post">
+                  <td class="item-delete"><button type="submit" class="delete-button">削除</button></td>
                 </form>
               </tr>
             </tbody>
@@ -274,7 +271,7 @@
             <tbody th:each="grandCategory : ${session.grandCategoryList}">
               <tr>
                 <td class="grandCategory-name"><a th:href="@{/categoryDetail(id=${grandCategory.id})}" th:text="${grandCategory.name}">name</a></td>
-                <form action="" th:action="@{/deleteCategory(id=${grandCategory.id}, page=${session.grandCurrentPage})}" method="post">
+                <form id="delete-submit" th:action="@{/deleteCategory(id=${grandCategory.id}, page=${session.grandCurrentPage})}" method="post">
                   <td class="item-delete"><button type="submit">削除</button></td>
                 </form>
               </tr>
@@ -337,6 +334,14 @@
         document.getElementById('grand-button').disabled = inputValue.trim() === '';
       });
     });
+  </script>
+  <script>
+    document.getElementById('delete-submit').addEventListener('submit', function(event){
+      var confirmResult = confirm("本当に削除しますか？")
+      if(!confirmResult){
+        event.preventDefault();
+      }
+    })
   </script>
 </body>
 </html>
