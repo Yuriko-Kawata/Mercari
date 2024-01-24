@@ -139,7 +139,7 @@ public class CategoryController {
         model.addAttribute("categoryForm", categoryForm);
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
-        return "add-category";
+        return "category-add";
     }
 
     @PostMapping("addCategory")

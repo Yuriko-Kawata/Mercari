@@ -74,9 +74,13 @@ public class CategoryRepository {
                 CASE
                 WHEN position = 1 THEN NULL
                 WHEN position = 2 THEN
-                    (SELECT id FROM category WHERE name = :parentCategory AND parent_id IS NULL AND name_all IS NULL ORDER BY id LIMIT 1)
+                    COALESCE(
+                    (SELECT id FROM category WHERE name = :parentCategory AND parent_id IS NULL AND name_all IS NULL ORDER BY id LIMIT 1),
+                    LASTVAL())
                 ELSE
-                    (SELECT id FROM category WHERE name = :childCategory AND parent_id IS NOT NULL AND name_all IS NULL ORDER BY id LIMIT 1)
+                COALESCE(
+                    (SELECT id FROM category WHERE name = :childCategory AND parent_id IS NOT NULL AND name_all IS NULL ORDER BY id LIMIT 1),
+                    LASTVAL())
                 END,
                 CASE
                 WHEN position = 1 OR position = 2 THEN NULL
