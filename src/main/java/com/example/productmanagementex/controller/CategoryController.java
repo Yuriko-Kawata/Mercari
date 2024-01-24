@@ -165,10 +165,10 @@ public class CategoryController {
             model.addAttribute("error", true);
             return toEditCategory(form.getId(), model);
         }
-        categoryService.editCategoryName(form.getId(), form.getName(), form.getParentId(), form.getNameAll());
+        categoryService.editCategoryNameAndNameAll(form.getId(), form.getName(), form.getParentId(), form.getNameAll());
 
         model.addAttribute("categoryId", form.getId());
-        return "confirm/edit-category-confirm";
+        return "confirm/edit-item-confirm";
     }
 
     // @PostMapping("delete")

@@ -37,6 +37,16 @@ public class CategoryRepository {
             ;
             """;
 
+    private static final String FIND_NAME_BY_ID_SQL = """
+            SELECT
+                name
+            FROM
+                category
+            WHERE
+                id = :id
+            ;
+            """;
+
     private final String CHECK_CATEGORY_SQL = """
             SELECT
                 count(*)
@@ -44,6 +54,16 @@ public class CategoryRepository {
                 category
             WHERE
                 name_all = :nameAll
+            ;
+            """;
+
+    private final String UPDATE_NAMEALL_SQL = """
+            UPDATE
+                category
+            SET
+                name_all = REPLACE(name_all, :originalName, :name)
+            WHERE
+                name_all LIKE :originalNameLike
             ;
             """;
 
@@ -331,6 +351,12 @@ public class CategoryRepository {
         return categoryList;
     }
 
+    public String findNameById(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        String name = template.queryForObject(FIND_NAME_BY_ID_SQL, param, String.class);
+        return name;
+    }
+
     public int checkCategory(String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
         int categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
@@ -377,9 +403,9 @@ public class CategoryRepository {
                         )
                 """;
 
-        if (parentCondition == 0) {
+        if (parentCondition == 1) {
             sql += "AND parent_id IS NULL";
-        } else if (parentCondition == 1) {
+        } else if (parentCondition == 2) {
             sql += "AND parent_id IS NOT NULL AND name_all IS NULL";
         } else {
             sql += "AND parent_id IS NOT NULL AND name_all IS NOT NULL";
@@ -387,6 +413,23 @@ public class CategoryRepository {
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name);
         template.update(sql, param);
+    }
+
+    public void editCategoryNameAll(int id, String name, String originalName, String originalNameLike,
+            int parentCondition) {
+        if (parentCondition == 1) {
+            SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name)
+                    .addValue("originalName", originalName).addValue("originalNameLike", originalNameLike);
+            template.update(UPDATE_NAMEALL_SQL, param);
+        } else if (parentCondition == 2) {
+            SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name)
+                    .addValue("originalName", originalName).addValue("originalNameLike", originalNameLike);
+            template.update(UPDATE_NAMEALL_SQL, param);
+        } else {
+            SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name)
+                    .addValue("originalName", originalName).addValue("originalNameLike", originalNameLike);
+            template.update(UPDATE_NAMEALL_SQL, param);
+        }
     }
 
     public void insertCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {

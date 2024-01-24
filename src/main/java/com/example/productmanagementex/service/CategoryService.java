@@ -75,17 +75,57 @@ public class CategoryService {
         repository.insertCategory(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory(), nameAll);
     }
 
-    public void editCategoryName(int id, String name, int parentId, String nameAll) {
-        int parentCondition = 0;
+    public void editCategoryNameAndNameAll(int id, String name, int parentId, String nameAll) {
+        int parentCondition = 1;
+        String originalName = repository.findNameById(id);
+        String insertName = null;
+        String insertOriginalName = null;
+        String originalNameLike = null;
+        StringBuilder nameBuilder = new StringBuilder();
+        StringBuilder originalNameBuilder = new StringBuilder();
+
         if (parentId != 0) {
             if (nameAll == "") {
-                parentCondition = 1;
-            } else {
                 parentCondition = 2;
+                nameBuilder.append("/");
+                nameBuilder.append(name);
+                nameBuilder.append("/");
+                insertName = nameBuilder.toString();
+
+                originalNameBuilder.append("/");
+                originalNameBuilder.append(originalName);
+                originalNameBuilder.append("/");
+                insertOriginalName = originalNameBuilder.toString();
+                originalNameBuilder.insert(0, "%");
+                originalNameBuilder.append("%");
+                originalNameLike = originalNameBuilder.toString();
+            } else {
+                parentCondition = 3;
+                nameBuilder.append("/");
+                nameBuilder.append(name);
+                insertName = nameBuilder.toString();
+
+                originalNameBuilder.append("/");
+                originalNameBuilder.append(originalName);
+                insertOriginalName = originalNameBuilder.toString();
+                originalNameBuilder.insert(0, "%");
+                originalNameLike = originalNameBuilder.toString();
+
             }
+        } else {
+            nameBuilder.append(name);
+            nameBuilder.append("/");
+            insertName = nameBuilder.toString();
+
+            originalNameBuilder.append(originalName);
+            originalNameBuilder.append("/");
+            insertOriginalName = originalNameBuilder.toString();
+            originalNameBuilder.append("%");
+            originalNameLike = originalNameBuilder.toString();
         }
 
         repository.editCategoryName(id, name, parentCondition);
+        repository.editCategoryNameAll(id, insertName, insertOriginalName, originalNameLike, parentCondition);
     }
 
     public List<Category> findAllParentCategory(int page) {
