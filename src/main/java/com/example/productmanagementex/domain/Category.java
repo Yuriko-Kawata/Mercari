@@ -5,7 +5,6 @@ public class Category {
     private Integer parentId;
     private String name;
     private String nameAll;
-    private Integer categoryNumber;
 
     public Integer getId() {
         return id;
@@ -39,17 +38,9 @@ public class Category {
         this.nameAll = nameAll;
     }
 
-    public Integer getCategoryNumber() {
-        return categoryNumber;
-    }
-
-    public void setCategoryNumber(Integer categoryNumber) {
-        this.categoryNumber = categoryNumber;
-    }
-
     @Override
     public String toString() {
         return "Category [id=" + id + ", parentId=" + parentId + ", name=" + name + ", nameAll=" + nameAll
-                + ", categoryNumber=" + categoryNumber + "]";
+                + "]";
     }
 }

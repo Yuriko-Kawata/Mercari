@@ -147,8 +147,8 @@
               <th>category</th>
               <th>brand</th>
               <th>cond&nbsp;<button type="submit" th:formaction="@{sort(page=${currentPage}, sort='condition', order=${order == 'asc' ? 'desc' : 'asc'})}">&udhar;</button></th>
-              <th colspan="2">delete status</th>
-              <th>change status</th>
+              <!-- <th colspan="2">delete status</th>
+              <th>change status</th> -->
             </form>
           <tr>
         </thead>
@@ -163,7 +163,7 @@
             </td>
             <td class="item-brand" th:text="${item.brand}"><a href="">item-brand</a></td>
             <td class="item-condition" th:text="${item.condition}">item-condition</td>
-            <div th:if="${item.delete == false}">
+            <!-- <div th:if="${item.delete == false}">
               <td class="item-delete" id="true-value">表示</td>
               <td class="item-delete"></td>     
             </div>
@@ -173,14 +173,14 @@
             </div>
             <form action="" th:action="@{delete(id=${item.id}, page=${currentPage})}" method="post">
               <td class="item-delete"><button type="submit" >変更</button></td>
-            </form>
+            </form> -->
           </tr>
         </tbody>
       </table>
     </div>
 
     <!-- pagination -->
-    <div id="pages" th:if="${totalItemCount != 0}">
+    <div id="pages" th:if="${totalItemCount <= 1}">
       <nav class="page-nav" style="text-align: center;">
         <div th:if="${currentPage <= 5}">
           <a th:each="pageNum: ${#numbers.sequence(1, 5)}"

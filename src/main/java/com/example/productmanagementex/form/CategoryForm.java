@@ -15,8 +15,6 @@ public class CategoryForm {
     private String grandCategory;
     // 全カテゴリ名
     private String nameAll;
-    // カテゴリー番号
-    private int categoryNumber;
 
     public int getId() {
         return id;
@@ -74,19 +72,11 @@ public class CategoryForm {
         this.nameAll = nameAll;
     }
 
-    public int getCategoryNumber() {
-        return categoryNumber;
-    }
-
-    public void setCategoryNumber(int categoryNumber) {
-        this.categoryNumber = categoryNumber;
-    }
-
     @Override
     public String toString() {
         return "CategoryForm [id=" + id + ", name=" + name + ", parentId=" + parentId + ", parentCategory="
                 + parentCategory + ", childCategory=" + childCategory + ", grandCategory=" + grandCategory
-                + ", nameAll=" + nameAll + ", categoryNumber=" + categoryNumber + "]";
+                + ", nameAll=" + nameAll + "]";
     }
 
 }

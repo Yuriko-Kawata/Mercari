@@ -1,5 +1,6 @@
 package com.example.productmanagementex.domain;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,9 +29,9 @@ public class Item {
     // 商品説明
     private String description;
     // カテゴリ名
-    private String nameAll;
+    private Date updateTime;
     // 状態
-    private Boolean delete;
+    private Integer delFlg;
 
     public Integer getId() {
         return id;
@@ -104,27 +105,27 @@ public class Item {
         this.description = description;
     }
 
-    public String getNameAll() {
-        return nameAll;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setNameAll(String nameAll) {
-        this.nameAll = nameAll;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
-    public Boolean getDelete() {
-        return delete;
+    public Integer getDelFlg() {
+        return delFlg;
     }
 
-    public void setDelete(Boolean delete) {
-        this.delete = delete;
+    public void setDelFlg(Integer delFlg) {
+        this.delFlg = delFlg;
     }
 
     @Override
     public String toString() {
         return "Item [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category + ", brand="
                 + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping + ", description="
-                + description + ", nameAll=" + nameAll + ", delete=" + delete + "]";
+                + description + ", updateTime=" + updateTime + ", delFlg=" + delFlg + "]";
     }
 
 }

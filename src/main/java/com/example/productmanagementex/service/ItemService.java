@@ -152,9 +152,8 @@ public class ItemService {
         Item item = new Item();
 
         BeanUtils.copyProperties(itemForm, item);
-        item.setNameAll(nameAll);
 
-        repository.insertItem(item);
+        repository.insertItem(item, nameAll);
     }
 
     public void editItem(ItemForm itemForm, CategoryForm categoryForm) {
@@ -168,9 +167,8 @@ public class ItemService {
         Item item = new Item();
 
         BeanUtils.copyProperties(itemForm, item);
-        item.setNameAll(nameAll);
 
-        repository.updateItem(item);
+        repository.updateItem(item, nameAll);
     }
 
     public void delete(int id) {
