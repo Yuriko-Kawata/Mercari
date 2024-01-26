@@ -23,6 +23,13 @@
       display: flex;
       align-items:last baseline;
     }
+    .sub-title{
+      width: 85px;
+      font-size:large;
+      border: double;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
     .check{
       font-size: small;
       padding-left: 20px;
@@ -36,6 +43,45 @@
     .logout{
       background-color: unset;
       border: none;
+    }
+    .infomation{
+      border: dashed;
+      padding: 30px;
+      width: 700px;
+      margin: auto;
+    }
+    .important{
+      color: red;
+    }
+      /* モーダルのスタイル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+    }
+    /* モーダルコンテンツのスタイル */
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid orange;
+      width: 40%;
+    }
+    /* ボタンのスタイル */
+    .button {
+      padding: 10px 20px;
+      border: orange;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: orange;
     }
   </style>
   <title>Rakus Items</title>
@@ -98,9 +144,7 @@
         <label for="parentCategory" class="col-sm-2 control-label">parent category</label>
         <div class="col-sm-8">
           <select class="form-control" name="parentCategory" id="parentCategory">
-            <div th:each="originalCategory : ${itemData.category}">
-              <option th:if="${originalCategory.parentId == 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-parent-id="${originalCategory.id}"></option>
-            </div>
+            <option th:text="${originalParentCategory + ' : 元情報'}" value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-parent-id="${category.id}"></option>
             </div>
@@ -111,9 +155,7 @@
         <label for="childCategory" class="col-sm-2 control-label">child category</label>
         <div class="col-sm-8">
           <select class="form-control" name="childCategory" id="childCategory" disabled>
-            <div th:each="originalCategory : ${itemData.category}">
-              <option th:if="${originalCategory.parentId != 0 && originalCategory.nameAll == null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-child-parentId="${originalCategory.parentId}" th:data-child-id="${originalCategory.id}"></option>
-            </div>
+            <option th:text="${originalChildCategory + ' : 元情報'}" value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-child-parentId="${category.parentId}" th:data-child-id="${category.id}"></option>
             </div>
@@ -124,14 +166,12 @@
         <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
         <div class="col-sm-8">
           <select class="form-control" name="grandCategory" id="grandCategory" disabled>
-            <div th:each="originalCategory : ${itemData.category}">
-              <option th:if="${originalCategory.nameAll != null}" th:text="${originalCategory.name}" th:value="${originalCategory.name}" th:data-grand-id="${originalCategory.parentId}"></option>
-            </div>
+            <option th:text="${originalGrandCategory + ' : 元情報'}" value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
             </div>
           </select>
-          <div th:if="${error}" style="color: red;">存在しないカテゴリです</div>
+          <div th:if="${choiceError}" style="color: red;">カテゴリ変更の際は、全てのカテゴリ選択必須です</div>
         </div>
       </div>
 
@@ -174,13 +214,13 @@
           class="col-sm-2 control-label">description</label>
         <div class="col-sm-8">
           <textarea name="description" id="description" class="form-control"
-          rows="5" th:text="${itemData.description}"></textarea>
+          rows="5" th:text="${itemData.description}" required></textarea>
         </div>
       </div>
       <!-- submit button -->
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" id="submit-button" class="btn btn-default">Submit</button>
+          <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
         </div>
       </div>
     </form>
@@ -188,6 +228,27 @@
       <div>
         <button type="button" id="reload-button" class="btn btn-default" th:href="@{toEdit(id=${itemData.id})}">元の情報に戻す</button>
       </div>
+      <div class="infomation">
+        <div class="sub-title">注意事項</div>
+        <div class="important">
+          <ul>
+            <li>カテゴリを変更する場合は、親、子、孫カテゴリの全てを選択してください。</li>
+            <li>category, brand以外は入力必須です。</li>
+          </ul>
+        </div>
+      </div>
+    
+  </div>
+
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <p>&#x26A0;警告</p>
+      <div style="text-align: center; font-size: large;">商品情報を本当に変更してもよろしいですか？</div>
+      <div style="text-align: right; margin-top: 20px;  ">
+        <button class="button" onclick="confirmSubmission(false)">キャンセル</button>
+        <button class="button" onclick="confirmSubmission(true)" style="color: red;">確認</button>
+      </div>
+    </div>
   </div>
   <!-- script -->
   <script

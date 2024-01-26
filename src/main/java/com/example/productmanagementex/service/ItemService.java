@@ -142,18 +142,10 @@ public class ItemService {
     }
 
     public void addItem(ItemForm itemForm, CategoryForm categoryForm) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(categoryForm.getParentCategory());
-        builder.append("/");
-        builder.append(categoryForm.getChildCategory());
-        builder.append("/");
-        builder.append(categoryForm.getGrandCategory());
-        String nameAll = builder.toString();
         Item item = new Item();
-
         BeanUtils.copyProperties(itemForm, item);
 
-        repository.insertItem(item, nameAll);
+        repository.insertItem(item);
     }
 
     public void editItem(ItemForm itemForm, CategoryForm categoryForm) {
@@ -165,7 +157,6 @@ public class ItemService {
         builder.append(categoryForm.getGrandCategory());
         String nameAll = builder.toString();
         Item item = new Item();
-
         BeanUtils.copyProperties(itemForm, item);
 
         repository.updateItem(item, nameAll);

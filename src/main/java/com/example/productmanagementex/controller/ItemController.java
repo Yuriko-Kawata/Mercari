@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.productmanagementex.domain.Category;
+import com.example.productmanagementex.domain.Item;
 import com.example.productmanagementex.domain.User;
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.form.ItemForm;
@@ -146,19 +148,66 @@ public class ItemController {
     public String toEditItem(int id, CategoryForm categoryForm, Model model) {
         model.addAttribute("categoryForm", categoryForm);
         model.addAttribute("categoryList", categoryService.findAllCategory());
-        model.addAttribute("itemData", itemService.findById(id));
+        Item item = itemService.findById(id);
+        String originalParentCategory = null;
+        String originalChildCategory = null;
+        String originalGrandCategory = null;
+        for (Category category : item.getCategory()) {
+            if (category.getParentId() != 0) {
+                if (category.getNameAll() != null) {
+                    originalGrandCategory = category.getName();
+                } else {
+                    originalChildCategory = category.getName();
+                }
+            } else {
+                originalParentCategory = category.getName();
+            }
+        }
+        model.addAttribute("originalParentCategory", originalParentCategory);
+        model.addAttribute("originalChildCategory", originalChildCategory);
+        model.addAttribute("originalGrandCategory", originalGrandCategory);
+        model.addAttribute("itemData", item);
 
         return "edit";
     }
 
     @PostMapping("edit")
     public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
-        if (categoryService.checkCategory(categoryForm) == 0) {
-            model.addAttribute("error", true);
+        if (categoryForm.getParentCategory() == "" && categoryForm.getChildCategory() == null
+                && categoryForm.getGrandCategory() == null) {
+            Item item = itemService.findById(itemForm.getId());
+            String originalParentCategory = null;
+            String originalChildCategory = null;
+            String originalGrandCategory = null;
+            for (Category category : item.getCategory()) {
+                if (category.getParentId() != 0) {
+                    if (category.getNameAll() != null) {
+                        originalGrandCategory = category.getName();
+                    } else {
+                        originalChildCategory = category.getName();
+                    }
+                } else {
+                    originalParentCategory = category.getName();
+                }
+            }
+            categoryForm.setParentCategory(originalParentCategory);
+            categoryForm.setChildCategory(originalChildCategory);
+            categoryForm.setGrandCategory(originalGrandCategory);
+
+            itemService.editItem(itemForm, categoryForm);
+            model.addAttribute("itemId", itemForm.getId());
+            return "confirm/edit-item-confirm";
+
+        } else if (categoryForm.getParentCategory() != "" && categoryForm.getChildCategory() == "") {
+            model.addAttribute("choiceError", model);
+            return toEditItem(itemForm.getId(), categoryForm, model);
+        } else if (categoryForm.getParentCategory() != "" && categoryForm.getChildCategory() != ""
+                && categoryForm.getGrandCategory() == "") {
+            model.addAttribute("choiceError", model);
             return toEditItem(itemForm.getId(), categoryForm, model);
         }
-        itemService.editItem(itemForm, categoryForm);
 
+        itemService.editItem(itemForm, categoryForm);
         model.addAttribute("itemId", itemForm.getId());
         return "confirm/edit-item-confirm";
     }

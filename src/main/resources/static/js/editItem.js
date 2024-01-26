@@ -25,7 +25,6 @@ document.getElementById('childCategory').addEventListener('change', function() {
     
     document.getElementById('grandCategory').disabled = inputValue.trim() === '';
 
-    
     grandOptions.forEach(function(option) {
         if (option.getAttribute('data-grand-id') === selectedId) {
             option.style.display = 'block'; // 親カテゴリに対応する子カテゴリを表示
@@ -84,11 +83,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-document.getElementById('edit-item').addEventListener('submit', function(event){    
-    var confirmResult = confirm("変更しますか？")
-    if(!confirmResult){
-        event.preventDefault();
+function confirmSubmission(isConfirmed) {
+    document.getElementById('edit-modal').style.display = 'none';
+    if (isConfirmed) {
+        document.getElementById('edit-item').submit();
     }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const inputs = document.querySelectorAll('input, select');
+    const submitButton = document.getElementById('submit-button');
+
+    inputs.forEach(input => {
+        input.addEventListener('change', function () {
+            submitButton.disabled = false;
+        });
+    });
+
+    submitButton.addEventListener('click', function(event) {
+        event.preventDefault(); // デフォルトの送信を阻止
+        document.getElementById('edit-modal').style.display = 'block'; // モーダルを表示
+    });
 });
 
 document.getElementById('reload-button').addEventListener('click', function() {

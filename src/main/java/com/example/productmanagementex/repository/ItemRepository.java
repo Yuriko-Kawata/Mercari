@@ -36,14 +36,20 @@ public class ItemRepository {
         Category parentCategory = new Category();
         parentCategory.setId(rs.getInt("parent_id"));
         parentCategory.setName(rs.getString("parent_name"));
+        parentCategory.setParentId(rs.getInt("parent_parent_id"));
+        parentCategory.setNameAll(rs.getString("parent_name_all"));
         categoryList.add(parentCategory);
         Category childCategory = new Category();
         childCategory.setId(rs.getInt("child_id"));
         childCategory.setName(rs.getString("child_name"));
+        childCategory.setParentId(rs.getInt("child_parent_id"));
+        childCategory.setNameAll(rs.getString("child_name_all"));
         categoryList.add(childCategory);
         Category grandCategory = new Category();
         grandCategory.setId(rs.getInt("grand_id"));
         grandCategory.setName(rs.getString("grand_name"));
+        grandCategory.setParentId(rs.getInt("grand_parent_id"));
+        grandCategory.setNameAll(rs.getString("grand_name_all"));
         categoryList.add(grandCategory);
 
         item.setCategory(categoryList);
@@ -109,10 +115,16 @@ public class ItemRepository {
                 i.del_flg AS i_del_flg,
                 grand.id AS grand_id,
                 grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
                 child.id AS child_id,
                 child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
                 parent.id AS parent_id,
-                parent.name AS parent_name
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
             FROM
                 items AS i
             LEFT OUTER JOIN
@@ -153,10 +165,16 @@ public class ItemRepository {
                 i.del_flg AS i_del_flg,
                 grand.id AS grand_id,
                 grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
                 child.id AS child_id,
                 child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
                 parent.id AS parent_id,
-                parent.name AS parent_name
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
             FROM
                 items AS i
             LEFT OUTER JOIN
@@ -225,10 +243,16 @@ public class ItemRepository {
                 i.del_flg AS i_del_flg,
                 grand.id AS grand_id,
                 grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
                 child.id AS child_id,
                 child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
                 parent.id AS parent_id,
-                parent.name AS parent_name
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
             FROM
                 items AS i
             LEFT OUTER JOIN
@@ -250,7 +274,7 @@ public class ItemRepository {
 
     private static final String INSERT_SQL = """
             INSERT INTO
-                items(name, condition, category, brand, price, description, name_all)
+                items(name, condition, category, brand, price, description)
             VALUES
                 (:name, :condition,
                 (SELECT
@@ -260,7 +284,7 @@ public class ItemRepository {
                 WHERE
                     name_all = :nameAll)
                 ,
-                :brand, :price, :description, :nameAll
+                :brand, :price, :description
                 )
             ;
             """;
@@ -271,7 +295,7 @@ public class ItemRepository {
             SET
                 name = :name, condition = :condition,
                 category = (SELECT id FROM category WHERE name_all = :nameAll),
-                brand = :brand, price = :price, description = :description, name_all = :nameAll
+                brand = :brand, price = :price, description = :description
             WHERE
                 id = :id
             ;
@@ -319,11 +343,10 @@ public class ItemRepository {
         return item;
     }
 
-    public void insertItem(Item item, String nameAll) {
+    public void insertItem(Item item) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
-                .addValue("price", item.getPrice()).addValue("description", item.getDescription())
-                .addValue("nameAll", nameAll);
+                .addValue("price", item.getPrice()).addValue("description", item.getDescription());
         template.update(INSERT_SQL, param);
     }
 
