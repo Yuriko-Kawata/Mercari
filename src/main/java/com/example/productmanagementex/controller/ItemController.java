@@ -136,6 +136,16 @@ public class ItemController {
 
     @PostMapping("add")
     public String addItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
+        if (categoryForm.getParentCategory() == "") {
+            model.addAttribute("error", true);
+            return toAddItem(itemForm, model);
+        } else if (categoryForm.getChildCategory() == "") {
+            model.addAttribute("error", true);
+            return toAddItem(itemForm, model);
+        } else if (categoryForm.getGrandCategory() == "") {
+            model.addAttribute("error", true);
+            return toAddItem(itemForm, model);
+        }
         if (rs.hasErrors()) {
             return toAddItem(itemForm, model);
         }
