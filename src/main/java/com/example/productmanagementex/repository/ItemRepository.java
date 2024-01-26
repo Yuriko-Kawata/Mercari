@@ -139,6 +139,8 @@ public class ItemRepository {
                 category AS parent
             ON
                 child.parent_id = parent.id
+            WHERE
+                    i.del_flg = 0
             ORDER BY
                 i.id
             LIMIT
@@ -190,7 +192,8 @@ public class ItemRepository {
             ON
                 child.parent_id = parent.id
             WHERE
-                (i.name LIKE :name)
+                i.del_flg = 0
+                AND (i.name LIKE :name)
                 AND (i.brand LIKE :brand)
                 AND  i.category IN
                     (SELECT
@@ -215,7 +218,8 @@ public class ItemRepository {
             FROM
                 items
             WHERE
-                (name LIKE :name)
+                del_flg = 0
+                AND(name LIKE :name)
                 AND (brand LIKE :brand)
                 AND  category IN
                     (SELECT
