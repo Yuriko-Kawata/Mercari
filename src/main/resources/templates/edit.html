@@ -118,10 +118,12 @@
   <!-- details -->
   <div id="input-main" class="container">
     <a type="button" class="btn btn-default" th:href="@{detail(id=${itemData.id})}"><i
-        class="fa fa-reply"></i> back</a>
+      class="fa fa-reply"></i> back</a>
+    
     <div class="title">
       <h2>商品編集</h2><span class="check">defaultで元の情報が表示</span>
     </div>
+    
 
     <!-- edit form -->
     <form action="#" th:action="@{/edit(id=${itemData.id})}" method="post" class="form-horizontal" id="edit-item">
@@ -218,25 +220,29 @@
         </div>
       </div>
       <!-- submit button -->
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
+      <div class="form-group" style="display: flex;">
+        <div class="col-sm-offset-2 col-sm-8" style="display: flex; justify-content: space-between;">
           <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
+          <a type="button" id="reload-button" class="btn btn-default" th:href="@{toEdit(id=${itemData.id})}">元に戻す</a>
+          <a type="button" id="delete-button" class="btn btn-default" th:href="@{delete(id=${itemData.id})}">Delete</a>
         </div>
       </div>
     </form>
-      <!-- clear button(元の値に戻す) -->
-      <div>
-        <button type="button" id="reload-button" class="btn btn-default" th:href="@{toEdit(id=${itemData.id})}">元の情報に戻す</button>
+  </div>
+    
+    <!-- clear button(元の値に戻す) -->
+    <div class="form-group">
+    </div>
+
+    <div class="infomation">
+      <div class="sub-title">注意事項</div>
+      <div class="important">
+        <ul>
+          <li>カテゴリを変更する場合は、親、子、孫カテゴリの全てを選択してください。</li>
+          <li>category, brand以外は入力必須です。</li>
+        </ul>
       </div>
-      <div class="infomation">
-        <div class="sub-title">注意事項</div>
-        <div class="important">
-          <ul>
-            <li>カテゴリを変更する場合は、親、子、孫カテゴリの全てを選択してください。</li>
-            <li>category, brand以外は入力必須です。</li>
-          </ul>
-        </div>
-      </div>
+    </div>
     
   </div>
 
@@ -244,9 +250,19 @@
     <div class="modal-content">
       <p>&#x26A0;警告</p>
       <div style="text-align: center; font-size: large;">商品情報を本当に変更してもよろしいですか？</div>
+      <div style="text-align: right; margin-top: 20px;">
+        <button class="button" onclick="editConfirmSubmission(false)">キャンセル</button>
+        <button class="button" onclick="editConfirmSubmission(true)" style="color: red;">確認</button>
+      </div>
+    </div>
+  </div>
+  <div id="delete-modal" class="modal">
+    <div class="modal-content">
+      <p>&#x26A0;警告</p>
+      <div style="text-align: center; font-size: large;">商品を本当に削除してもよろしいですか？</div>
       <div style="text-align: right; margin-top: 20px;  ">
-        <button class="button" onclick="confirmSubmission(false)">キャンセル</button>
-        <button class="button" onclick="confirmSubmission(true)" style="color: red;">確認</button>
+        <button class="button" onclick="deleteConfirmSubmission(false)">キャンセル</button>
+        <button class="button" onclick="deleteConfirmSubmission(true)" style="color: red;">確認</button>
       </div>
     </div>
   </div>

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function confirmSubmission(isConfirmed) {
+function editConfirmSubmission(isConfirmed) {
     document.getElementById('edit-modal').style.display = 'none';
     if (isConfirmed) {
         document.getElementById('edit-item').submit();
@@ -106,6 +106,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-document.getElementById('reload-button').addEventListener('click', function() {
-    location.reload();
-});
+function deleteConfirmSubmission(isConfirmed) {
+    document.getElementById('delete-modal').style.display = 'none';
+    if (isConfirmed) {
+      // 削除処理の実行。この部分は実際の削除処理に合わせて変更してください。
+      window.location.href = document.getElementById('delete-button').getAttribute('href');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var deleteButton = document.getElementById('delete-button');
+    if (deleteButton) {
+      deleteButton.addEventListener('click', function(event) {
+        event.preventDefault(); // リンクのデフォルト動作を防ぐ
+        document.getElementById('delete-modal').style.display = 'block';
+      });
+    }
+  });
