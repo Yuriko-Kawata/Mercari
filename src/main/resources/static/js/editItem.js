@@ -1,72 +1,17 @@
-// <select> 要素を取得
-const selectParentElement = document.getElementById('parentCategory');
-
-// すべてのオプションを走査し、重複を追跡
-const seenParentOptions = new Set();
-for (const option of selectParentElement.options) {
-    if (seenParentOptions.has(option.text)) {
-        // 既に存在するテキストの場合、オプションを非表示にする
-        option.style.display = 'none';
-    }else {
-    // 新しいテキストの場合、Setに追加
-    seenParentOptions.add(option.text);
-    }
-};
-
-// <select> 要素を取得
-const selectChildElement = document.getElementById('childCategory');
-// すべてのオプションを走査し、重複を追跡
-const seenChildOptions = new Set();
-for (const option of selectChildElement.options) {
-    if (seenChildOptions.has(option.text)) {
-        // 既に存在するテキストの場合、オプションを非表示にする
-        option.style.display = 'none';
-    }else {
-    // 新しいテキストの場合、Setに追加
-    seenChildOptions.add(option.text);
-    }
-
-};
-
-// <select> 要素を取得
-const selectGrandElement = document.getElementById('grandCategory');
-// すべてのオプションを走査し、重複を追跡
-const seenGrandOptions = new Set();
-for (const option of selectGrandElement.options) {
-    if (seenGrandOptions.has(option.text)) {
-        // 既に存在するテキストの場合、オプションを非表示にする
-        option.style.display = 'none';
-    }else {
-    // 新しいテキストの場合、Setに追加
-    seenGrandOptions.add(option.text);
-    }
-};
-
-
 document.getElementById('parentCategory').addEventListener('change', function() {
     var select = this;
     var selectedOption = select.options[select.selectedIndex];
     var selectedId = selectedOption.getAttribute('data-parent-id');
     var childOptions = document.querySelectorAll('#childCategory option');
+    var inputValue = this.value;
+    
+    document.getElementById('childCategory').disabled = inputValue.trim() === '';
     
     childOptions.forEach(function(option) {
         if (option.getAttribute('data-child-parentId') === selectedId) {
             option.style.display = 'block'; // 親カテゴリに対応する子カテゴリを表示
         } else {
             option.style.display = 'none'; // それ以外の子カテゴリを非表示
-        }
-        const selectChildElement = document.getElementById('childCategory');
-        
-        // すべてのオプションを走査し、重複を追跡
-        const seenChildOptions = new Set();
-        for (const option of selectChildElement.options) {
-            if (seenChildOptions.has(option.text)) {
-                // 既に存在するテキストの場合、オプションを非表示にする
-                option.style.display = 'none';
-            }else {
-                // 新しいテキストの場合、Setに追加
-                seenChildOptions.add(option.text);
-            }
         }
     });
 });
@@ -76,7 +21,10 @@ document.getElementById('childCategory').addEventListener('change', function() {
     var selectedOption = select.options[select.selectedIndex];
     var selectedId = selectedOption.getAttribute('data-child-id');
     var grandOptions = document.querySelectorAll('#grandCategory option');
+    var inputValue = this.value;
     
+    document.getElementById('grandCategory').disabled = inputValue.trim() === '';
+
     grandOptions.forEach(function(option) {
         if (option.getAttribute('data-grand-id') === selectedId) {
             option.style.display = 'block'; // 親カテゴリに対応する子カテゴリを表示
@@ -84,17 +32,6 @@ document.getElementById('childCategory').addEventListener('change', function() {
             option.style.display = 'none'; // それ以外の子カテゴリを非表示
         }
         
-        // すべてのオプションを走査し、重複を追跡
-        const seenChildOptions = new Set();
-        for (const option of selectChildElement.options) {
-            if (seenChildOptions.has(option.text)) {
-                // 既に存在するテキストの場合、オプションを非表示にする
-                option.style.display = 'none';
-            }else {
-                // 新しいテキストの場合、Setに追加
-                seenChildOptions.add(option.text);
-            }
-        }
     });
 });
 
@@ -146,13 +83,43 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-document.getElementById('edit-item').addEventListener('submit', function(event){    
-    var confirmResult = confirm("変更しますか？")
-    if(!confirmResult){
-        event.preventDefault();
+function editConfirmSubmission(isConfirmed) {
+    document.getElementById('edit-modal').style.display = 'none';
+    if (isConfirmed) {
+        document.getElementById('edit-item').submit();
     }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const inputs = document.querySelectorAll('input, select');
+    const submitButton = document.getElementById('submit-button');
+
+    inputs.forEach(input => {
+        input.addEventListener('change', function () {
+            submitButton.disabled = false;
+        });
+    });
+
+    submitButton.addEventListener('click', function(event) {
+        event.preventDefault(); // デフォルトの送信を阻止
+        document.getElementById('edit-modal').style.display = 'block'; // モーダルを表示
+    });
 });
 
-document.getElementById('reload-button').addEventListener('click', function() {
-    location.reload();
-});
+function deleteConfirmSubmission(isConfirmed) {
+    document.getElementById('delete-modal').style.display = 'none';
+    if (isConfirmed) {
+      // 削除処理の実行。この部分は実際の削除処理に合わせて変更してください。
+      window.location.href = document.getElementById('delete-button').getAttribute('href');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var deleteButton = document.getElementById('delete-button');
+    if (deleteButton) {
+      deleteButton.addEventListener('click', function(event) {
+        event.preventDefault(); // リンクのデフォルト動作を防ぐ
+        document.getElementById('delete-modal').style.display = 'block';
+      });
+    }
+  });

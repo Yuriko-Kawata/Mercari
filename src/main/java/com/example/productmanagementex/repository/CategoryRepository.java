@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.productmanagementex.domain.Category;
 
+// 要修正
 @Repository
 public class CategoryRepository {
 
@@ -23,13 +24,12 @@ public class CategoryRepository {
         category.setParentId(rs.getInt("parent_id"));
         category.setName(rs.getString("name"));
         category.setNameAll(rs.getString("name_all"));
-        category.setCategoryNumber(rs.getInt("category_number"));
         return category;
     };
 
     private final String FIND_ALL_SQL = """
             SELECT
-                id, parent_id, name, name_all, category_number
+                id, parent_id, name, name_all
             FROM
                 category
             ORDER BY
@@ -68,7 +68,7 @@ public class CategoryRepository {
             """;
 
     private final String INSERT_SQL = """
-            INSERT INTO category (name, parent_id, name_all, category_number)
+            INSERT INTO category (name, parent_id, name_all)
             SELECT
                 SPLIT_PART(:nameAll, '/', position),
                 CASE
@@ -95,7 +95,7 @@ public class CategoryRepository {
     private static final String FIND_ALL_PARENT_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
                 category
             WHERE
@@ -112,7 +112,7 @@ public class CategoryRepository {
     private static final String FIND_ALL_CHILD_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
                 category
             WHERE
@@ -129,7 +129,7 @@ public class CategoryRepository {
     private static final String FIND_ALL_GRAND_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
                 category
             WHERE
@@ -200,7 +200,7 @@ public class CategoryRepository {
     private static final String SEARCH_PARENT_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
             category
             WHERE
@@ -218,7 +218,7 @@ public class CategoryRepository {
     private static final String SEARCH_CHILD_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
             category
             WHERE
@@ -236,7 +236,7 @@ public class CategoryRepository {
     private static final String SEARCH_GRAND_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
             category
             WHERE
@@ -310,7 +310,7 @@ public class CategoryRepository {
 
     private static final String FIND_BY_ID_SQL = """
             SELECT
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
                 category
             WHERE
@@ -321,7 +321,7 @@ public class CategoryRepository {
     private static final String FIND_CHILD_CATEGORY_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
                 category
             WHERE

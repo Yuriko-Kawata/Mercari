@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.productmanagementex.domain.Category;
+import com.example.productmanagementex.domain.Item;
 import com.example.productmanagementex.domain.User;
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.form.ItemForm;
@@ -50,7 +52,12 @@ public class ItemController {
         model.addAttribute("itemList", itemService.findAllItems(page));
 
         int totalItem = itemService.totalItem();
-        int totalPage = totalItem / 30 + 1;
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
 
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
@@ -69,7 +76,14 @@ public class ItemController {
                         form.getChildCategory(), form.getGrandCategory(), page));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
-        int totalPage = totalItem / 30 + 1;
+
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
+
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);
@@ -91,7 +105,13 @@ public class ItemController {
                         form.getChildCategory(), form.getGrandCategory(), page));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
-        int totalPage = totalItem / 30 + 1;
+
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);
@@ -107,19 +127,17 @@ public class ItemController {
     }
 
     @RequestMapping("toAdd")
-    public String toAddItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
+    public String toAddItem(ItemForm itemForm, Model model) {
         model.addAttribute("itemForm", itemForm);
-        model.addAttribute("categoryForm", categoryForm);
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
         return "add";
     }
 
     @PostMapping("add")
-    public String addItem(@Validated ItemForm itemForm, BindingResult rsItem, @Validated CategoryForm categoryForm,
-            BindingResult rsCategory, Model model) {
-        if (rsItem.hasErrors() || rsCategory.hasErrors()) {
-            return toAddItem(itemForm, categoryForm, model);
+    public String addItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
+        if (rs.hasErrors()) {
+            return toAddItem(itemForm, model);
         }
 
         itemService.addItem(itemForm, categoryForm);
@@ -130,28 +148,74 @@ public class ItemController {
     public String toEditItem(int id, CategoryForm categoryForm, Model model) {
         model.addAttribute("categoryForm", categoryForm);
         model.addAttribute("categoryList", categoryService.findAllCategory());
-        model.addAttribute("itemData", itemService.findById(id));
+        Item item = itemService.findById(id);
+        String originalParentCategory = null;
+        String originalChildCategory = null;
+        String originalGrandCategory = null;
+        for (Category category : item.getCategory()) {
+            if (category.getParentId() != 0) {
+                if (category.getNameAll() != null) {
+                    originalGrandCategory = category.getName();
+                } else {
+                    originalChildCategory = category.getName();
+                }
+            } else {
+                originalParentCategory = category.getName();
+            }
+        }
+        model.addAttribute("originalParentCategory", originalParentCategory);
+        model.addAttribute("originalChildCategory", originalChildCategory);
+        model.addAttribute("originalGrandCategory", originalGrandCategory);
+        model.addAttribute("itemData", item);
 
         return "edit";
     }
 
     @PostMapping("edit")
     public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
-        if (categoryService.checkCategory(categoryForm) == 0) {
-            model.addAttribute("error", true);
+        if (categoryForm.getParentCategory() == "" && categoryForm.getChildCategory() == null
+                && categoryForm.getGrandCategory() == null) {
+            Item item = itemService.findById(itemForm.getId());
+            String originalParentCategory = null;
+            String originalChildCategory = null;
+            String originalGrandCategory = null;
+            for (Category category : item.getCategory()) {
+                if (category.getParentId() != 0) {
+                    if (category.getNameAll() != null) {
+                        originalGrandCategory = category.getName();
+                    } else {
+                        originalChildCategory = category.getName();
+                    }
+                } else {
+                    originalParentCategory = category.getName();
+                }
+            }
+            categoryForm.setParentCategory(originalParentCategory);
+            categoryForm.setChildCategory(originalChildCategory);
+            categoryForm.setGrandCategory(originalGrandCategory);
+
+            itemService.editItem(itemForm, categoryForm);
+            model.addAttribute("itemId", itemForm.getId());
+            return "confirm/edit-item-confirm";
+
+        } else if (categoryForm.getParentCategory() != "" && categoryForm.getChildCategory() == "") {
+            model.addAttribute("choiceError", model);
+            return toEditItem(itemForm.getId(), categoryForm, model);
+        } else if (categoryForm.getParentCategory() != "" && categoryForm.getChildCategory() != ""
+                && categoryForm.getGrandCategory() == "") {
+            model.addAttribute("choiceError", model);
             return toEditItem(itemForm.getId(), categoryForm, model);
         }
-        itemService.editItem(itemForm, categoryForm);
 
+        itemService.editItem(itemForm, categoryForm);
         model.addAttribute("itemId", itemForm.getId());
         return "confirm/edit-item-confirm";
     }
 
-    @PostMapping("delete")
-    public String deleteItem(int id, int page, Model model) {
+    @RequestMapping("delete")
+    public String deleteItem(int id, Model model) {
         itemService.delete(id);
-
-        return toSearchPage(page, model);
+        return "confirm/delete-item-confirm";
     }
 
 }

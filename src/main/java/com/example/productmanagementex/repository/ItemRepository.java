@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -19,48 +19,86 @@ public class ItemRepository {
     @Autowired
     private NamedParameterJdbcTemplate template;
 
-    private static final ResultSetExtractor<List<Item>> ITEM_RESULTSET = (rs) -> {
-        List<Item> itemList = new ArrayList<>();
-        List<Category> categoryList = null;
-        Item item = null;
-        int itemBefore = 0;
+    private static RowMapper<Item> ITEM_ROWMAPPER = (rs, i) -> {
+        Item item = new Item();
+        item.setId(rs.getInt("i_id"));
+        item.setName(rs.getString("i_name"));
+        item.setCondition(rs.getInt("i_condition"));
+        item.setBrand(rs.getString("i_brand"));
+        item.setPrice(rs.getDouble("i_price"));
+        item.setStock(rs.getInt("i_stock"));
+        item.setShipping(rs.getInt("i_shipping"));
+        item.setDescription(rs.getString("i_description"));
+        item.setUpdateTime(rs.getDate("i_update_time"));
+        item.setDelFlg(rs.getInt("i_del_flg"));
 
-        while (rs.next()) {
-            int itemNow = rs.getInt("i_id");
+        List<Category> categoryList = new ArrayList<>();
+        Category parentCategory = new Category();
+        parentCategory.setId(rs.getInt("parent_id"));
+        parentCategory.setName(rs.getString("parent_name"));
+        parentCategory.setParentId(rs.getInt("parent_parent_id"));
+        parentCategory.setNameAll(rs.getString("parent_name_all"));
+        categoryList.add(parentCategory);
+        Category childCategory = new Category();
+        childCategory.setId(rs.getInt("child_id"));
+        childCategory.setName(rs.getString("child_name"));
+        childCategory.setParentId(rs.getInt("child_parent_id"));
+        childCategory.setNameAll(rs.getString("child_name_all"));
+        categoryList.add(childCategory);
+        Category grandCategory = new Category();
+        grandCategory.setId(rs.getInt("grand_id"));
+        grandCategory.setName(rs.getString("grand_name"));
+        grandCategory.setParentId(rs.getInt("grand_parent_id"));
+        grandCategory.setNameAll(rs.getString("grand_name_all"));
+        categoryList.add(grandCategory);
 
-            if (itemNow != itemBefore) {
-                if (item != null) {
-                    itemList.add(item);
-                }
-                categoryList = new ArrayList<>();
-                item = new Item();
-                item.setId(rs.getInt("i_id"));
-                item.setName(rs.getString("i_name"));
-                item.setCondition(rs.getInt("i_condition"));
-                item.setBrand(rs.getString("i_brand"));
-                item.setPrice(rs.getDouble("i_price"));
-                item.setStock(rs.getInt("i_stock"));
-                item.setShipping(rs.getInt("i_shipping"));
-                item.setDescription(rs.getString("i_description"));
-                item.setDelete(rs.getBoolean("i_delete"));
-                itemBefore = itemNow;
-            }
-            if (rs.getInt("c_id") != 0) {
-                Category category = new Category();
-                category.setId(rs.getInt("c_id"));
-                category.setParentId(rs.getInt("c_parent_id"));
-                category.setName(rs.getString("c_name"));
-                category.setNameAll(rs.getString("c_name_all"));
-                category.setCategoryNumber(rs.getInt("c_category_number"));
-                categoryList.add(category);
-            }
-            item.setCategory(categoryList);
-        }
-        if (item != null) {
-            itemList.add(item);
-        }
-        return itemList;
+        item.setCategory(categoryList);
+        return item;
     };
+
+    // private static final ResultSetExtractor<List<Item>> ITEM_RESULTSET = (rs) ->
+    // {
+    // List<Item> itemList = new ArrayList<>();
+    // List<Category> categoryList = null;
+    // Item item = null;
+    // int itemBefore = 0;
+
+    // while (rs.next()) {
+    // int itemNow = rs.getInt("i_id");
+
+    // if (itemNow != itemBefore) {
+    // if (item != null) {
+    // itemList.add(item);
+    // }
+    // categoryList = new ArrayList<>();
+    // item = new Item();
+    // item.setId(rs.getInt("i_id"));
+    // item.setName(rs.getString("i_name"));
+    // item.setCondition(rs.getInt("i_condition"));
+    // item.setBrand(rs.getString("i_brand"));
+    // item.setPrice(rs.getDouble("i_price"));
+    // item.setStock(rs.getInt("i_stock"));
+    // item.setShipping(rs.getInt("i_shipping"));
+    // item.setDescription(rs.getString("i_description"));
+    // item.setUpdateTime(rs.getDate("i_update_time"));
+    // item.setDelFlg(rs.getInt("i_del_flg"));
+    // itemBefore = itemNow;
+    // }
+    // if (rs.getInt("c_id") != 0) {
+    // Category category = new Category();
+    // category.setId(rs.getInt("c_id"));
+    // category.setParentId(rs.getInt("c_parent_id"));
+    // category.setName(rs.getString("c_name"));
+    // category.setNameAll(rs.getString("c_name_all"));
+    // categoryList.add(category);
+    // }
+    // item.setCategory(categoryList);
+    // }
+    // if (item != null) {
+    // itemList.add(item);
+    // }
+    // return itemList;
+    // };
 
     private final String FIND_ALL_SQL = """
             SELECT
@@ -73,24 +111,42 @@ public class ItemRepository {
                 i.stock AS i_stock,
                 i.shipping AS i_shipping,
                 i.description AS i_description,
-                i.delete AS i_delete,
-                c.id AS c_id,
-                c.parent_id AS c_parent_id,
-                c.name AS c_name,
-                c.name_all AS c_name_all,
-                c.category_number AS c_category_number
+                i.update_time AS i_update_time,
+                i.del_flg AS i_del_flg,
+                grand.id AS grand_id,
+                grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
+                child.id AS child_id,
+                child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
+                parent.id AS parent_id,
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
             FROM
                 items AS i
             LEFT OUTER JOIN
-                category AS c
+                category AS grand
             ON
-                i.category = c.category_number
+                i.category = grand.id
+            LEFT OUTER JOIN
+                category AS child
+            ON
+                grand.parent_id = child.id
+            LEFT OUTER JOIN
+                category AS parent
+            ON
+                child.parent_id = parent.id
+            WHERE
+                    i.del_flg = 0
             ORDER BY
-                i.id, c.parent_id NULLS FIRST
+                i.id
             LIMIT
-                90
+                30
             OFFSET
-                (:page - 1) * 90
+                (:page - 1) * 30
             ;
             """;
 
@@ -107,35 +163,52 @@ public class ItemRepository {
                 i.stock AS i_stock,
                 i.shipping AS i_shipping,
                 i.description AS i_description,
-                i.delete AS i_delete,
-                c.id AS c_id,
-                c.parent_id AS c_parent_id,
-                c.name AS c_name,
-                c.name_all AS c_name_all,
-                c.category_number AS c_category_number
+                i.update_time AS i_update_time,
+                i.del_flg AS i_del_flg,
+                grand.id AS grand_id,
+                grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
+                child.id AS child_id,
+                child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
+                parent.id AS parent_id,
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
             FROM
                 items AS i
             LEFT OUTER JOIN
-                category AS c
+                category AS grand
             ON
-                i.category = c.category_number
+                i.category = grand.id
+            LEFT OUTER JOIN
+                category AS child
+            ON
+                grand.parent_id = child.id
+            LEFT OUTER JOIN
+                category AS parent
+            ON
+                child.parent_id = parent.id
             WHERE
-                (i.name LIKE :name)
+                i.del_flg = 0
+                AND (i.name LIKE :name)
                 AND (i.brand LIKE :brand)
-                AND  c.category_number IN
+                AND  i.category IN
                     (SELECT
-                        category_number
+                        id
                     FROM
                         category
                     WHERE
                         name_all LIKE :nameAll
                         )
             ORDER BY
-                i.id, c.parent_id NULLS FIRST
+                i.id
             LIMIT
-                90
+                30
             OFFSET
-                (:page - 1) * 90
+                (:page - 1) * 30
             ;
             """;
 
@@ -145,11 +218,12 @@ public class ItemRepository {
             FROM
                 items
             WHERE
-                (name LIKE :name)
+                del_flg = 0
+                AND(name LIKE :name)
                 AND (brand LIKE :brand)
                 AND  category IN
                     (SELECT
-                        category_number
+                        id
                     FROM
                         category
                     WHERE
@@ -169,38 +243,52 @@ public class ItemRepository {
                 i.stock AS i_stock,
                 i.shipping AS i_shipping,
                 i.description AS i_description,
-                i.delete AS i_delete,
-                c.id AS c_id,
-                c.parent_id AS c_parent_id,
-                c.name AS c_name,
-                c.name_all AS c_name_all,
-                c.category_number AS c_category_number
+                i.update_time AS i_update_time,
+                i.del_flg AS i_del_flg,
+                grand.id AS grand_id,
+                grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
+                child.id AS child_id,
+                child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
+                parent.id AS parent_id,
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
             FROM
                 items AS i
             LEFT OUTER JOIN
-                category AS c
+                category AS grand
             ON
-                i.category = c.category_number
+                i.category = grand.id
+            LEFT OUTER JOIN
+                category AS child
+            ON
+                grand.parent_id = child.id
+            LEFT OUTER JOIN
+                category AS parent
+            ON
+                child.parent_id = parent.id
             WHERE
                 i.id = :id
-            ORDER BY
-                c.id
             ;
             """;
 
     private static final String INSERT_SQL = """
             INSERT INTO
-                items(name, condition, category, brand, price, description, name_all)
+                items(name, condition, category, brand, price, description)
             VALUES
                 (:name, :condition,
                 (SELECT
-                    category_number
+                    id
                 FROM
                     category
                 WHERE
                     name_all = :nameAll)
                 ,
-                :brand, :price, :description, :nameAll
+                :brand, :price, :description
                 )
             ;
             """;
@@ -210,24 +298,26 @@ public class ItemRepository {
                 items
             SET
                 name = :name, condition = :condition,
-                category = (SELECT category_number FROM category WHERE name_all = :nameAll),
-                brand = :brand, price = :price, description = :description, name_all = :nameAll
+                category = (SELECT id FROM category WHERE name_all = :nameAll),
+                brand = :brand, price = :price, description = :description
             WHERE
                 id = :id
+            ;
             """;
 
     private static final String CHANGE_DELETE_SQL = """
             UPDATE
                 items
             SET
-                delete = NOT delete
+                del_flg = CASE WHEN del_flg = 0 THEN 1 ELSE 0 END
             WHERE
                 id = :id
+            ;
             """;
 
     public List<Item> findAllItems(int page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
-        List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_RESULTSET);
+        List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
         return itemList;
     }
 
@@ -239,7 +329,7 @@ public class ItemRepository {
     public List<Item> searchItems(String name, String brand, String nameAll, int page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll).addValue("page", page);
-        List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_RESULTSET);
+        List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_ROWMAPPER);
         return itemList;
     }
 
@@ -252,7 +342,7 @@ public class ItemRepository {
 
     public Item findById(int id) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
-        List<Item> itemList = template.query(FIND_BY_ID_SQL, param, ITEM_RESULTSET);
+        List<Item> itemList = template.query(FIND_BY_ID_SQL, param, ITEM_ROWMAPPER);
         Item item = itemList.get(0);
         return item;
     }
@@ -260,17 +350,16 @@ public class ItemRepository {
     public void insertItem(Item item) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
-                .addValue("price", item.getPrice()).addValue("description", item.getDescription())
-                .addValue("nameAll", item.getNameAll());
+                .addValue("price", item.getPrice()).addValue("description", item.getDescription());
         template.update(INSERT_SQL, param);
     }
 
-    public void updateItem(Item item) {
+    public void updateItem(Item item, String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", item.getId())
                 .addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
-                .addValue("nameAll", item.getNameAll());
+                .addValue("nameAll", nameAll);
         template.update(UPDATE_SQL, param);
     }
 

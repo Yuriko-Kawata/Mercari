@@ -142,17 +142,8 @@ public class ItemService {
     }
 
     public void addItem(ItemForm itemForm, CategoryForm categoryForm) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(categoryForm.getParentCategory());
-        builder.append("/");
-        builder.append(categoryForm.getChildCategory());
-        builder.append("/");
-        builder.append(categoryForm.getGrandCategory());
-        String nameAll = builder.toString();
         Item item = new Item();
-
         BeanUtils.copyProperties(itemForm, item);
-        item.setNameAll(nameAll);
 
         repository.insertItem(item);
     }
@@ -166,11 +157,9 @@ public class ItemService {
         builder.append(categoryForm.getGrandCategory());
         String nameAll = builder.toString();
         Item item = new Item();
-
         BeanUtils.copyProperties(itemForm, item);
-        item.setNameAll(nameAll);
 
-        repository.updateItem(item);
+        repository.updateItem(item, nameAll);
     }
 
     public void delete(int id) {
