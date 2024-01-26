@@ -68,7 +68,7 @@ public class CategoryRepository {
             """;
 
     private final String INSERT_SQL = """
-            INSERT INTO category (name, parent_id, name_all, category_number)
+            INSERT INTO category (name, parent_id, name_all)
             SELECT
                 SPLIT_PART(:nameAll, '/', position),
                 CASE
@@ -200,7 +200,7 @@ public class CategoryRepository {
     private static final String SEARCH_PARENT_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
             category
             WHERE
@@ -218,7 +218,7 @@ public class CategoryRepository {
     private static final String SEARCH_CHILD_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
             category
             WHERE
@@ -236,7 +236,7 @@ public class CategoryRepository {
     private static final String SEARCH_GRAND_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
             category
             WHERE
@@ -310,7 +310,7 @@ public class CategoryRepository {
 
     private static final String FIND_BY_ID_SQL = """
             SELECT
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
                 category
             WHERE
@@ -321,7 +321,7 @@ public class CategoryRepository {
     private static final String FIND_CHILD_CATEGORY_SQL = """
             SELECT
             DISTINCT ON(name)
-                id, name, parent_id, name_all, category_number
+                id, name, parent_id, name_all
             FROM
                 category
             WHERE

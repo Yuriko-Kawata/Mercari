@@ -168,7 +168,7 @@ public class CategoryController {
         categoryService.editCategoryNameAndNameAll(form.getId(), form.getName(), form.getParentId(), form.getNameAll());
 
         model.addAttribute("categoryId", form.getId());
-        return "confirm/edit-item-confirm";
+        return "confirm/edit-category-confirm";
     }
 
     // @PostMapping("delete")
