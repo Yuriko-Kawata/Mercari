@@ -212,11 +212,10 @@ public class ItemController {
         return "confirm/edit-item-confirm";
     }
 
-    @PostMapping("delete")
-    public String deleteItem(int id, int page, Model model) {
+    @RequestMapping("delete")
+    public String deleteItem(int id, Model model) {
         itemService.delete(id);
-
-        return toSearchPage(page, model);
+        return "confirm/delete-item-confirm";
     }
 
 }
