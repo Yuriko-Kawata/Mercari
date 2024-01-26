@@ -1,21 +1,3 @@
-const parentDatalistElement = document.getElementById('parentCategoryList');
-// すべてのオプションを走査し、重複を追跡
-const seenParentOptions = new Set();
-const parentOptionsToRemove = [];
-
-for (const option of parentDatalistElement.options) {
-    if (seenParentOptions.has(option.value)) {
-        // 既に存在する値の場合、オプションを削除リストに追加
-        parentOptionsToRemove.push(option);
-    } else {
-        // 新しい値の場合、Setに追加
-        seenParentOptions.add(option.value);
-    }
-}
-// 重複するオプションを削除
-for (const option of parentOptionsToRemove) {
-    parentDatalistElement.removeChild(option);
-};
 
 const childDatalistElement = document.getElementById('childCategoryList');
 // すべてのオプションを走査し、重複を追跡

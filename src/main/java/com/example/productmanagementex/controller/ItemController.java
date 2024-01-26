@@ -50,7 +50,12 @@ public class ItemController {
         model.addAttribute("itemList", itemService.findAllItems(page));
 
         int totalItem = itemService.totalItem();
-        int totalPage = totalItem / 30 + 1;
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
 
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
@@ -69,7 +74,14 @@ public class ItemController {
                         form.getChildCategory(), form.getGrandCategory(), page));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
-        int totalPage = totalItem / 30 + 1;
+
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
+
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);
@@ -91,7 +103,13 @@ public class ItemController {
                         form.getChildCategory(), form.getGrandCategory(), page));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
-        int totalPage = totalItem / 30 + 1;
+
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);

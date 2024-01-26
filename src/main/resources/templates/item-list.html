@@ -180,35 +180,43 @@
     </div>
 
     <!-- pagination -->
-    <div id="pages" th:if="${totalItemCount <= 1}">
+    <div id="pages" th:if="${totalItemCount != 0}">
       <nav class="page-nav" style="text-align: center;">
+        <div th:if="${totalPage <= 4}">
+          <a th:each="pageNum: ${#numbers.sequence(1, totalPage)}"
+          th:href="@{/toSearch(page=${pageNum})}"
+          th:class="${pageNum == currentPage} ? 'current-page' : ''"
+          th:text="${pageNum + '&nbsp;'}"></a>
+        </div>
         <div th:if="${currentPage <= 5}">
-          <a th:each="pageNum: ${#numbers.sequence(1, 5)}"
-                th:href="@{/toSearch(page=${pageNum})}"
-                th:class="${pageNum == currentPage} ? 'current-page' : ''"
-                th:text="${pageNum + '&nbsp;'}"></a>
-          &hellip;
-          <a th:href="@{toSearch(page=${totalPage})}" th:text="${totalPage}"></a>
-          <a th:href="@{toSearch(page=${currentPage+1})}">&gt;&gt;</a>
+          <div th:if="${totalPage >= 5}">
+            <a th:each="pageNum: ${#numbers.sequence(1, 5)}"
+            th:href="@{/toSearch(page=${pageNum})}"
+            th:class="${pageNum == currentPage} ? 'current-page' : ''"
+            th:text="${pageNum + '&nbsp;'}"></a>
+            &hellip;
+            <a th:href="@{toSearch(page=${totalPage})}" th:text="${totalPage}"></a>
+            <a th:href="@{toSearch(page=${currentPage+1})}">&gt;&gt;</a>
+            <div th:if="${currentPage >= 6 && currentPage+3 < totalPage}">
+              <a th:href="@{/toSearch(page=${currentPage-1})}">&lt;&lt;</a>
+              <a th:href="@{/toSearch(page=1)}">1</a>&hellip;
+              <a th:href="@{toSearch(page=${currentPage-3})}" th:text="${currentPage-3}">2</a>
+              <a th:href="@{toSearch(page=${currentPage-2})}" th:text="${currentPage-2}">3</a>
+              <a th:href="@{toSearch(page=${currentPage-1})}" th:text="${currentPage-1}">4</a>
+              <a class="current-page" th:text="${currentPage}">5</a>&hellip;
+              <a th:href="@{toSearch(page=${totalPage})}" th:text="${totalPage}">20</a>
+              <a th:href="@{/toSearch(page=${currentPage+1})}">&gt;&gt;</a>
+            </div>
+            <div th:if="${currentPage+3 >= totalPage}">
+              <a th:href="@{/toSearch(page=${currentPage-1})}">&lt;&lt;</a>
+              <a th:href="@{/toSearch(page=1)}">1</a>&hellip;
+              <a th:each="pageNum: ${#numbers.sequence(totalPage-4, totalPage)}"
+              th:href="@{/toSearch(page=${pageNum})}"
+              th:class="${pageNum == currentPage} ? 'current-page' : ''"
+              th:text="${pageNum + '&nbsp;'}"></a>
+            </div>  
+          </div>
         </div>
-        <div th:if="${currentPage >= 6 && currentPage+3 < totalPage}">
-          <a th:href="@{/toSearch(page=${currentPage-1})}">&lt;&lt;</a>
-          <a th:href="@{/toSearch(page=1)}">1</a>&hellip;
-          <a th:href="@{toSearch(page=${currentPage-3})}" th:text="${currentPage-3}">2</a>
-          <a th:href="@{toSearch(page=${currentPage-2})}" th:text="${currentPage-2}">3</a>
-          <a th:href="@{toSearch(page=${currentPage-1})}" th:text="${currentPage-1}">4</a>
-          <a class="current-page" th:text="${currentPage}">5</a>&hellip;
-          <a th:href="@{toSearch(page=${totalPage})}" th:text="${totalPage}">20</a>
-          <a th:href="@{/toSearch(page=${currentPage+1})}">&gt;&gt;</a>
-        </div>
-        <div th:if="${currentPage+3 >= totalPage}">
-          <a th:href="@{/toSearch(page=${currentPage-1})}">&lt;&lt;</a>
-          <a th:href="@{/toSearch(page=1)}">1</a>&hellip;
-          <a th:each="pageNum: ${#numbers.sequence(totalPage-4, totalPage)}"
-                th:href="@{/toSearch(page=${pageNum})}"
-                th:class="${pageNum == currentPage} ? 'current-page' : ''"
-                th:text="${pageNum + '&nbsp;'}"></a>
-        </div>  
       </nav>
     </div>
       <!-- ページ番号を指定して表示するフォーム -->

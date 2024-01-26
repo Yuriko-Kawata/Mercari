@@ -1,17 +1,3 @@
-// <select> 要素を取得
-const selectParentElement = document.getElementById('parentCategory');
-
-// すべてのオプションを走査し、重複を追跡
-const seenParentOptions = new Set();
-for (const option of selectParentElement.options) {
-    if (seenParentOptions.has(option.text)) {
-        // 既に存在するテキストの場合、オプションを非表示にする
-        option.style.display = 'none';
-    }else {
-    // 新しいテキストの場合、Setに追加
-    seenParentOptions.add(option.text);
-    }
-}
 
 document.getElementById('parentCategory').addEventListener('change', function() {
     var select = this;
@@ -34,17 +20,6 @@ document.getElementById('parentCategory').addEventListener('change', function() 
         }
     });
     
-    // すべてのオプションを走査し、重複を追跡
-    const seenChildOptions = new Set();
-    for (const option of selectChildElement.options) {
-        if (seenChildOptions.has(option.text)) {
-            // 既に存在するテキストの場合、オプションを非表示にする
-            option.style.display = 'none';
-        }else {
-            // 新しいテキストの場合、Setに追加
-            seenChildOptions.add(option.text);
-        }
-    }
 });
 
 document.getElementById('childCategory').addEventListener('change', function() {
@@ -67,17 +42,6 @@ document.getElementById('childCategory').addEventListener('change', function() {
         
     });
     
-    // すべてのオプションを走査し、重複を追跡
-    const seenGrandOptions = new Set();
-    for (const option of selectGrandElement.options) {
-        if (seenGrandOptions.has(option.text)) {
-            // 既に存在するテキストの場合、オプションを非表示にする
-            option.style.display = 'none';
-        }else {
-            // 新しいテキストの場合、Setに追加
-            seenGrandOptions.add(option.text);
-        }
-    }
 });
 
 document.getElementById('name').addEventListener('input', function() {
