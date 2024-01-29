@@ -121,7 +121,7 @@
         <div class="col-sm-offset-2 col-sm-8">
           <div style="display: flex;justify-content: space-between;">
             <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
-            <a type="button" id="delete-button" class="btn btn-default" th:href="@{toDeleteCategory(id=${categoryData.id})}">&#x1F5D1;&nbsp;delete</a>
+            <a type="button" id="delete-button" class="btn btn-default" th:href="@{deleteCategory(id=${categoryData.id}, parentId=${categoryData.parentId}, nameAll=${categoryData.nameAll})}">&#x1F5D1;&nbsp;delete</a>
           </div>
           <div th:if="${inputError}" style="color:  red;">入力必須です</div>
           <div th:if="${checkError}" style="color:  red;">すでに存在しているカテゴリー名です</div>
@@ -146,10 +146,16 @@
       <div id="delete-modal" class="modal">
         <div class="modal-content">
           <p>&#x26A0;警告</p>
-          <div style="text-align: center; font-size: large;">カテゴリを本当に削除してもよろしいですか？</div>
+          <div style="text-align: center; font-size: large; padding-bottom: 10px;">カテゴリを本当に削除してもよろしいですか？</div>
+          <div>
+            <ul>
+              <li>対応する子、孫カテゴリも削除されます。</li>
+              <li>また、紐づいていた商品のカテゴリは「カテゴリ無」となります。</li>
+            </ul>
+          </div>
           <div style="text-align: right; margin-top: 20px;  ">
             <button class="button" onclick="deleteConfirmSubmission(false)">キャンセル</button>
-            <button class="button" onclick="deleteConfirmSubmission(true)" style="color: red;">確認</button>
+            <button class="button" onclick="deleteConfirmSubmission(true)" style="color: red;">削除</button>
           </div>
         </div>
       </div>  
