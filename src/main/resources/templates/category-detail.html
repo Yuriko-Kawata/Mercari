@@ -24,48 +24,40 @@
       border: none;
     }
   </style>
-  <!-- script -->
-  <script
-    src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script
-    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-    crossorigin="anonymous"></script>
-  <title>Rakus Items</title>
 </head>
 <body>
   <!-- navbar -->
   <nav class="navbar navbar-inverse">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed"
-        data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-        aria-controls="navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
+      data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+      aria-controls="navbar">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
+  </div>
+  <div id="navbar" class="collapse navbar-collapse">
+    <div>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <form th:action="@{/logout}" method="post">
+            <input type="submit" class="navbar-text logout" value="Logout"/>
+          </form>
+        </li>
+      </ul>
+      <p class="navbar-text navbar-right">
+        user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
+      </p>
     </div>
-    <div id="navbar" class="collapse navbar-collapse">
-      <div>
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <form th:action="@{/logout}" method="post">
-              <input type="submit" class="navbar-text logout" value="Logout"/>
-            </form>
-          </li>
-        </ul>
-        <p class="navbar-text navbar-right">
-          user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
-        </p>
-      </div>
-    </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- details -->
-  <div class="container">
-    <a type="button" class="btn btn-default" th:href="@{categoryList}"><i
-        class="fa fa-reply"></i> back</a>
+<!-- details -->
+<div class="container">
+  <a type="button" class="btn btn-default" th:href="@{categoryList}"><i
+    class="fa fa-reply"></i> back</a>
     <h2>Details</h2>
     <div id="details">
       <table class="table table-hover">
@@ -90,9 +82,19 @@
           </tr>
         </tbody>
       </table>
-      <a type="button" class="btn btn-default" th:href="@{toEditCategory(id=${category.id})}"><i
+      <div style="display: flex; justify-content: space-between;">
+        <a type="button" id="submit-button" class="btn btn-default" th:href="@{toEditCategory(id=${category.id})}"><i
           class="fa fa-pencil-square-o"></i>&nbsp;edit</a>
+      </div>  
     </div>
-  </div>
-</body>
-</html>
+</div>
+    <!-- script -->
+    <script
+      src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous"></script>
+    <title>Rakus Items</title>
+  </body>
+  </html>

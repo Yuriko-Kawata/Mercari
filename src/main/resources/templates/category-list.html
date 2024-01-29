@@ -136,16 +136,14 @@
           <table id="parent-category-table" class="table table-hover table-condensed">
             <thead>
               <tr>
+                <th>id</th>
                 <th>name</th>
-                <th>delete</th>
               </tr>
             </thead>
             <tbody th:each="parentCategory : ${session.parentCategoryList}">
               <tr>
+                <td class="parentCategory-id" th:text="${parentCategory.id}">id</td>
                 <td class="parentCategory-name"><a th:href="@{/categoryDetail(id=${parentCategory.id})}" th:text="${parentCategory.name}">name</a></td>
-                <form id="delete-submit" th:action="@{/deleteCategory(id=${parentCategory.id}, page=${session.ParentCurrentPage})}" method="post">
-                  <td class="item-delete"><button type="submit" class="delete-button">削除</button></td>
-                </form>
               </tr>
             </tbody>
           </table>
@@ -200,16 +198,16 @@
           <table id="child-category-table" class="table table-hover table-condensed">
             <thead>
               <tr>
+                <th>id</th>
                 <th>name</th>
-                <th>delete</th>
+                <th>parent id</th>
               </tr>
             </thead>
             <tbody th:each="childCategory : ${session.childCategoryList}">
               <tr>
+                <td class="childCategory-id" th:text="${childCategory.id}">id</td>
                 <td class="childCategory-name"><a th:href="@{/categoryDetail(id=${childCategory.id})}" th:text="${childCategory.name}">name</a></td>
-                <form id="delete-submit" th:action="@{/deleteCategory(id=${childCategory.id}, page=${session.childCurrentPage})}" method="post">
-                  <td class="item-delete"><button type="submit" class="delete-button">削除</button></td>
-                </form>
+                <td class="childCategory-parent-id" th:text="${childCategory.parentId}">parent id</td>
               </tr>
             </tbody>
           </table>
@@ -261,19 +259,19 @@
         
         <!-- table -->
         <div class="table-responsive">
-          <table id="parent-category-table" class="table table-hover table-condensed">
+          <table id="grand-category-table" class="table table-hover table-condensed">
             <thead>
               <tr>
+                <th>id</th>
                 <th>name</th>
-                <th>delete</th>
+                <th>parent id</th>
               </tr>
             </thead>
             <tbody th:each="grandCategory : ${session.grandCategoryList}">
               <tr>
+                <td class="grandCategory-id" th:text="${grandCategory.id}">id</td>
                 <td class="grandCategory-name"><a th:href="@{/categoryDetail(id=${grandCategory.id})}" th:text="${grandCategory.name}">name</a></td>
-                <form id="delete-submit" th:action="@{/deleteCategory(id=${grandCategory.id}, page=${session.grandCurrentPage})}" method="post">
-                  <td class="item-delete"><button type="submit">削除</button></td>
-                </form>
+                <td class="grandCategory-prent-id" th:text="${grandCategory.parentId}">parent id</td>
               </tr>
             </tbody>
           </table>
