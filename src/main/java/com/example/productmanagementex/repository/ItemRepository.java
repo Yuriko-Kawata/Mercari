@@ -347,10 +347,11 @@ public class ItemRepository {
         return item;
     }
 
-    public void insertItem(Item item) {
+    public void insertItem(Item item, String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
-                .addValue("price", item.getPrice()).addValue("description", item.getDescription());
+                .addValue("price", item.getPrice()).addValue("description", item.getDescription())
+                .addValue("nameAll", nameAll);
         template.update(INSERT_SQL, param);
     }
 

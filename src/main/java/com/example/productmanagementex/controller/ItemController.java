@@ -136,6 +136,16 @@ public class ItemController {
 
     @PostMapping("add")
     public String addItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
+        if (categoryForm.getParentCategory() == "") {
+            model.addAttribute("error", true);
+            return toAddItem(itemForm, model);
+        } else if (categoryForm.getChildCategory() == "") {
+            model.addAttribute("error", true);
+            return toAddItem(itemForm, model);
+        } else if (categoryForm.getGrandCategory() == "") {
+            model.addAttribute("error", true);
+            return toAddItem(itemForm, model);
+        }
         if (rs.hasErrors()) {
             return toAddItem(itemForm, model);
         }
@@ -173,6 +183,11 @@ public class ItemController {
 
     @PostMapping("edit")
     public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
+        if (itemForm.getName() == "" || itemForm.getPrice() == 0 || itemForm.getDescription() == "") {
+            model.addAttribute("inputError", model);
+            return toEditItem(itemForm.getId(), categoryForm, model);
+        }
+
         if (categoryForm.getParentCategory() == "" && categoryForm.getChildCategory() == null
                 && categoryForm.getGrandCategory() == null) {
             Item item = itemService.findById(itemForm.getId());

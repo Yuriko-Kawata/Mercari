@@ -94,14 +94,13 @@ public class CategoryRepository {
 
     private static final String FIND_ALL_PARENT_SQL = """
             SELECT
-            DISTINCT ON(name)
                 id, name, parent_id, name_all
             FROM
                 category
             WHERE
                 parent_id IS NULL AND name_all IS NULL
             ORDER BY
-                name, id
+                id
             LIMIT
                 30
             OFFSET
@@ -111,14 +110,13 @@ public class CategoryRepository {
 
     private static final String FIND_ALL_CHILD_SQL = """
             SELECT
-            DISTINCT ON(name)
                 id, name, parent_id, name_all
             FROM
                 category
             WHERE
                 parent_id IS NOT NULL AND name_all IS NULL
             ORDER BY
-                name, id
+                parent_id, id
             LIMIT
                 30
             OFFSET
@@ -128,14 +126,13 @@ public class CategoryRepository {
 
     private static final String FIND_ALL_GRAND_SQL = """
             SELECT
-            DISTINCT ON(name)
                 id, name, parent_id, name_all
             FROM
                 category
             WHERE
                 name_all IS NOT NULL
             ORDER BY
-                name, id
+                parent_id, id
             LIMIT
                 30
             OFFSET
@@ -144,70 +141,46 @@ public class CategoryRepository {
             """;
 
     private static final String PARENT_SIZE_SQL = """
-            WITH unique_parent_category AS (
-                SELECT DISTINCT ON (name)
-                    id, name
-                FROM
-                    category
-                WHERE
-                    parent_id IS NULL AND name_all IS NULL
-                ORDER BY
-                    name, id
-            )
             SELECT
                 count(*)
             FROM
-                unique_parent_category
+                category
+            WHERE
+                parent_id IS NULL AND name_all IS NULL
+            ;
             ;
             """;
 
     private static final String CHILD_SIZE_SQL = """
-            WITH unique_child_category AS (
-                SELECT DISTINCT ON (name)
-                    id, name
-                FROM
-                    category
-                WHERE
-                    parent_id IS NOT NULL AND name_all IS NULL
-                ORDER BY
-                    name, id
-            )
             SELECT
                 count(*)
             FROM
-                unique_child_category
+                category
+            WHERE
+                parent_id IS NOT NULL AND name_all IS NULL
             ;
             """;
 
     private static final String GRAND_SIZE_SQL = """
-            WITH unique_grand_category AS (
-                SELECT DISTINCT ON (name)
-                    id, name
-                FROM
-                    category
-                WHERE
-                    name_all IS NOT NULL
-                ORDER BY
-                    name, id
-            )
             SELECT
                 count(*)
             FROM
-                unique_grand_category
+                category
+            WHERE
+                name_all IS NOT NULL
             ;
             """;
 
     private static final String SEARCH_PARENT_SQL = """
             SELECT
-            DISTINCT ON(name)
                 id, name, parent_id, name_all
             FROM
-            category
+                category
             WHERE
                 parent_id IS NULL AND name_all IS NULL
                 AND name LIKE :name
             ORDER BY
-                name, id
+                id
             LIMIT
                 30
             OFFSET
@@ -217,15 +190,14 @@ public class CategoryRepository {
 
     private static final String SEARCH_CHILD_SQL = """
             SELECT
-            DISTINCT ON(name)
                 id, name, parent_id, name_all
             FROM
-            category
+                category
             WHERE
                 parent_id IS NOT NULL AND name_all IS NULL
                 AND name LIKE :name
             ORDER BY
-                name, id
+                parent_id, id
             LIMIT
                 30
             OFFSET
@@ -235,15 +207,14 @@ public class CategoryRepository {
 
     private static final String SEARCH_GRAND_SQL = """
             SELECT
-            DISTINCT ON(name)
                 id, name, parent_id, name_all
             FROM
-            category
+                category
             WHERE
                 name_all IS NOT NULL
                 AND name LIKE :name
             ORDER BY
-                name, id
+                parent_id, id
             LIMIT
                 30
             OFFSET
@@ -252,59 +223,35 @@ public class CategoryRepository {
             """;
 
     private static final String SEARCH_PARENT_SIZE_SQL = """
-            WITH unique_parent_category AS (
-                SELECT DISTINCT ON (name)
-                    id, name
-                FROM
-                    category
-                WHERE
-                    parent_id IS NULL AND name_all IS NULL
-                    AND name LIKE :name
-                ORDER BY
-                    name, id
-            )
             SELECT
                 count(*)
             FROM
-                unique_parent_category
+                category
+            WHERE
+                parent_id IS NULL AND name_all IS NULL
+                AND name LIKE :name
             ;
             """;
 
     private static final String SEARCH_CHILD_SIZE_SQL = """
-            WITH unique_child_category AS (
-                SELECT DISTINCT ON (name)
-                    id, name
-                FROM
-                    category
-                WHERE
-                    parent_id IS NOT NULL AND name_all IS NULL
-                    AND name LIKE :name
-                ORDER BY
-                    name, id
-            )
             SELECT
                 count(*)
             FROM
-                unique_child_category
+                category
+            WHERE
+                parent_id IS NOT NULL AND name_all IS NULL
+                AND name LIKE :name
             ;
             """;
 
     private static final String SEARCH_GRAND_SIZE_SQL = """
-            WITH unique_grand_category AS (
-                SELECT DISTINCT ON (name)
-                    id, name
-                FROM
-                    category
-                WHERE
-                    name_all IS NOT NULL
-                    AND name LIKE :name
-                ORDER BY
-                    name, id
-            )
             SELECT
                 count(*)
             FROM
-                unique_grand_category
+                category
+            WHERE
+                name_all IS NOT NULL
+                AND name LIKE :name
             ;
             """;
 
@@ -320,32 +267,23 @@ public class CategoryRepository {
 
     private static final String FIND_CHILD_CATEGORY_SQL = """
             SELECT
-            DISTINCT ON(name)
                 id, name, parent_id, name_all
             FROM
                 category
             WHERE
                 parent_id = :id
             ORDER BY
-                name, id
+                parent_id, id
             ;
             """;
 
     private static final String CHILD_CATEGORY_SIZE_SQL = """
-            WITH unique_grand_category AS (
-                SELECT DISTINCT ON (name)
-                    id, name
-                FROM
-                    category
-                WHERE
-                    parent_id = :id
-                ORDER BY
-                    name, id
-            )
             SELECT
                 count(*)
             FROM
-                unique_grand_category
+                category
+            WHERE
+                parent_id = :id
             ;
             """;
 

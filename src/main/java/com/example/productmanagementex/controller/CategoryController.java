@@ -161,8 +161,12 @@ public class CategoryController {
 
     @PostMapping("editCategory")
     public String editCategory(CategoryForm form, Model model) {
+        if (form.getName() == null || form.getName() == "") {
+            model.addAttribute("inputError", true);
+            return toEditCategory(form.getId(), model);
+        }
         if (categoryService.checkCategoryName(form.getName(), form.getParentId(), form.getNameAll()) != 0) {
-            model.addAttribute("error", true);
+            model.addAttribute("checkError", true);
             return toEditCategory(form.getId(), model);
         }
         categoryService.editCategoryNameAndNameAll(form.getId(), form.getName(), form.getParentId(), form.getNameAll());

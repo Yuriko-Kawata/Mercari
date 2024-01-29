@@ -94,7 +94,7 @@
       <div class="form-group">
         <label for="parentCategory" class="col-sm-2 control-label">parent category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="parentCategory" >
+          <select class="form-control" name="parentCategory" id="parentCategory" >
             <option value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-parent-id="${category.id}"></option>
@@ -105,7 +105,7 @@
       <div class="form-group">
         <label for="childCategory" class="col-sm-2 control-label">child category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="childCategory" disabled>
+          <select class="form-control" name="childCategory" id="childCategory" disabled>
             <option value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-child-id="${category.id}" th:data-child-parentId="${category.parentId}"></option>
@@ -116,12 +116,13 @@
       <div class="form-group">
         <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
         <div class="col-sm-8">
-          <select class="form-control" id="grandCategory" disabled>
+          <select class="form-control" name="grandCategory" id="grandCategory" disabled>
             <option value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
             </div>
           </select>
+          <span th:if="${error}" class="text-danger">カテゴリは孫まで選択必須です</span>
         </div>
       </div>
       <div class="form-group">

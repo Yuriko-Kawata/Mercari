@@ -91,7 +91,7 @@ function editConfirmSubmission(isConfirmed) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const inputs = document.querySelectorAll('input, select');
+    const inputs = document.querySelectorAll('input, select, textarea');
     const submitButton = document.getElementById('submit-button');
 
     inputs.forEach(input => {

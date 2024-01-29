@@ -37,6 +37,36 @@
       background-color: unset;
       border: none;
     }
+    /* モーダルのスタイル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+    }
+    /* モーダルコンテンツのスタイル */
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid orange;
+      width: 40%;
+    }
+    /* ボタンのスタイル */
+    .button {
+      padding: 10px 20px;
+      border: orange;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: orange;
+    }
   </style>
   <title>Rakus Items</title>
 </head>
@@ -83,21 +113,46 @@
       <div class="form-group">
         <label for="inputName" class="col-sm-2 control-label">name</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" name="name" id="inputName" th:value="${categoryData.name}" required/>
+          <input type="text" class="form-control" name="name" id="inputName" th:value="${categoryData.name}"/>
         </div>
       </div>
       <!-- submit button -->
       <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" id="submit-button" class="btn btn-default">Submit</button>
-          <div th:if="${error}" style="color:  red;">すでに存在しているカテゴリー名です</div>
+        <div class="col-sm-offset-2 col-sm-8">
+          <div style="display: flex;justify-content: space-between;">
+            <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
+            <a type="button" id="delete-button" class="btn btn-default" th:href="@{toDeleteCategory(id=${categoryData.id})}">&#x1F5D1;&nbsp;delete</a>
+          </div>
+          <div th:if="${inputError}" style="color:  red;">入力必須です</div>
+          <div th:if="${checkError}" style="color:  red;">すでに存在しているカテゴリー名です</div>
         </div>
       </div>
     </form>
       <!-- clear button(元の値に戻す) -->
       <div>
-        <button type="button" id="reload-button" class="btn btn-default" th:href="@{toCategoryEdit(id=${categoryData.id})}">元の情報に戻す</button>
+        <a type="button" id="reload-button" class="btn btn-default" th:href="@{toEditCategory(id=${categoryData.id})}">元の情報に戻す</a>
       </div>
+
+      <div id="edit-modal" class="modal">
+        <div class="modal-content">
+          <p>&#x26A0;警告</p>
+          <div style="text-align: center; font-size: large;">カテゴリ情報を本当に変更してもよろしいですか？</div>
+          <div style="text-align: right; margin-top: 20px;">
+            <button class="button" onclick="editConfirmSubmission(false)">キャンセル</button>
+            <button class="button" onclick="editConfirmSubmission(true)" style="color: red;">確認</button>
+          </div>
+        </div>
+      </div>
+      <div id="delete-modal" class="modal">
+        <div class="modal-content">
+          <p>&#x26A0;警告</p>
+          <div style="text-align: center; font-size: large;">カテゴリを本当に削除してもよろしいですか？</div>
+          <div style="text-align: right; margin-top: 20px;  ">
+            <button class="button" onclick="deleteConfirmSubmission(false)">キャンセル</button>
+            <button class="button" onclick="deleteConfirmSubmission(true)" style="color: red;">確認</button>
+          </div>
+        </div>
+      </div>  
   </div>
   <!-- script -->
   <script
