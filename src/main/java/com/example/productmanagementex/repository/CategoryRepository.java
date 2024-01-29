@@ -287,6 +287,31 @@ public class CategoryRepository {
             ;
             """;
 
+    private static final String FIND_CHANGE_RECORD_ID_SQL = """
+            SELECT
+                id
+            FROM
+                category
+            WHERE
+                (:parentCondition = 1 AND parent_id IN (
+                    SELECT
+                        id
+                    FROM
+                        category
+                    WHERE
+                        parent_id = :id
+                ))
+            OR (:parentCondition = 2 AND parent_id = :id);
+                """;
+
+    private static final String DELETE_SQL = """
+            DELETE FROM
+                category
+            WHERE
+                id = :id
+            ;
+            """;
+
     public List<Category> findAllCategory() {
         SqlParameterSource param = new MapSqlParameterSource();
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
@@ -470,5 +495,17 @@ public class CategoryRepository {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         int size = template.queryForObject(CHILD_CATEGORY_SIZE_SQL, param, Integer.class);
         return size;
+    }
+
+    public List<Integer> findChangeRecordId(int id, int parentCondition) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("parentCondition",
+                parentCondition);
+        List<Integer> changeRecordId = template.queryForList(FIND_CHANGE_RECORD_ID_SQL, param, Integer.class);
+        return changeRecordId;
+    }
+
+    public void delete(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        template.update(DELETE_SQL, param);
     }
 }
