@@ -225,7 +225,7 @@
         <div class="col-sm-offset-2 col-sm-8" style="display: flex; justify-content: space-between;">
           <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
           <a type="button" id="reload-button" class="btn btn-default" th:href="@{toEdit(id=${itemData.id})}">元に戻す</a>
-          <a type="button" id="delete-button" class="btn btn-default" th:href="@{delete(id=${itemData.id})}">Delete</a>
+          <a type="button" id="delete-button" class="btn btn-default" th:href="@{delete(id=${itemData.id}, updateTime=${updateTime})}">Delete</a>
         </div>
       </div>
     </form>

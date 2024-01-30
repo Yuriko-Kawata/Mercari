@@ -23,6 +23,8 @@ import com.example.productmanagementex.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.sql.Timestamp;
+
 @Controller
 @RequestMapping({ "", "/" })
 public class ItemController {
@@ -223,6 +225,7 @@ public class ItemController {
 
     @RequestMapping("toEdit")
     public String toEditItem(int id, CategoryForm categoryForm, Model model) {
+        model.addAttribute("updateTime", itemService.getUpdateTime(id));
         model.addAttribute("categoryForm", categoryForm);
         model.addAttribute("categoryList", categoryService.findAllCategory());
         Item item = itemService.findById(id);
@@ -295,8 +298,11 @@ public class ItemController {
     }
 
     @RequestMapping("delete")
-    public String deleteItem(int id, Model model) {
-        itemService.delete(id);
+    public String deleteItem(int id, Timestamp updateTime, Model model) {
+        if (itemService.checkDelete(id, updateTime)) {
+            itemService.delete(id);
+        }
+
         return "confirm/delete-item-confirm";
     }
 
