@@ -82,6 +82,7 @@
               <input type="submit" class="navbar-text logout" value="Logout"/>
             </form>
           </li>
+          <li><a th:href="@{categoryList}">カテゴリ一覧へ</a></li>
         </ul>
         <p class="navbar-text navbar-right">
           user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
@@ -92,11 +93,9 @@
 
   <div id="main" class="container-fluid">
     <div style="text-align: right;">
-      <a class="btn btn-default" type="button" th:href="@{itemList}"><i
-        class="fa fa-reply"></i>&nbsp;商品一覧へ</a>
-        <!-- addCategory link -->
-        <a class="btn btn-default" th:href="@{toAddCategory}"><i
-          class="fa fa-plus-square-o"></i> Add New Category</a>
+      <!-- addCategory link -->
+      <a class="btn btn-default" th:href="@{toAddCategory}"><i
+        class="fa fa-plus-square-o"></i> Add New Category</a>
     </div>
 
     <!-- 検索フォーム -->

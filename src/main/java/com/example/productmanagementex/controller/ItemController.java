@@ -120,6 +120,45 @@ public class ItemController {
         return "item-list";
     }
 
+    @RequestMapping("categoryFilter")
+    public String filter(String name, int parentId, String nameAll, Model model) {
+        SearchForm form = new SearchForm();
+        if (parentId == 0) {
+            form.setParentCategory(name);
+        } else if (nameAll == "") {
+            Category parentCategory = categoryService.findParentCategory(parentId);
+            form.setParentCategory(parentCategory.getName());
+            form.setChildCategory(name);
+        } else {
+            Category childCategory = categoryService.findParentCategory(parentId);
+            Category parentCategory = categoryService.findParentCategory(childCategory.getParentId());
+            form.setParentCategory(parentCategory.getName());
+            form.setChildCategory(childCategory.getName());
+            form.setGrandCategory(name);
+        }
+        session.setAttribute("form", form);
+
+        model.addAttribute("searchCondition", form);
+        model.addAttribute("itemList",
+                itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
+                        form.getChildCategory(), form.getGrandCategory(), 1));
+        int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
+                form.getChildCategory(), form.getGrandCategory());
+
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
+        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalItemCount", totalItem);
+        model.addAttribute("currentPage", 1);
+        model.addAttribute("categoryList", categoryService.findAllCategory());
+
+        return "item-list";
+    }
+
     @RequestMapping("detail")
     public String detail(int id, Model model) {
         model.addAttribute("item", itemService.findById(id));

@@ -245,4 +245,9 @@ public class CategoryService {
         return count;
     }
 
+    public Category findParentCategory(int parentId) {
+        Category category = repository.findParentCategory(parentId);
+        return category;
+    }
+
 }

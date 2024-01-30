@@ -287,6 +287,15 @@ public class CategoryRepository {
             ;
             """;
 
+    private static final String FIND_PARENT_CATEGORY_SQL = """
+            SELECT
+                id, name, parent_id, name_all
+            FROM
+                category
+            WHERE
+                id = :parentId
+            """;
+
     public List<Category> findAllCategory() {
         SqlParameterSource param = new MapSqlParameterSource();
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
@@ -470,5 +479,11 @@ public class CategoryRepository {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         int size = template.queryForObject(CHILD_CATEGORY_SIZE_SQL, param, Integer.class);
         return size;
+    }
+
+    public Category findParentCategory(int parentId) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("parentId", parentId);
+        Category category = template.queryForObject(FIND_PARENT_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
+        return category;
     }
 }
