@@ -121,7 +121,7 @@ public class ItemController {
     }
 
     @RequestMapping("categoryFilter")
-    public String filter(String name, int parentId, String nameAll, Model model) {
+    public String categoryFilter(String name, int parentId, String nameAll, Model model) {
         SearchForm form = new SearchForm();
         if (parentId == 0) {
             form.setParentCategory(name);
@@ -157,6 +157,34 @@ public class ItemController {
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
         return "item-list";
+    }
+
+    @RequestMapping("brandFilter")
+    public String brandFilter(String brand, Model model) {
+        SearchForm form = new SearchForm();
+        form.setBrand(brand);
+        session.setAttribute("form", form);
+
+        model.addAttribute("searchCondition", form);
+        model.addAttribute("itemList",
+                itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
+                        form.getChildCategory(), form.getGrandCategory(), 1));
+        int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
+                form.getChildCategory(), form.getGrandCategory());
+
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
+        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalItemCount", totalItem);
+        model.addAttribute("currentPage", 1);
+        model.addAttribute("categoryList", categoryService.findAllCategory());
+
+        return "item-list";
+
     }
 
     @RequestMapping("detail")

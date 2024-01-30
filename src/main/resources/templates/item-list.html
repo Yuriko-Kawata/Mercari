@@ -161,7 +161,7 @@
                 <a th:href="@{categoryFilter(name=${category.name}, parentId=${category.parentId}, nameAll=${category.nameAll})}" th:text="${category.name}"></a> / 
               </span>
             </td>
-            <td class="item-brand" th:text="${item.brand}"><a th:href="@{brandFilter(brand=${item.brand})}">item-brand</a></td>
+            <td class="item-brand"><a th:href="@{brandFilter(brand=${item.brand})}" th:text="${item.brand}">item-brand</a></td>
             <td class="item-condition" th:text="${item.condition}">item-condition</td>
             <!-- <div th:if="${item.delete == false}">
               <td class="item-delete" id="true-value">表示</td>

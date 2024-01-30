@@ -54,7 +54,7 @@ public class ItemService {
             brand = brandBuilder.toString();
         }
 
-        if (parentCategory != "") {
+        if (parentCategory != "" && parentCategory != null) {
             if (childCategory != "" && childCategory != null) {
                 if (grandCategory != "" && grandCategory != null) {
                     nameAllBuilder.append(parentCategory);
@@ -108,7 +108,7 @@ public class ItemService {
             brand = brandBuilder.toString();
         }
 
-        if (parentCategory != "") {
+        if (parentCategory != "" && parentCategory != null) {
             if (childCategory != "" && childCategory != null) {
                 if (grandCategory != "" && grandCategory != null) {
                     nameAllBuilder.append(parentCategory);
