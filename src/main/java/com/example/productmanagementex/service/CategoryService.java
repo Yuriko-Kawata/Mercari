@@ -236,21 +236,21 @@ public class CategoryService {
         return category;
     }
 
-    public List<Category> findChildCategory(int id) {
-        List<Category> categoryList = repository.findChildCategory(id);
-        return categoryList;
-    }
-
     public int childCategoryCount(int id) {
         int count = repository.childCategorySize(id);
         return count;
     }
 
-<<<<<<< HEAD
     public Category findParentCategory(int parentId) {
         Category category = repository.findParentCategory(parentId);
         return category;
-=======
+    }
+
+    public List<Category> findChildCategory(int id) {
+        List<Category> categoryList = repository.findChildCategory(id);
+        return categoryList;
+    }
+
     public List<Integer> findChangeRecordId(int id, int parentId, String nameAll) {
         int parentCondition = 1;
         List<Integer> changeRecordId = new ArrayList<>();
@@ -266,7 +266,6 @@ public class CategoryService {
 
     public void delete(int id) {
         repository.delete(id);
->>>>>>> main
     }
 
 }
