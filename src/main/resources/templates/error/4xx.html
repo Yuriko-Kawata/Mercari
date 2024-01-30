@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エラー</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 50px;
+    }
+    .error-container {
+        padding: 20px;
+        display: inline-block;
+    }
+    p {
+        color: #666;
+    }
+    .error{
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    img {
+        width: 500px;
+        height: 500px;
+    }
+</style>
+</head>
+<body>
+    <div class="error">
+        <div class="error-container">
+            <h1>Error...</h1>
+            <p>エラーが発生したため処理を中断しました。</p>
+            <p>下にあるリンクから再度ログインをお願いします。</p>
+            <div><a th:href="@{login}">[ログイン画面に戻る]</a></div>
+        </div>
+        <div>
+            <img th:src="@{/img/404.png}" alt="404-error">
+        </div>
+    </div>
+</body>
+</html>
