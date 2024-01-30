@@ -73,7 +73,7 @@ public class CategoryService {
         builder.append(form.getGrandCategory());
         String nameAll = builder.toString();
 
-        repository.insertCategory(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory(), nameAll);
+        repository.insertCategory(nameAll);
     }
 
     public void editCategoryNameAndNameAll(int id, String name, int parentId, String nameAll) {
