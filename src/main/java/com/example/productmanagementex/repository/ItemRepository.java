@@ -152,7 +152,15 @@ public class ItemRepository {
             ;
             """;
 
-    private final String ITEMLIST_SIZE_SQL = "SELECT count(*) from items;";
+    private final String ITEMLIST_SIZE_SQL = """
+            SELECT
+                count(*)
+            from
+                items
+            WHERE
+                del_flg = 0
+            ;
+            """;
 
     private final String SEARCH_SQL = """
             SELECT

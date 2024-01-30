@@ -68,27 +68,40 @@ public class CategoryRepository {
             """;
 
     private final String INSERT_SQL = """
-            INSERT INTO category (name, parent_id, name_all)
-            SELECT
-                SPLIT_PART(:nameAll, '/', position),
-                CASE
-                WHEN position = 1 THEN NULL
-                WHEN position = 2 THEN
-                    COALESCE(
-                    (SELECT id FROM category WHERE name = :parentCategory AND parent_id IS NULL AND name_all IS NULL ORDER BY id LIMIT 1),
-                    LASTVAL())
-                ELSE
-                COALESCE(
-                    (SELECT id FROM category WHERE name = :childCategory AND parent_id IS NOT NULL AND name_all IS NULL ORDER BY id LIMIT 1),
-                    LASTVAL())
-                END,
-                CASE
-                WHEN position = 1 OR position = 2 THEN NULL
-                ELSE :nameAll
-                END,
-                (SELECT category_number FROM category ORDER BY id DESC LIMIT 1 OFFSET 2)+1
-            FROM
-                generate_series(1, 3) AS position
+            CREATE OR REPLACE PROCEDURE add_category(new_category_name TEXT)
+            LANGUAGE plpgsql
+            AS $$
+            DECLARE
+                category_parts TEXT[];
+                current_parent_id INTEGER;
+                current_name_all TEXT;
+                i INTEGER;
+            BEGIN
+                category_parts := string_to_array(new_category_name, '/');
+                current_parent_id := NULL;
+                current_name_all := '';
+
+                FOR i IN 1..array_length(category_parts, 1) LOOP
+                    IF i = 3 THEN
+                        -- 孫カテゴリの場合、name_all を設定
+                        current_name_all := category_parts[1] || '/' || category_parts[2] || '/' || category_parts[3];
+                    ELSE
+                        -- 親カテゴリと子カテゴリでは name_all を NULL に
+                        current_name_all := NULL;
+                    END IF;
+
+                    IF NOT EXISTS (SELECT 1 FROM category WHERE name = category_parts[i] AND (parent_id = current_parent_id OR (parent_id IS NULL AND current_parent_id IS NULL))) THEN
+                        INSERT INTO category (name, parent_id, name_all)
+                        VALUES (category_parts[i], current_parent_id, current_name_all)
+                        RETURNING id INTO current_parent_id;
+                    ELSE
+                        SELECT id INTO current_parent_id FROM category WHERE name = category_parts[i] AND (parent_id = current_parent_id OR (parent_id IS NULL AND current_parent_id IS NULL));
+                    END IF;
+                END LOOP;
+            END;
+            $$;
+
+            CALL add_category(:nameAll)
             ;
             """;
 
@@ -409,10 +422,8 @@ public class CategoryRepository {
         }
     }
 
-    public void insertCategory(String parentCategory, String childCategory, String grandCategory, String nameAll) {
-        SqlParameterSource param = new MapSqlParameterSource().addValue("parentCategory", parentCategory)
-                .addValue("childCategory", childCategory).addValue("grandCategory", grandCategory)
-                .addValue("nameAll", nameAll);
+    public void insertCategory(String nameAll) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
         template.update(INSERT_SQL, param);
     }
 
