@@ -347,13 +347,13 @@ public class CategoryRepository {
         return name;
     }
 
-    public int checkCategory(String nameAll) {
+    public Integer checkCategory(String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
-        int categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
+        Integer categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
         return categoryCount;
     }
 
-    public int checkCategoryName(String name, int parentCondition) {
+    public Integer checkCategoryName(String name, int parentCondition) {
         // 動的にクエリ変えたいからstaticじゃない
         String sql = """
                 SELECT
@@ -372,7 +372,7 @@ public class CategoryRepository {
             sql += "AND parent_id IS NOT NULL AND name_all IS NOT NULL";
         }
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name);
-        int count = template.queryForObject(sql, param, Integer.class);
+        Integer count = template.queryForObject(sql, param, Integer.class);
         return count;
     }
 
@@ -445,21 +445,21 @@ public class CategoryRepository {
         return categoryList;
     }
 
-    public int parentListSize() {
+    public Integer parentListSize() {
         SqlParameterSource param = new MapSqlParameterSource();
-        int size = template.queryForObject(PARENT_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(PARENT_SIZE_SQL, param, Integer.class);
         return size;
     }
 
-    public int childListSize() {
+    public Integer childListSize() {
         SqlParameterSource param = new MapSqlParameterSource();
-        int size = template.queryForObject(CHILD_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(CHILD_SIZE_SQL, param, Integer.class);
         return size;
     }
 
-    public int grandListSize() {
+    public Integer grandListSize() {
         SqlParameterSource param = new MapSqlParameterSource();
-        int size = template.queryForObject(GRAND_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(GRAND_SIZE_SQL, param, Integer.class);
         return size;
     }
 
@@ -481,21 +481,21 @@ public class CategoryRepository {
         return categoryList;
     }
 
-    public int searchParentTotalPage(String codition) {
+    public Integer searchParentTotalPage(String codition) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", codition);
-        int size = template.queryForObject(SEARCH_PARENT_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(SEARCH_PARENT_SIZE_SQL, param, Integer.class);
         return size;
     }
 
-    public int searchChildTotalPage(String codition) {
+    public Integer searchChildTotalPage(String codition) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", codition);
-        int size = template.queryForObject(SEARCH_CHILD_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(SEARCH_CHILD_SIZE_SQL, param, Integer.class);
         return size;
     }
 
-    public int searchGrandTotalPage(String codition) {
+    public Integer searchGrandTotalPage(String codition) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", codition);
-        int size = template.queryForObject(SEARCH_GRAND_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(SEARCH_GRAND_SIZE_SQL, param, Integer.class);
         return size;
     }
 
@@ -506,9 +506,9 @@ public class CategoryRepository {
         return category;
     }
 
-    public int childCategorySize(int id) {
+    public Integer childCategorySize(int id) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
-        int size = template.queryForObject(CHILD_CATEGORY_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(CHILD_CATEGORY_SIZE_SQL, param, Integer.class);
         return size;
     }
 
