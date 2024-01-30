@@ -54,7 +54,7 @@ public class ItemService {
             brand = brandBuilder.toString();
         }
 
-        if (parentCategory != "") {
+        if (parentCategory != "" && parentCategory != null) {
             if (childCategory != "" && childCategory != null) {
                 if (grandCategory != "" && grandCategory != null) {
                     nameAllBuilder.append(parentCategory);
@@ -90,7 +90,7 @@ public class ItemService {
         StringBuilder nameAllBuilder = new StringBuilder();
         String nameAll = null;
 
-        if (name == "") {
+        if (name == "" || name == null) {
             name = "%";
         } else {
             nameBuilder.append("%");
@@ -99,7 +99,7 @@ public class ItemService {
             name = nameBuilder.toString();
         }
 
-        if (brand == "") {
+        if (brand == "" || brand == null) {
             brand = "%";
         } else {
             brandBuilder.append("%");
@@ -108,7 +108,7 @@ public class ItemService {
             brand = brandBuilder.toString();
         }
 
-        if (parentCategory != "") {
+        if (parentCategory != "" && parentCategory != null) {
             if (childCategory != "" && childCategory != null) {
                 if (grandCategory != "" && grandCategory != null) {
                     nameAllBuilder.append(parentCategory);

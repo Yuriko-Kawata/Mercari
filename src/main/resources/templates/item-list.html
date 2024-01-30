@@ -63,6 +63,7 @@
               <input type="submit" class="navbar-text logout" value="Logout"/>
             </form>
           </li>
+          <li><a th:href="@{categoryList}">カテゴリ一覧へ</a></li>
         </ul>
         <p class="navbar-text navbar-right">
           user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
@@ -72,12 +73,11 @@
   </nav>
 
   <div id="main" class="container-fluid">
-    <!-- addItem link -->
-    <div id="addItemButton" style="text-align: right;">
+    <div style="text-align: right;">
+      <!-- addItem link -->
       <a class="btn btn-default" th:href="@{toAdd}"><i
-          class="fa fa-plus-square-o"></i> Add New Item</a>
+        class="fa fa-plus-square-o"></i> Add New Item</a>
     </div>
-
     <div th:if="${totalItemCount == 0}">
       <span style="color: red;">該当の商品はありません</span>
     </div>
@@ -158,10 +158,10 @@
             <td class="item-price" th:text="${'&#x1F4B2;&nbsp;' + item.price}">item-price</td>
             <td>
               <span th:each="category : ${item.category}">
-                <a href="" th:text="${category.name}"></a> / 
+                <a th:href="@{categoryFilter(name=${category.name}, parentId=${category.parentId}, nameAll=${category.nameAll})}" th:text="${category.name}"></a> / 
               </span>
             </td>
-            <td class="item-brand" th:text="${item.brand}"><a href="">item-brand</a></td>
+            <td class="item-brand"><a th:href="@{brandFilter(brand=${item.brand})}" th:text="${item.brand}">item-brand</a></td>
             <td class="item-condition" th:text="${item.condition}">item-condition</td>
             <!-- <div th:if="${item.delete == false}">
               <td class="item-delete" id="true-value">表示</td>
