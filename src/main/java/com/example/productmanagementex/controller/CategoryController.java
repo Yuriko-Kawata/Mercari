@@ -1,5 +1,7 @@
 package com.example.productmanagementex.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.service.CategoryService;
+import com.example.productmanagementex.service.ItemService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -18,6 +21,8 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private ItemService itemService;
     @Autowired
     private HttpSession session;
 
@@ -175,11 +180,12 @@ public class CategoryController {
         return "confirm/edit-category-confirm";
     }
 
-    // @PostMapping("delete")
-    // public String deleteItem(int id, int page, Model model) {
-    // itemService.delete(id);
-
-    // return toSearchPage(page, model);
-    // }
+    @RequestMapping("deleteCategory")
+    public String deleteCategory(int id, int parentId, String nameAll, Model model) {
+        List<Integer> changeRecordIdList = categoryService.findChangeRecordId(id, parentId, nameAll);
+        itemService.updateCategory(changeRecordIdList);
+        categoryService.delete(id);
+        return "confirm/delete-category-confirm";
+    }
 
 }

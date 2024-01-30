@@ -315,6 +315,23 @@ public class ItemRepository {
             ;
             """;
 
+    private static final String UPDATE_CATEGORY_SQL = """
+            UPDATE
+                items
+            SET
+                category = (
+                    SELECT
+                        id
+                    FROM
+                        category
+                    WHERE
+                        name_all = 'カテゴリ無/カテゴリ無/カテゴリ無'
+                )
+            WHERE
+                category = :id
+            ;
+            """;
+
     public List<Item> findAllItems(int page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
@@ -367,6 +384,18 @@ public class ItemRepository {
     public void changeDeleteStatus(int id) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         template.update(CHANGE_DELETE_SQL, param);
+    }
+
+    public void updateCategory(List<Integer> changeRecordIdList) {
+        List<SqlParameterSource> parameters = new ArrayList<>();
+
+        for (Integer changeRecordId : changeRecordIdList) {
+            SqlParameterSource param = new MapSqlParameterSource()
+                    .addValue("id", changeRecordId);
+            parameters.add(param);
+        }
+
+        template.batchUpdate(UPDATE_CATEGORY_SQL, parameters.toArray(new SqlParameterSource[0]));
     }
 
 }

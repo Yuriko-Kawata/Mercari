@@ -1,6 +1,7 @@
 package com.example.productmanagementex.service;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -245,9 +246,27 @@ public class CategoryService {
         return count;
     }
 
+<<<<<<< HEAD
     public Category findParentCategory(int parentId) {
         Category category = repository.findParentCategory(parentId);
         return category;
+=======
+    public List<Integer> findChangeRecordId(int id, int parentId, String nameAll) {
+        int parentCondition = 1;
+        List<Integer> changeRecordId = new ArrayList<>();
+        if (parentId != 0 && nameAll == "") {
+            parentCondition = 2;
+        } else if (parentId != 0 && nameAll != "") {
+            changeRecordId.add(id);
+            return changeRecordId;
+        }
+        changeRecordId = repository.findChangeRecordId(id, parentCondition);
+        return changeRecordId;
+    }
+
+    public void delete(int id) {
+        repository.delete(id);
+>>>>>>> main
     }
 
 }

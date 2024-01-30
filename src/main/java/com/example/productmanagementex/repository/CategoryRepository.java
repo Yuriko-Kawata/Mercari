@@ -287,6 +287,7 @@ public class CategoryRepository {
             ;
             """;
 
+<<<<<<< HEAD
     private static final String FIND_PARENT_CATEGORY_SQL = """
             SELECT
                 id, name, parent_id, name_all
@@ -294,6 +295,31 @@ public class CategoryRepository {
                 category
             WHERE
                 id = :parentId
+=======
+    private static final String FIND_CHANGE_RECORD_ID_SQL = """
+            SELECT
+                id
+            FROM
+                category
+            WHERE
+                (:parentCondition = 1 AND parent_id IN (
+                    SELECT
+                        id
+                    FROM
+                        category
+                    WHERE
+                        parent_id = :id
+                ))
+            OR (:parentCondition = 2 AND parent_id = :id);
+                """;
+
+    private static final String DELETE_SQL = """
+            DELETE FROM
+                category
+            WHERE
+                id = :id
+            ;
+>>>>>>> main
             """;
 
     public List<Category> findAllCategory() {
@@ -481,9 +507,22 @@ public class CategoryRepository {
         return size;
     }
 
+<<<<<<< HEAD
     public Category findParentCategory(int parentId) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("parentId", parentId);
         Category category = template.queryForObject(FIND_PARENT_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
         return category;
+=======
+    public List<Integer> findChangeRecordId(int id, int parentCondition) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("parentCondition",
+                parentCondition);
+        List<Integer> changeRecordId = template.queryForList(FIND_CHANGE_RECORD_ID_SQL, param, Integer.class);
+        return changeRecordId;
+    }
+
+    public void delete(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        template.update(DELETE_SQL, param);
+>>>>>>> main
     }
 }

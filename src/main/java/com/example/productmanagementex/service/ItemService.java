@@ -174,4 +174,8 @@ public class ItemService {
         repository.changeDeleteStatus(id);
     }
 
+    public void updateCategory(List<Integer> changeRecordIdList) {
+        repository.updateCategory(changeRecordIdList);
+    }
+
 }
