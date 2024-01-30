@@ -12,6 +12,8 @@ import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.form.ItemForm;
 import com.example.productmanagementex.repository.ItemRepository;
 
+import java.sql.Timestamp;
+
 @Transactional
 @Service
 public class ItemService {
@@ -168,6 +170,21 @@ public class ItemService {
         BeanUtils.copyProperties(itemForm, item);
 
         repository.updateItem(item, nameAll);
+    }
+
+    public Timestamp getUpdateTime(int id) {
+        Timestamp updateTime = repository.getUpdateTime(id);
+        System.out.println(updateTime);
+        return updateTime;
+    }
+
+    public boolean checkDelete(int id, Timestamp updateTime) {
+        boolean check = false;
+        Integer count = repository.checkDelete(id, updateTime);
+        if (count != 0) {
+            check = true;
+        }
+        return check;
     }
 
     public void delete(int id) {

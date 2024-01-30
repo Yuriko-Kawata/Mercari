@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import com.example.productmanagementex.domain.Category;
 import com.example.productmanagementex.domain.Item;
 
+import java.sql.Timestamp;
+
 @Repository
 public class ItemRepository {
 
@@ -305,6 +307,26 @@ public class ItemRepository {
             ;
             """;
 
+    private static final String GET_UPDATETIME_SQL = """
+            SELECT
+                update_time
+            FROM
+                items
+            WHERE
+                id = :id
+            ;
+            """;
+
+    private static final String CHECK_DELETE_SQL = """
+            SELECT
+                count(*)
+            FROM
+                items
+            WHERE
+                id = :id AND update_time = :updateTime AND del_flg = 0
+            ;
+            """;
+
     private static final String CHANGE_DELETE_SQL = """
             UPDATE
                 items
@@ -326,7 +348,8 @@ public class ItemRepository {
                         category
                     WHERE
                         name_all = 'カテゴリ無/カテゴリ無/カテゴリ無'
-                )
+                ),
+                update_time =
             WHERE
                 category = :id
             ;
@@ -338,9 +361,10 @@ public class ItemRepository {
         return itemList;
     }
 
-    public int itemListSize() {
+    public Integer itemListSize() {
         SqlParameterSource param = new MapSqlParameterSource();
-        return template.queryForObject(ITEMLIST_SIZE_SQL, param, Integer.class);
+        Integer itemsize = template.queryForObject(ITEMLIST_SIZE_SQL, param, Integer.class);
+        return itemsize;
     }
 
     public List<Item> searchItems(String name, String brand, String nameAll, int page) {
@@ -350,10 +374,10 @@ public class ItemRepository {
         return itemList;
     }
 
-    public int searchItemsSize(String name, String brand, String nameAll) {
+    public Integer searchItemsSize(String name, String brand, String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll);
-        int itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE_SQL, param, Integer.class);
+        Integer itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE_SQL, param, Integer.class);
         return itemListSize;
     }
 
@@ -379,6 +403,18 @@ public class ItemRepository {
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
                 .addValue("nameAll", nameAll);
         template.update(UPDATE_SQL, param);
+    }
+
+    public Timestamp getUpdateTime(int id) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        Timestamp updateTime = template.queryForObject(GET_UPDATETIME_SQL, param, Timestamp.class);
+        return updateTime;
+    }
+
+    public Integer checkDelete(int id, Timestamp updateTime) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("updateTime", updateTime);
+        Integer count = template.queryForObject(CHECK_DELETE_SQL, param, Integer.class);
+        return count;
     }
 
     public void changeDeleteStatus(int id) {
