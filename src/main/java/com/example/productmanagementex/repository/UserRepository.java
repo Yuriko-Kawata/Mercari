@@ -2,6 +2,8 @@ package com.example.productmanagementex.repository;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -21,6 +23,8 @@ public class UserRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate template;
+
+    private static final Logger logger = LogManager.getLogger(UserRepository.class);
 
     private static final RowMapper<User> USER_ROW_MAPPER = (rs, i) -> {
         User user = new User();
@@ -60,9 +64,12 @@ public class UserRepository {
      * @param password password
      */
     public void insertUser(String name, String mail, String password) {
+        logger.debug("Started insertUser");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("mail", mail)
                 .addValue("password", password);
         template.update(INSERT_SQL, param);
+        logger.debug("Finished insertUser");
     }
 
     /**
@@ -72,12 +79,17 @@ public class UserRepository {
      * @return 検索結果があればuser, なければnull
      */
     public User findUserByMail(String mail) {
+        logger.debug("Started findUserByMail");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("mail", mail);
         List<User> users = template.query(FIND_BY_MAIL_SQL, param, USER_ROW_MAPPER);
         if (users.size() == 0) {
+            logger.debug("Finished findUserByMail");
             return null;
         } else {
             User user = users.get(0);
+
+            logger.debug("Finished findUserByMail");
             return user;
         }
     }

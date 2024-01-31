@@ -1,5 +1,7 @@
 package com.example.productmanagementex.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +45,8 @@ public class ItemController {
     @Autowired
     private HttpSession session;
 
+    private static final Logger logger = LogManager.getLogger(ItemController.class);
+
     /**
      * 商品一覧の表示
      * 
@@ -59,10 +63,12 @@ public class ItemController {
         }
 
         // ログインしているユーザーの情報取得
+        logger.info("getAuthentication method started");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserMail = authentication.getName();
         User user = userService.findUserByMail(currentUserMail);
         session.setAttribute("userName", user.getName());
+        logger.info("getAuthentication method finished with response: {}", user);
 
         // 検索条件の作成（初期は””）
         model.addAttribute("searchCondition", form);
@@ -99,6 +105,8 @@ public class ItemController {
      */
     @RequestMapping("search")
     public String toSearch(SearchForm form, Model model, @RequestParam(defaultValue = "1") int page) {
+        logger.info("search method started call: {}", form);
+
         // 検索条件のsessionスコープへの格納
         session.setAttribute("form", form);
 
@@ -124,6 +132,7 @@ public class ItemController {
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
+        logger.info("search method finished with response: {}", totalItem);
         return "item-list";
     }
 
@@ -136,9 +145,13 @@ public class ItemController {
      */
     @RequestMapping("toSearch")
     public String toSearchPage(int page, Model model) {
+        logger.info("searchPage method started call: {}", page);
+
         // 検索条件がなければ、ページを更新して一覧表示へ
         SearchForm form = (SearchForm) session.getAttribute("form");
         if (form == null) {
+
+            logger.info("searchPage method finished");
             return toItemList(page, model);
         }
 
@@ -161,6 +174,7 @@ public class ItemController {
         model.addAttribute("currentPage", page);
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
+        logger.info("searchPage method finished");
         return "item-list";
     }
 
@@ -175,6 +189,8 @@ public class ItemController {
      */
     @RequestMapping("categoryFilter")
     public String categoryFilter(String name, int parentId, String nameAll, Model model) {
+        logger.info("categoryFilter method started call: {}", name, parentId, nameAll);
+
         // 検索条件の更新
         // 選択したものが親カテゴリならparentCategoryのみ更新、子ならchildも、孫ならgrandも
         SearchForm form = new SearchForm();
@@ -212,6 +228,7 @@ public class ItemController {
         model.addAttribute("currentPage", 1);
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
+        logger.info("categoryFilter method finished with response: {}", totalItem);
         return "item-list";
     }
 
@@ -224,6 +241,8 @@ public class ItemController {
      */
     @RequestMapping("brandFilter")
     public String brandFilter(String brand, Model model) {
+        logger.info("brandFilter method started call: {}", brand);
+
         // 検索条件を取得したbrandに更新
         SearchForm form = new SearchForm();
         form.setBrand(brand);
@@ -248,6 +267,7 @@ public class ItemController {
         model.addAttribute("currentPage", 1);
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
+        logger.info("brandFilter method finished with response: {}", totalItem);
         return "item-list";
     }
 
@@ -279,6 +299,8 @@ public class ItemController {
      */
     @PostMapping("add")
     public String addItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
+        logger.info("addItem method started call: {}", itemForm, categoryForm);
+
         // カテゴリ全てが入力されているかチェック
         // エラーがあれば元の画面に戻る
         if (categoryForm.getParentCategory() == "") {
@@ -293,11 +315,14 @@ public class ItemController {
         }
         // validationエラーがあれば元の画面に戻る
         if (rs.hasErrors()) {
+            logger.warn("addItem, validation error");
             return toAddItem(itemForm, model);
         }
 
         // itemsに新規追加
         itemService.addItem(itemForm, categoryForm);
+
+        logger.info("addItem method finished");
         return "confirm/add-item-confirm";
     }
 
@@ -371,9 +396,13 @@ public class ItemController {
      */
     @PostMapping("edit")
     public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
+        logger.info("editItem method started call: {}", itemForm, categoryForm);
+
         // 入力チェック エラーがあれば元の画面に戻る
         if (itemForm.getName() == "" || itemForm.getPrice() == 0 || itemForm.getDescription() == "") {
             model.addAttribute("inputError", model);
+
+            logger.warn("editItem, validation error");
             return toEditItem(itemForm.getId(), categoryForm, model);
         }
 
@@ -413,11 +442,15 @@ public class ItemController {
         } else if (categoryForm.getParentCategory() != "" && categoryForm.getChildCategory() != ""
                 && categoryForm.getGrandCategory() == "") {
             model.addAttribute("choiceError", model);
+
+            logger.info("editItem method finished");
             return toEditItem(itemForm.getId(), categoryForm, model);
         }
 
         itemService.editItem(itemForm, categoryForm);
         model.addAttribute("itemId", itemForm.getId());
+
+        logger.info("editItem method finished");
         return "confirm/edit-item-confirm";
     }
 
@@ -431,11 +464,17 @@ public class ItemController {
      */
     @RequestMapping("delete")
     public String deleteItem(int id, Timestamp updateTime, Model model) {
+        logger.info("deleteItem method started call: {}", id, updateTime);
+
         // 排他制御を行い、update_timeが同じであれば削除を行う
         if (itemService.checkDelete(id, updateTime)) {
             itemService.delete(id);
+        } else {
+            logger.warn("deleteItem, checkDelete error");
+            return "4xx";
         }
 
+        logger.info("deleteItem method finished");
         return "confirm/delete-item-confirm";
     }
 

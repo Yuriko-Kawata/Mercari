@@ -3,6 +3,8 @@ package com.example.productmanagementex.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -25,6 +27,8 @@ public class ItemRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate template;
+
+    private static final Logger logger = LogManager.getLogger(ItemRepository.class);
 
     private static RowMapper<Item> ITEM_ROWMAPPER = (rs, i) -> {
         Item item = new Item();
@@ -341,8 +345,12 @@ public class ItemRepository {
      * @return 検索結果
      */
     public List<Item> findAllItems(int page) {
+        logger.debug("Started findAllItems");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
+
+        logger.debug("Finished findAllItems");
         return itemList;
     }
 
@@ -352,8 +360,12 @@ public class ItemRepository {
      * @return トータル件数
      */
     public Integer itemListSize() {
+        logger.debug("Started itemListSize");
+
         SqlParameterSource param = new MapSqlParameterSource();
         Integer itemsize = template.queryForObject(ITEMLIST_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished itemListSize");
         return itemsize;
     }
 
@@ -367,9 +379,13 @@ public class ItemRepository {
      * @return 検索結果
      */
     public List<Item> searchItems(String name, String brand, String nameAll, int page) {
+        logger.debug("Started searchItems");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll).addValue("page", page);
         List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_ROWMAPPER);
+
+        logger.debug("Finished searchItems");
         return itemList;
     }
 
@@ -382,9 +398,13 @@ public class ItemRepository {
      * @return 検索結果
      */
     public Integer searchItemsSize(String name, String brand, String nameAll) {
+        logger.debug("Started searchItemsSize");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll);
         Integer itemListSize = template.queryForObject(SEARCH_ITEM_LIST_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished searchItemsSize");
         return itemListSize;
     }
 
@@ -395,9 +415,13 @@ public class ItemRepository {
      * @return 検索結果
      */
     public Item findById(int id) {
+        logger.debug("Started findById");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         List<Item> itemList = template.query(FIND_BY_ID_SQL, param, ITEM_ROWMAPPER);
         Item item = itemList.get(0);
+
+        logger.debug("Finished findById");
         return item;
     }
 
@@ -408,11 +432,14 @@ public class ItemRepository {
      * @param nameAll name_all
      */
     public void insertItem(Item item, String nameAll) {
+        logger.debug("Started insertItem");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
                 .addValue("nameAll", nameAll);
         template.update(INSERT_SQL, param);
+        logger.debug("Finished insertItem");
     }
 
     /**
@@ -422,12 +449,15 @@ public class ItemRepository {
      * @param nameAll name_all
      */
     public void updateItem(Item item, String nameAll) {
+        logger.debug("Started updateItem");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", item.getId())
                 .addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
                 .addValue("nameAll", nameAll);
         template.update(UPDATE_SQL, param);
+        logger.debug("Finished updateItem");
     }
 
     /**
@@ -437,8 +467,12 @@ public class ItemRepository {
      * @return update_time
      */
     public Timestamp getUpdateTime(int id) {
+        logger.debug("Started getUpdateTime");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         Timestamp updateTime = template.queryForObject(GET_UPDATETIME_SQL, param, Timestamp.class);
+
+        logger.debug("Finished getUpdateTime");
         return updateTime;
     }
 
@@ -450,8 +484,12 @@ public class ItemRepository {
      * @return 検索結果に一致するものがあれば１、なければ０
      */
     public Integer checkDelete(int id, Timestamp updateTime) {
+        logger.debug("Started checkDelete");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("updateTime", updateTime);
         Integer count = template.queryForObject(CHECK_DELETE_SQL, param, Integer.class);
+
+        logger.debug("Finished checkDelete");
         return count;
     }
 
@@ -461,8 +499,11 @@ public class ItemRepository {
      * @param id id
      */
     public void changeDeleteStatus(int id) {
+        logger.debug("Started changeDeleteStatus");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         template.update(CHANGE_DELETE_SQL, param);
+        logger.debug("Finished changeDeleteStatus");
     }
 
     /**
@@ -471,6 +512,8 @@ public class ItemRepository {
      * @param changeRecordIdList 変更を行うレコードのidリスト
      */
     public void updateCategory(List<Integer> changeRecordIdList) {
+        logger.debug("Started updateCategory");
+
         List<SqlParameterSource> parameters = new ArrayList<>();
 
         for (Integer changeRecordId : changeRecordIdList) {
@@ -480,6 +523,7 @@ public class ItemRepository {
         }
 
         template.batchUpdate(UPDATE_CATEGORY_SQL, parameters.toArray(new SqlParameterSource[0]));
+        logger.debug("Finished updateCategory");
     }
 
 }

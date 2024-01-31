@@ -2,6 +2,8 @@ package com.example.productmanagementex.repository;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -21,6 +23,8 @@ public class CategoryRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate template;
+
+    private static final Logger logger = LogManager.getLogger(CategoryRepository.class);
 
     private static final RowMapper<Category> CATEGORY_ROWMAPPER = (rs, i) -> {
         Category category = new Category();
@@ -369,8 +373,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> findAllCategory() {
+        logger.debug("Started findAllCategory");
+
         SqlParameterSource param = new MapSqlParameterSource();
         List<Category> categoryList = template.query(FIND_ALL_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished findAllCategory");
         return categoryList;
     }
 
@@ -381,8 +389,12 @@ public class CategoryRepository {
      * @return name
      */
     public String findNameById(int id) {
+        logger.debug("Started findNamebyId");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         String name = template.queryForObject(FIND_NAME_BY_ID_SQL, param, String.class);
+
+        logger.debug("Finished findNamebyId");
         return name;
     }
 
@@ -393,8 +405,12 @@ public class CategoryRepository {
      * @return 検索結果があれば１、なければ0
      */
     public Integer checkCategory(String nameAll) {
+        logger.debug("Started checkCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
         Integer categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
+
+        logger.debug("Finished checkCategory");
         return categoryCount;
     }
 
@@ -406,6 +422,8 @@ public class CategoryRepository {
      * @return 検索結果があれば１、なければ０
      */
     public Integer checkCategoryName(String name, int parentCondition) {
+        logger.debug("Started checkCategoryName");
+
         // 動的にクエリ変えたいからstaticじゃない
         String sql = """
                 SELECT
@@ -426,6 +444,8 @@ public class CategoryRepository {
         }
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name);
         Integer count = template.queryForObject(sql, param, Integer.class);
+
+        logger.debug("Started checkCategoryName");
         return count;
     }
 
@@ -437,6 +457,8 @@ public class CategoryRepository {
      * @param parentCondition 階層
      */
     public void editCategoryName(int id, String name, int parentCondition) {
+        logger.debug("Started editCategoryName");
+
         // 動的にクエリ変えたいからstaticじゃない
         String sql = """
                 UPDATE
@@ -465,6 +487,7 @@ public class CategoryRepository {
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name);
         template.update(sql, param);
+        logger.debug("Finished editCategoryName");
     }
 
     /**
@@ -476,9 +499,12 @@ public class CategoryRepository {
      * @param originalNameLike 元のname_all
      */
     public void editCategoryNameAll(int id, String name, String originalName, String originalNameLike) {
+        logger.debug("Started editCategoryNameAll");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("name", name)
                 .addValue("originalName", originalName).addValue("originalNameLike", originalNameLike);
         template.update(UPDATE_NAMEALL_SQL, param);
+        logger.debug("Finished editCategoryNameAll");
     }
 
     /**
@@ -487,8 +513,11 @@ public class CategoryRepository {
      * @param nameAll name_all
      */
     public void insertCategory(String nameAll) {
+        logger.debug("Started insertCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
         template.update(INSERT_SQL, param);
+        logger.debug("Finished insertCategory");
     }
 
     /**
@@ -498,8 +527,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> findAllParentCategory(int page) {
+        logger.debug("Started findAllParentCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Category> categoryList = template.query(FIND_PARENT_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished findAllParentCategory");
         return categoryList;
     }
 
@@ -510,8 +543,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> findAllChildCategory(int page) {
+        logger.debug("Started findAllChildCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Category> categoryList = template.query(FIND_CHILD_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished findAllChildCategory");
         return categoryList;
     }
 
@@ -522,8 +559,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> findAllGrandCategory(int page) {
+        logger.debug("Started findAllGrandCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Category> categoryList = template.query(FIND_GRAND_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished findAllGrandCategory");
         return categoryList;
     }
 
@@ -533,8 +574,12 @@ public class CategoryRepository {
      * @return トータル件数
      */
     public Integer parentListSize() {
+        logger.debug("Started parentListSize");
+
         SqlParameterSource param = new MapSqlParameterSource();
         Integer size = template.queryForObject(PARENT_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished parentListSize");
         return size;
     }
 
@@ -544,8 +589,12 @@ public class CategoryRepository {
      * @return トータル件数
      */
     public Integer childListSize() {
+        logger.debug("Started childListSize");
+
         SqlParameterSource param = new MapSqlParameterSource();
         Integer size = template.queryForObject(CHILD_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished childListSize");
         return size;
     }
 
@@ -555,8 +604,12 @@ public class CategoryRepository {
      * @return トータル件数
      */
     public Integer grandListSize() {
+        logger.debug("Started grandListSize");
+
         SqlParameterSource param = new MapSqlParameterSource();
         Integer size = template.queryForObject(GRAND_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished grandListSize");
         return size;
     }
 
@@ -568,8 +621,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> searchParentCategory(String nameLike, Integer page) {
+        logger.debug("Started searchParentCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_PARENT_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished searchParentCategory");
         return categoryList;
     }
 
@@ -581,8 +638,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> searchChildCategory(String nameLike, int page) {
+        logger.debug("Started searchChildCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_CHILD_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished searchChildCategory");
         return categoryList;
     }
 
@@ -594,8 +655,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> searchGrandCategory(String nameLike, int page) {
+        logger.debug("Started searchGrandCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_GRAND_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished searchGrandCategory");
         return categoryList;
     }
 
@@ -606,8 +671,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public Integer searchParentTotal(String nameLike) {
+        logger.debug("Started searchParentTotal");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike);
         Integer size = template.queryForObject(SEARCH_PARENT_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished searchParentTotal");
         return size;
     }
 
@@ -618,8 +687,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public Integer searchChildTotal(String nameLike) {
+        logger.debug("Started searchChildTotal");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike);
         Integer size = template.queryForObject(SEARCH_CHILD_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished searchChildTotal");
         return size;
     }
 
@@ -630,8 +703,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public Integer searchGrandTotal(String nameLike) {
+        logger.debug("Started searchGrandTotal");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike);
         Integer size = template.queryForObject(SEARCH_GRAND_SIZE_SQL, param, Integer.class);
+
+        logger.debug("Finished searchGrandTotal");
         return size;
     }
 
@@ -642,9 +719,13 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public Category findById(int id) {
+        logger.debug("Started findById");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         List<Category> categoryList = template.query(FIND_BY_ID_SQL, param, CATEGORY_ROWMAPPER);
         Category category = categoryList.get(0);
+
+        logger.debug("Finished findById");
         return category;
     }
 
@@ -655,8 +736,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public Integer childCategorySize(int id) {
+        logger.debug("Started childCategorySize");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         Integer size = template.queryForObject(CHILD_CATEGORY_SIZE_BY_PARENT_ID_SQL, param, Integer.class);
+
+        logger.debug("Finished childCategorySize");
         return size;
     }
 
@@ -667,8 +752,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Category> findChildCategory(int id) {
+        logger.debug("Started findChildCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         List<Category> categoryList = template.query(FIND_CHILD_CATEGORY_BY_PARENT_ID_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished findChildCategory");
         return categoryList;
     }
 
@@ -679,8 +768,12 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public Category findParentCategory(int parentId) {
+        logger.debug("Started findParentCategory");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("parentId", parentId);
         Category category = template.queryForObject(FIND_PARENT_CATEGORY_BY_ID_SQL, param, CATEGORY_ROWMAPPER);
+
+        logger.debug("Finished findParentCategory");
         return category;
     }
 
@@ -692,10 +785,14 @@ public class CategoryRepository {
      * @return 検索結果
      */
     public List<Integer> findChangeRecordId(int parentId, int parentCondition) {
+        logger.debug("Started findChangeRecordId");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("parentId", parentId).addValue(
                 "parentCondition",
                 parentCondition);
         List<Integer> changeRecordId = template.queryForList(FIND_CHANGE_RECORD_ID_SQL, param, Integer.class);
+
+        logger.debug("Finished findChangeRecordId");
         return changeRecordId;
     }
 
@@ -705,7 +802,10 @@ public class CategoryRepository {
      * @param id id
      */
     public void delete(int id) {
+        logger.debug("Started delete");
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         template.update(DELETE_SQL, param);
+        logger.debug("Finished delete");
     }
 }

@@ -1,5 +1,7 @@
 package com.example.productmanagementex.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,8 @@ public class CategoryController {
     private ItemService itemService;
     @Autowired
     private HttpSession session;
+
+    private static final Logger logger = LogManager.getLogger(CategoryController.class);
 
     /**
      * カテゴリ一覧の表示
@@ -68,6 +72,7 @@ public class CategoryController {
         session.setAttribute("childCurrentPage", childPage);
         // 孫カテゴリのcurrent pageの更新
         session.setAttribute("grandCurrentPage", grandPage);
+
         return "category-list";
     }
 
@@ -85,8 +90,12 @@ public class CategoryController {
     public String toSearchCategory(String searchCategory, @RequestParam(defaultValue = "1") int parentPage,
             @RequestParam(defaultValue = "1") int childPage,
             @RequestParam(defaultValue = "1") int grandPage, Model model) {
+        logger.info("searchCategory method started call: {}", searchCategory, parentPage, childPage, grandPage);
+
         // 検索条件が””であれば、ページを更新して一覧表示へ
         if (searchCategory == "") {
+
+            logger.info("searchCategory method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
         }
         session.setAttribute("categorySearchCondition", searchCategory);
@@ -110,6 +119,7 @@ public class CategoryController {
         session.setAttribute("childCurrentPage", childPage);
         session.setAttribute("grandCurrentPage", grandPage);
 
+        logger.info("searchCategory method finished");
         return "category-list";
     }
 
@@ -122,11 +132,15 @@ public class CategoryController {
      */
     @RequestMapping("toParentSearch")
     public String toSearchParentPage(int parentPage, Model model) {
+        logger.info("searchParentPage method startedcall: {}", parentPage);
+
         // 検索条件がなければ、ページを更新して一覧表示へ
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int childPage = (int) session.getAttribute("childCurrentPage");
             int grandPage = (int) session.getAttribute("grandCurrentPage");
+
+            logger.info("searchParentPage method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
         }
         model.addAttribute("searchCondition", searchCondition);
@@ -136,6 +150,7 @@ public class CategoryController {
                 categoryService.searchParentTotalPage(searchCondition));
         session.setAttribute("parentCurrentPage", parentPage);
 
+        logger.info("searchParentPage method finished");
         return "category-list";
     }
 
@@ -148,11 +163,15 @@ public class CategoryController {
      */
     @RequestMapping("toChildSearch")
     public String toSearchChildPage(int childPage, Model model) {
+        logger.info("searchChildPage method started call: {}", childPage);
+
         // 検索条件がなければ、ページを更新して一覧表示へ
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int parentPage = (int) session.getAttribute("parentCurrentPage");
             int grandPage = (int) session.getAttribute("grandCurrentPage");
+
+            logger.info("searchChildPage method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
         }
         model.addAttribute("searchCondition", searchCondition);
@@ -162,6 +181,7 @@ public class CategoryController {
                 categoryService.searchChildTotalPage(searchCondition));
         session.setAttribute("childCurrentPage", childPage);
 
+        logger.info("searchChildPage method finished");
         return "category-list";
     }
 
@@ -174,11 +194,15 @@ public class CategoryController {
      */
     @RequestMapping("toGrandSearch")
     public String toSearchGrandPage(int grandPage, Model model) {
+        logger.info("searchGrandPage method started call: {}", grandPage);
+
         // 検索条件がなければ、ページを更新して一覧表示へ
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
             int parentPage = (int) session.getAttribute("parentCurrentPage");
             int childPage = (int) session.getAttribute("childCurrentPage");
+
+            logger.info("searchGrandPage method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
         }
 
@@ -189,6 +213,7 @@ public class CategoryController {
                 categoryService.searchGrandTotalPage(searchCondition));
         session.setAttribute("grandCurrentPage", grandPage);
 
+        logger.info("searchGrandPage method finished");
         return "category-list";
     }
 
@@ -201,12 +226,16 @@ public class CategoryController {
      */
     @RequestMapping("categoryDetail")
     public String categoryDetail(int id, Model model) {
+        logger.info("categoryDetail method started call: {}", id);
+
         // idからcategory情報の取得
         model.addAttribute("category", categoryService.findById(id));
         // 対応する子カテゴリリストの取得
         model.addAttribute("childCategoryList", categoryService.findChildCategory(id));
         // 子カテゴリの件数の取得
         model.addAttribute("childCategoryCount", categoryService.childCategoryCount(id));
+
+        logger.info("categoryDetail method finished");
         return "category-detail";
     }
 
@@ -219,11 +248,14 @@ public class CategoryController {
      */
     @RequestMapping("toAddCategory")
     public String toAddCategory(CategoryForm categoryForm, Model model) {
+        logger.info("addCategory method started call: {}", categoryForm);
+
         // エラーがあった場合はこれに入れて返す（初期は空）
         model.addAttribute("categoryForm", categoryForm);
         // 現在のカテゴリリストの取得
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
+        logger.info("categoryDetail method finished");
         return "category-add";
     }
 
@@ -236,14 +268,20 @@ public class CategoryController {
      */
     @PostMapping("addCategory")
     public String addCategory(CategoryForm categoryForm, Model model) {
+        logger.info("addCategory method started call: {}", categoryForm);
+
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategory(categoryForm) != 0) {
             model.addAttribute("error", true);
+
+            logger.warn("addCategory, checkCategory error");
             return toAddCategory(categoryForm, model);
         }
 
         // カテゴリの新規作成
         categoryService.insertCategory(categoryForm);
+
+        logger.info("addCategory method finished");
         return "confirm/add-category-confirm";
     }
 
@@ -258,6 +296,7 @@ public class CategoryController {
     public String toEditCategory(int id, Model model) {
         // idからcategory情報を取得
         model.addAttribute("categoryData", categoryService.findById(id));
+
         return "category-edit";
     }
 
@@ -270,14 +309,20 @@ public class CategoryController {
      */
     @PostMapping("editCategory")
     public String editCategory(CategoryForm form, Model model) {
+        logger.info("editCategory method started call: {}", form);
+
         // 入力がなければエラーで返す（
         if (form.getName() == null || form.getName() == "") {
             model.addAttribute("inputError", true);
+
+            logger.warn("editCategory, input error");
             return toEditCategory(form.getId(), model);
         }
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategoryName(form.getName(), form.getParentId(), form.getNameAll()) != 0) {
             model.addAttribute("checkError", true);
+
+            logger.warn("editCategory, checkCategoryName error");
             return toEditCategory(form.getId(), model);
         }
         // categoryのname,name_allを更新
@@ -285,6 +330,8 @@ public class CategoryController {
 
         // 画面遷移用のid受け渡し
         model.addAttribute("categoryId", form.getId());
+
+        logger.info("editCategory method finished");
         return "confirm/edit-category-confirm";
     }
 
@@ -299,10 +346,14 @@ public class CategoryController {
      */
     @RequestMapping("deleteCategory")
     public String deleteCategory(int id, int parentId, String nameAll, Model model) {
+        logger.info("deleteCategory method started call: {}", id, parentId, nameAll);
+
         // 変更に関わるitemsの更新
         itemService.updateCategory(id, parentId, nameAll);
         // レコードの削除
         categoryService.delete(id);
+
+        logger.info("deleteCategory method finished");
         return "confirm/delete-category-confirm";
     }
 

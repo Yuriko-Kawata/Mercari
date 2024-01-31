@@ -3,6 +3,8 @@ package com.example.productmanagementex.service;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
+    private static final Logger logger = LogManager.getLogger(CategoryService.class);
+
     public List<Category> findAllCategory() {
         List<Category> categoryList = repository.findAllCategory();
         return categoryList;
@@ -35,6 +39,7 @@ public class CategoryService {
      * @return 重複するものがあれば１、なければ０
      */
     public int checkCategory(CategoryForm form) {
+        logger.debug("Starting checkCategory");
         // 子カテゴリの選択がなければ”カテゴリ無”を代入
         if (form.getChildCategory() == null || form.getChildCategory() == "") {
             form.setChildCategory("カテゴリ無");
@@ -55,6 +60,8 @@ public class CategoryService {
 
         // nameAllに一致するものがあるか確認
         int count = repository.checkCategory(nameAll);
+
+        logger.debug("Finished checkCategory");
         return count;
     }
 
@@ -67,6 +74,8 @@ public class CategoryService {
      * @return 検索条件に合うものがあれば１、なければ０
      */
     public int checkCategoryName(String name, int parentId, String nameAll) {
+        logger.debug("Starting checkCategoryName");
+
         // 親カテゴリならparentConditionが０、子なら１、孫なら２
         int parentCondition = 0;
         if (parentId != 0) {
@@ -79,6 +88,8 @@ public class CategoryService {
 
         // nameとparentCondition(階層)で一致するものがないか確認
         int count = repository.checkCategoryName(name, parentCondition);
+
+        logger.debug("Finished checkCategoryName");
         return count;
     }
 
@@ -88,6 +99,8 @@ public class CategoryService {
      * @param form form
      */
     public void insertCategory(CategoryForm form) {
+        logger.debug("Started insertCategory");
+
         // 子カテゴリの選択がなければ”カテゴリ無”を代入
         if (form.getChildCategory() == null || form.getChildCategory() == "") {
             form.setChildCategory("カテゴリ無");
@@ -108,6 +121,7 @@ public class CategoryService {
 
         // categoryテーブルに新規作成
         repository.insertCategory(nameAll);
+        logger.debug("Finished insertCategory");
     }
 
     /**
@@ -119,6 +133,8 @@ public class CategoryService {
      * @param nameAll  name_all
      */
     public void editCategoryNameAndNameAll(int id, String name, int parentId, String nameAll) {
+        logger.debug("Started editCategoryNameAndNameAll");
+
         // 階層
         int parentCondition = 1;
         // idで検索した元のname Menとか
@@ -179,6 +195,7 @@ public class CategoryService {
         repository.editCategoryName(id, name, parentCondition);
         // name_allの更新
         repository.editCategoryNameAll(id, insertName, insertOriginalName, originalNameLike);
+        logger.debug("Finished editCategoryNameAndNameAll");
     }
 
     /**
@@ -255,6 +272,8 @@ public class CategoryService {
      * @return 検索結果
      */
     public List<Category> searchParentCategory(String searchCondition, int page) {
+        logger.debug("Started searchParentCategory");
+
         // 曖昧検索用の文字列作成
         StringBuilder builder = new StringBuilder();
         builder.append("%");
@@ -264,6 +283,8 @@ public class CategoryService {
 
         // 作成した文字列を用いて検索
         List<Category> categoryList = repository.searchParentCategory(nameLike, page);
+
+        logger.debug("Finished searchParentCategory");
         return categoryList;
     }
 
@@ -275,6 +296,8 @@ public class CategoryService {
      * @return 検索結果
      */
     public List<Category> searchChildCategory(String searchCondition, int page) {
+        logger.debug("Started searchChildCategory");
+
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
@@ -282,6 +305,8 @@ public class CategoryService {
         String nameLike = builder.toString();
 
         List<Category> categoryList = repository.searchChildCategory(nameLike, page);
+
+        logger.debug("Finished searchChildCategory");
         return categoryList;
     }
 
@@ -293,6 +318,8 @@ public class CategoryService {
      * @return 検索結果
      */
     public List<Category> searchGrandCategory(String searchCondition, int page) {
+        logger.debug("Started searchGrandCategory");
+
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
@@ -300,6 +327,8 @@ public class CategoryService {
         String nameLike = builder.toString();
 
         List<Category> categoryList = repository.searchGrandCategory(nameLike, page);
+
+        logger.debug("Finished searchGrandCategory");
         return categoryList;
     }
 
@@ -410,6 +439,8 @@ public class CategoryService {
      * @return 検索結果
      */
     public List<Integer> findChangeRecordId(int id, int parentId, String nameAll) {
+        logger.debug("Started findChangeRecordId");
+
         // 親カテゴリならparentConditionが０、子なら１、孫なら２
         int parentCondition = 1;
         List<Integer> changeRecordId = new ArrayList<>();
@@ -418,10 +449,14 @@ public class CategoryService {
         } else if (parentId != 0 && nameAll != "") {
             // 孫の場合はそのIDのみ渡す
             changeRecordId.add(id);
+
+            logger.debug("Finished findChangeRecordId");
             return changeRecordId;
         }
         // 親、子の場合は変更が必要なレコードが複数のため、検索を行う
         changeRecordId = repository.findChangeRecordId(id, parentCondition);
+
+        logger.debug("Finished findChangeRecordId");
         return changeRecordId;
     }
 

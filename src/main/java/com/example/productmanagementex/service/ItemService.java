@@ -2,6 +2,8 @@ package com.example.productmanagementex.service;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class ItemService {
     private CategoryService categoryService;
     @Autowired
     private ItemRepository repository;
+
+    private static final Logger logger = LogManager.getLogger(ItemService.class);
 
     /**
      * pageに対応する３０件を取得
@@ -62,6 +66,8 @@ public class ItemService {
      */
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
             String grandCategory, int page) {
+        logger.debug("Started searchItems");
+
         StringBuilder nameBuilder = new StringBuilder();
         StringBuilder brandBuilder = new StringBuilder();
         StringBuilder nameAllBuilder = new StringBuilder();
@@ -118,6 +124,8 @@ public class ItemService {
         }
 
         List<Item> itemList = repository.searchItems(name, brand, nameAll, page);
+
+        logger.debug("Finished searchItems");
         return itemList;
     }
 
@@ -202,6 +210,8 @@ public class ItemService {
      * @param categoryForm category情報
      */
     public void addItem(ItemForm itemForm, CategoryForm categoryForm) {
+        logger.debug("Started addItem");
+
         // categoryFormからname_all作成
         StringBuilder builder = new StringBuilder();
         builder.append(categoryForm.getParentCategory());
@@ -216,6 +226,7 @@ public class ItemService {
         BeanUtils.copyProperties(itemForm, item);
 
         repository.insertItem(item, nameAll);
+        logger.debug("Finished addItem");
     }
 
     /**
@@ -225,6 +236,8 @@ public class ItemService {
      * @param categoryForm category情報
      */
     public void editItem(ItemForm itemForm, CategoryForm categoryForm) {
+        logger.debug("Started editItem");
+
         StringBuilder builder = new StringBuilder();
         builder.append(categoryForm.getParentCategory());
         builder.append("/");
@@ -237,6 +250,7 @@ public class ItemService {
         BeanUtils.copyProperties(itemForm, item);
 
         repository.updateItem(item, nameAll);
+        logger.debug("Finished editItem");
     }
 
     /**
@@ -258,12 +272,16 @@ public class ItemService {
      * @return 検索条件に一致するものがあればtrue、なければfalse
      */
     public boolean checkDelete(int id, Timestamp updateTime) {
+        logger.debug("Started checkDelete");
+
         // 検索結果があればtrueに、なければfalseに
         boolean check = false;
         Integer count = repository.checkDelete(id, updateTime);
         if (count != 0) {
             check = true;
         }
+
+        logger.debug("Finished checkDelete");
         return check;
     }
 
@@ -273,7 +291,9 @@ public class ItemService {
      * @param id id
      */
     public void delete(int id) {
+        logger.debug("Started delete");
         repository.changeDeleteStatus(id);
+        logger.debug("Finished delete");
     }
 
     /**
@@ -284,9 +304,13 @@ public class ItemService {
      * @param nameAll  name_all
      */
     public void updateCategory(int id, int parentId, String nameAll) {
+        logger.debug("Started updateCategory");
+
         // 変更が必要なIDリストの取得
         List<Integer> changeRecordIdList = categoryService.findChangeRecordId(id, parentId, nameAll);
         repository.updateCategory(changeRecordIdList);
+
+        logger.debug("Finished updateCategory");
     }
 
 }
