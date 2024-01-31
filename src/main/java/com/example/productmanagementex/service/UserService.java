@@ -5,6 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,16 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
+    private static final Logger logger = LogManager.getLogger(UserService.class);
+
     /**
      * ユーザーの新規作成
      * 
      * @param form form
      */
     public void registerUser(UserForm form) {
+        logger.debug("Started registerUser");
+
         // パスワードのハッシュ化（SHA-256とBase64使用）
         try {
             // SHA-256メッセージダイジェストのインスタンスを取得
@@ -44,7 +50,7 @@ public class UserService {
             form.setPassword(Base64.getEncoder().encodeToString(hashedBytes));
         } catch (NoSuchAlgorithmException e) {
             // SHA-256アルゴリズムが見つからない場合のエラー処理
-            e.printStackTrace();
+            logger.error("No Such Algorithm Exception");
         }
 
         // domainクラスへのコピー
@@ -53,6 +59,7 @@ public class UserService {
 
         // 新規作成
         repository.insertUser(user.getName(), user.getMail(), user.getPassword());
+        logger.debug("Finished registerUser");
     }
 
     /**
@@ -62,7 +69,11 @@ public class UserService {
      * @return 一致するものがあれば１、なければ０
      */
     public User findUserByMail(String mail) {
+        logger.debug("Started findUserbymail");
+
         User user = repository.findUserByMail(mail);
+
+        logger.debug("Finished findUserbymail");
         return user;
     }
 
