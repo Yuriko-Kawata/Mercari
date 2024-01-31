@@ -14,6 +14,11 @@ import com.example.productmanagementex.domain.User;
 import com.example.productmanagementex.form.UserForm;
 import com.example.productmanagementex.repository.UserRepository;
 
+/**
+ * userのserviceクラス
+ * 
+ * @author hiraizumi
+ */
 @Transactional
 @Service
 public class UserService {
@@ -21,7 +26,13 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
+    /**
+     * ユーザーの新規作成
+     * 
+     * @param form form
+     */
     public void registerUser(UserForm form) {
+        // パスワードのハッシュ化（SHA-256とBase64使用）
         try {
             // SHA-256メッセージダイジェストのインスタンスを取得
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -36,12 +47,20 @@ public class UserService {
             e.printStackTrace();
         }
 
+        // domainクラスへのコピー
         User user = new User();
         BeanUtils.copyProperties(form, user);
 
+        // 新規作成
         repository.insertUser(user.getName(), user.getMail(), user.getPassword());
     }
 
+    /**
+     * メールアドレスが重複していないかチェック
+     * 
+     * @param mail mail
+     * @return 一致するものがあれば１、なければ０
+     */
     public User findUserByMail(String mail) {
         User user = repository.findUserByMail(mail);
         return user;

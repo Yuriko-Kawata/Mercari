@@ -10,6 +10,14 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.example.productmanagementex.service.CustomUserDetailsService;
 
+/**
+ * Spring Security設定を提供
+ * ユーザー認証とHTTPリクエストの許可を管理
+ * カスタムユーザー詳細サービスを使用してユーザー詳細を取得
+ * SHA-256パスワードエンコーダーを使用してパスワードをエンコードする
+ * 
+ * @author hiraizumi
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -17,11 +25,25 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * SHA-256パスワードエンコーダーを提供
+     *
+     * @return SHA-256パスワードエンコーダー
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new SHA256PasswordEncoder();
     }
 
+    /**
+     * HTTPリクエストのフィルタチェーンを提供
+     * 特定のURLへのアクセスを許可し、他の全てのリクエストを認証
+     * ログインページ、デフォルトの成功URL、ログアウト処理、ユーザー詳細サービスを設定
+     *
+     * @param http HttpSecurityオブジェクト
+     * @return セキュリティフィルタチェーン
+     * @throws Exception 例外
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

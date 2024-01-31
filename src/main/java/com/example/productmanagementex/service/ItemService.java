@@ -14,6 +14,11 @@ import com.example.productmanagementex.repository.ItemRepository;
 
 import java.sql.Timestamp;
 
+/**
+ * itemのserviceクラス
+ * 
+ * @author hiraizumi
+ */
 @Transactional
 @Service
 public class ItemService {
@@ -23,16 +28,38 @@ public class ItemService {
     @Autowired
     private ItemRepository repository;
 
+    /**
+     * pageに対応する３０件を取得
+     * 
+     * @param page page
+     * @return 検索結果
+     */
     public List<Item> findAllItems(int page) {
         List<Item> itemList = repository.findAllItems(page);
         return itemList;
     }
 
+    /**
+     * トータル件数の取得
+     * 
+     * @return 検索結果
+     */
     public int totalItem() {
         int itemListSize = repository.itemListSize();
         return itemListSize;
     }
 
+    /**
+     * 検索条件に一致するレコードの検索（pageに対応する３０件）
+     * 
+     * @param name           name
+     * @param brand          brand
+     * @param parentCategory 親カテゴリ
+     * @param childCategory  子カテゴリ
+     * @param grandCategory  孫カテゴリ
+     * @param page           page
+     * @return 検索結果
+     */
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
             String grandCategory, int page) {
         StringBuilder nameBuilder = new StringBuilder();
@@ -40,6 +67,7 @@ public class ItemService {
         StringBuilder nameAllBuilder = new StringBuilder();
         String nameAll = null;
 
+        // nameの入力がなければ全件
         if (name == null) {
             name = "%";
         } else {
@@ -49,6 +77,7 @@ public class ItemService {
             name = nameBuilder.toString();
         }
 
+        // brandの入力がなければ全件
         if (brand == null) {
             brand = "%";
         } else {
@@ -58,9 +87,11 @@ public class ItemService {
             brand = brandBuilder.toString();
         }
 
+        // categoryの選択条件で分岐
         if (parentCategory != "" && parentCategory != null) {
             if (childCategory != "" && childCategory != null) {
                 if (grandCategory != "" && grandCategory != null) {
+                    // 親、子、孫まで選択した時は 親/子/孫 で検索
                     nameAllBuilder.append(parentCategory);
                     nameAllBuilder.append("/");
                     nameAllBuilder.append(childCategory);
@@ -68,6 +99,7 @@ public class ItemService {
                     nameAllBuilder.append(grandCategory);
                     nameAll = nameAllBuilder.toString();
                 } else {
+                    // 孫を選択していない時は 親/子/% で検索
                     nameAllBuilder.append(parentCategory);
                     nameAllBuilder.append("/");
                     nameAllBuilder.append(childCategory);
@@ -75,11 +107,13 @@ public class ItemService {
                     nameAll = nameAllBuilder.toString();
                 }
             } else {
+                // 親だけ選択の時は 親/% で検索
                 nameAllBuilder.append(parentCategory);
                 nameAllBuilder.append("/%");
                 nameAll = nameAllBuilder.toString();
             }
         } else {
+            // 選択がなかった場合は全件
             nameAll = "%";
         }
 
@@ -87,6 +121,16 @@ public class ItemService {
         return itemList;
     }
 
+    /**
+     * 検索条件に一致するトータル件数の取得
+     * 
+     * @param name           name
+     * @param brand          brand
+     * @param parentCategory 親カテゴリ
+     * @param childCategory  子カテゴリ
+     * @param grandCategory  孫カテゴリ
+     * @return 検索結果
+     */
     public int searchTotalItem(String name, String brand, String parentCategory, String childCategory,
             String grandCategory) {
         StringBuilder nameBuilder = new StringBuilder();
@@ -141,11 +185,24 @@ public class ItemService {
         return itemListSize;
     }
 
+    /**
+     * idで検索
+     * 
+     * @param id id
+     * @return 検索結果
+     */
     public Item findById(int id) {
         return repository.findById(id);
     }
 
+    /**
+     * 新規作成
+     * 
+     * @param itemForm     item情報
+     * @param categoryForm category情報
+     */
     public void addItem(ItemForm itemForm, CategoryForm categoryForm) {
+        // categoryFormからname_all作成
         StringBuilder builder = new StringBuilder();
         builder.append(categoryForm.getParentCategory());
         builder.append("/");
@@ -154,12 +211,19 @@ public class ItemService {
         builder.append(categoryForm.getGrandCategory());
         String nameAll = builder.toString();
 
+        // domainクラスにコピー
         Item item = new Item();
         BeanUtils.copyProperties(itemForm, item);
 
         repository.insertItem(item, nameAll);
     }
 
+    /**
+     * 編集
+     * 
+     * @param itemForm     item情報
+     * @param categoryForm category情報
+     */
     public void editItem(ItemForm itemForm, CategoryForm categoryForm) {
         StringBuilder builder = new StringBuilder();
         builder.append(categoryForm.getParentCategory());
@@ -168,19 +232,33 @@ public class ItemService {
         builder.append("/");
         builder.append(categoryForm.getGrandCategory());
         String nameAll = builder.toString();
+
         Item item = new Item();
         BeanUtils.copyProperties(itemForm, item);
 
         repository.updateItem(item, nameAll);
     }
 
+    /**
+     * idで指定したupdate_timeの取得
+     * 
+     * @param id id
+     * @return update_time
+     */
     public Timestamp getUpdateTime(int id) {
         Timestamp updateTime = repository.getUpdateTime(id);
-        System.out.println(updateTime);
         return updateTime;
     }
 
+    /**
+     * idで指定したレコードに対して、update_timeとdel_flgをチェック
+     * 
+     * @param id         id
+     * @param updateTime update_time
+     * @return 検索条件に一致するものがあればtrue、なければfalse
+     */
     public boolean checkDelete(int id, Timestamp updateTime) {
+        // 検索結果があればtrueに、なければfalseに
         boolean check = false;
         Integer count = repository.checkDelete(id, updateTime);
         if (count != 0) {
@@ -189,11 +267,24 @@ public class ItemService {
         return check;
     }
 
+    /**
+     * 論理削除
+     * 
+     * @param id id
+     */
     public void delete(int id) {
         repository.changeDeleteStatus(id);
     }
 
+    /**
+     * categoryの更新
+     * 
+     * @param id       id
+     * @param parentId parent_id
+     * @param nameAll  name_all
+     */
     public void updateCategory(int id, int parentId, String nameAll) {
+        // 変更が必要なIDリストの取得
         List<Integer> changeRecordIdList = categoryService.findChangeRecordId(id, parentId, nameAll);
         repository.updateCategory(changeRecordIdList);
     }
