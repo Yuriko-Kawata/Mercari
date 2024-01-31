@@ -15,6 +15,11 @@ import com.example.productmanagementex.domain.Item;
 
 import java.sql.Timestamp;
 
+/**
+ * itemsのrepositoryクラス
+ * 
+ * @author hiraizumi
+ */
 @Repository
 public class ItemRepository {
 
@@ -58,50 +63,7 @@ public class ItemRepository {
         return item;
     };
 
-    // private static final ResultSetExtractor<List<Item>> ITEM_RESULTSET = (rs) ->
-    // {
-    // List<Item> itemList = new ArrayList<>();
-    // List<Category> categoryList = null;
-    // Item item = null;
-    // int itemBefore = 0;
-
-    // while (rs.next()) {
-    // int itemNow = rs.getInt("i_id");
-
-    // if (itemNow != itemBefore) {
-    // if (item != null) {
-    // itemList.add(item);
-    // }
-    // categoryList = new ArrayList<>();
-    // item = new Item();
-    // item.setId(rs.getInt("i_id"));
-    // item.setName(rs.getString("i_name"));
-    // item.setCondition(rs.getInt("i_condition"));
-    // item.setBrand(rs.getString("i_brand"));
-    // item.setPrice(rs.getDouble("i_price"));
-    // item.setStock(rs.getInt("i_stock"));
-    // item.setShipping(rs.getInt("i_shipping"));
-    // item.setDescription(rs.getString("i_description"));
-    // item.setUpdateTime(rs.getDate("i_update_time"));
-    // item.setDelFlg(rs.getInt("i_del_flg"));
-    // itemBefore = itemNow;
-    // }
-    // if (rs.getInt("c_id") != 0) {
-    // Category category = new Category();
-    // category.setId(rs.getInt("c_id"));
-    // category.setParentId(rs.getInt("c_parent_id"));
-    // category.setName(rs.getString("c_name"));
-    // category.setNameAll(rs.getString("c_name_all"));
-    // categoryList.add(category);
-    // }
-    // item.setCategory(categoryList);
-    // }
-    // if (item != null) {
-    // itemList.add(item);
-    // }
-    // return itemList;
-    // };
-
+    // pageに対応する３０件を取得するクエリ
     private final String FIND_ALL_SQL = """
             SELECT
                 i.id AS i_id,
@@ -152,6 +114,7 @@ public class ItemRepository {
             ;
             """;
 
+    // itemのトータル件数を取得するクエリ
     private final String ITEMLIST_SIZE_SQL = """
             SELECT
                 count(*)
@@ -162,6 +125,7 @@ public class ItemRepository {
             ;
             """;
 
+    // 検索条件に一致するレコードを取得するクエリ（del_flg = 0のもの）
     private final String SEARCH_SQL = """
             SELECT
                 i.id AS i_id,
@@ -222,6 +186,7 @@ public class ItemRepository {
             ;
             """;
 
+    // 検索条件に一致するitemのトータル件数を取得するクエリ
     private static final String SEARCH_ITEM_LIST_SIZE_SQL = """
             SELECT
                 count(*)
@@ -242,6 +207,7 @@ public class ItemRepository {
             ;
             """;
 
+    // idで検索を行うクエリ
     private static final String FIND_BY_ID_SQL = """
             SELECT
                 i.id AS i_id,
@@ -286,6 +252,7 @@ public class ItemRepository {
             ;
             """;
 
+    // 新規作成を行うクエリ
     private static final String INSERT_SQL = """
             INSERT INTO
                 items(name, condition, category, brand, price, description)
@@ -303,6 +270,7 @@ public class ItemRepository {
             ;
             """;
 
+    // 更新を行うクエリ
     private static final String UPDATE_SQL = """
             UPDATE
                 items
@@ -315,6 +283,7 @@ public class ItemRepository {
             ;
             """;
 
+    // idで指定したupdate_timeを取得するクエリ
     private static final String GET_UPDATETIME_SQL = """
             SELECT
                 update_time
@@ -325,6 +294,7 @@ public class ItemRepository {
             ;
             """;
 
+    // idで指定したdel_flgを確認するクエリ
     private static final String CHECK_DELETE_SQL = """
             SELECT
                 count(*)
@@ -335,6 +305,7 @@ public class ItemRepository {
             ;
             """;
 
+    // 論理削除を行うクエリ
     private static final String CHANGE_DELETE_SQL = """
             UPDATE
                 items
@@ -345,6 +316,7 @@ public class ItemRepository {
             ;
             """;
 
+    // idに一致するレコードのcategoryを更新するクエリ
     private static final String UPDATE_CATEGORY_SQL = """
             UPDATE
                 items
@@ -356,25 +328,44 @@ public class ItemRepository {
                         category
                     WHERE
                         name_all = 'カテゴリ無/カテゴリ無/カテゴリ無'
-                ),
-                update_time =
+                )
             WHERE
                 category = :id
             ;
             """;
 
+    /**
+     * pageに対応する30件取得
+     * 
+     * @param page page
+     * @return 検索結果
+     */
     public List<Item> findAllItems(int page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
         List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
         return itemList;
     }
 
+    /**
+     * トータル件数の取得
+     * 
+     * @return トータル件数
+     */
     public Integer itemListSize() {
         SqlParameterSource param = new MapSqlParameterSource();
         Integer itemsize = template.queryForObject(ITEMLIST_SIZE_SQL, param, Integer.class);
         return itemsize;
     }
 
+    /**
+     * 検索条件に一致するレコードの取得（ページに対応する３０件）
+     * 
+     * @param name    name
+     * @param brand   brand
+     * @param nameAll name_all
+     * @param page    page
+     * @return 検索結果
+     */
     public List<Item> searchItems(String name, String brand, String nameAll, int page) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll).addValue("page", page);
@@ -382,6 +373,14 @@ public class ItemRepository {
         return itemList;
     }
 
+    /**
+     * 検索条件に一致するレコードのトータル件数の取得
+     * 
+     * @param name    name
+     * @param brand   brand
+     * @param nameAll name_all
+     * @return 検索結果
+     */
     public Integer searchItemsSize(String name, String brand, String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll);
@@ -389,6 +388,12 @@ public class ItemRepository {
         return itemListSize;
     }
 
+    /**
+     * idで検索
+     * 
+     * @param id id
+     * @return 検索結果
+     */
     public Item findById(int id) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         List<Item> itemList = template.query(FIND_BY_ID_SQL, param, ITEM_ROWMAPPER);
@@ -396,6 +401,12 @@ public class ItemRepository {
         return item;
     }
 
+    /**
+     * 新規作成
+     * 
+     * @param item    item
+     * @param nameAll name_all
+     */
     public void insertItem(Item item, String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
@@ -404,6 +415,12 @@ public class ItemRepository {
         template.update(INSERT_SQL, param);
     }
 
+    /**
+     * 更新
+     * 
+     * @param item    item
+     * @param nameAll name_all
+     */
     public void updateItem(Item item, String nameAll) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", item.getId())
                 .addValue("name", item.getName())
@@ -413,23 +430,46 @@ public class ItemRepository {
         template.update(UPDATE_SQL, param);
     }
 
+    /**
+     * idで指定したupdate_timeの取得
+     * 
+     * @param id id
+     * @return update_time
+     */
     public Timestamp getUpdateTime(int id) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         Timestamp updateTime = template.queryForObject(GET_UPDATETIME_SQL, param, Timestamp.class);
         return updateTime;
     }
 
+    /**
+     * idで指定したdel_flgの取得
+     * 
+     * @param id         id
+     * @param updateTime update_time
+     * @return 検索結果に一致するものがあれば１、なければ０
+     */
     public Integer checkDelete(int id, Timestamp updateTime) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id).addValue("updateTime", updateTime);
         Integer count = template.queryForObject(CHECK_DELETE_SQL, param, Integer.class);
         return count;
     }
 
+    /**
+     * del_flgの変更
+     * 
+     * @param id id
+     */
     public void changeDeleteStatus(int id) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
         template.update(CHANGE_DELETE_SQL, param);
     }
 
+    /**
+     * name_allの更新
+     * 
+     * @param changeRecordIdList 変更を行うレコードのidリスト
+     */
     public void updateCategory(List<Integer> changeRecordIdList) {
         List<SqlParameterSource> parameters = new ArrayList<>();
 

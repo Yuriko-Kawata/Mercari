@@ -1,5 +1,10 @@
 package com.example.productmanagementex.domain;
 
+/**
+ * userのdomainクラス
+ * 
+ * @author hiraizumi
+ */
 public class User {
     // ユーザーID
     private Integer id;

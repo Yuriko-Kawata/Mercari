@@ -1,9 +1,18 @@
 package com.example.productmanagementex.domain;
 
+/**
+ * categoryのdomainクラス
+ * 
+ * @author hiraizumi
+ */
 public class Category {
+    // id
     private Integer id;
+    // 親カテゴリのid
     private Integer parentId;
+    // 名前
     private String name;
+    // フルパス（孫のみ）
     private String nameAll;
 
     public Integer getId() {

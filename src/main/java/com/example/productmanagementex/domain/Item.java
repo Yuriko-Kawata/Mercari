@@ -4,10 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 2023.12.27
+ * itemsのdomainクラス
  * 
  * @author hiraizumi
- *         itemのformクラス
  */
 public class Item {
     // id

@@ -1,5 +1,10 @@
 package com.example.productmanagementex.form;
 
+/**
+ * 検索用のformクラス
+ * 
+ * @author hiraizumi
+ */
 public class SearchForm {
     // 商品名
     private String name;

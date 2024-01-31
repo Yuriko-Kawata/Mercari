@@ -4,10 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * 2023.12.27
+ * itemのformクラス
  * 
  * @author hiraizumi
- *         itemのformクラス
  */
 public class ItemForm {
     // id

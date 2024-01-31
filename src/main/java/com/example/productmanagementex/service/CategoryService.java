@@ -11,6 +11,11 @@ import com.example.productmanagementex.domain.Category;
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.repository.CategoryRepository;
 
+/**
+ * categoryのserviceクラス
+ * 
+ * @author hiraizumi
+ */
 @Transactional
 @Service
 public class CategoryService {
@@ -23,14 +28,23 @@ public class CategoryService {
         return categoryList;
     }
 
+    /**
+     * カテゴリに重複するものがないかチェック
+     * 
+     * @param form form
+     * @return 重複するものがあれば１、なければ０
+     */
     public int checkCategory(CategoryForm form) {
+        // 子カテゴリの選択がなければ”カテゴリ無”を代入
         if (form.getChildCategory() == null || form.getChildCategory() == "") {
             form.setChildCategory("カテゴリ無");
         }
+        // 孫カテゴリの選択がなければ”カテゴリ無”を代入
         if (form.getGrandCategory() == null || form.getGrandCategory() == "") {
             form.setGrandCategory("カテゴリ無");
         }
 
+        // 親/子/孫でnameAllを作成
         StringBuilder builder = new StringBuilder();
         builder.append(form.getParentCategory());
         builder.append("/");
@@ -39,11 +53,21 @@ public class CategoryService {
         builder.append(form.getGrandCategory());
         String nameAll = builder.toString();
 
+        // nameAllに一致するものがあるか確認
         int count = repository.checkCategory(nameAll);
         return count;
     }
 
+    /**
+     * name, parent_idの組み合わせで一致するものがあるかチェック
+     * 
+     * @param name     name
+     * @param parentId parent_id
+     * @param nameAll  name_all
+     * @return 検索条件に合うものがあれば１、なければ０
+     */
     public int checkCategoryName(String name, int parentId, String nameAll) {
+        // 親カテゴリならparentConditionが０、子なら１、孫なら２
         int parentCondition = 0;
         if (parentId != 0) {
             if (nameAll == "") {
@@ -53,18 +77,27 @@ public class CategoryService {
             }
         }
 
+        // nameとparentCondition(階層)で一致するものがないか確認
         int count = repository.checkCategoryName(name, parentCondition);
         return count;
     }
 
+    /**
+     * カテゴリの新規作成
+     * 
+     * @param form form
+     */
     public void insertCategory(CategoryForm form) {
+        // 子カテゴリの選択がなければ”カテゴリ無”を代入
         if (form.getChildCategory() == null || form.getChildCategory() == "") {
             form.setChildCategory("カテゴリ無");
         }
+        // 孫カテゴリの選択がなければ”カテゴリ無”を代入
         if (form.getGrandCategory() == null || form.getGrandCategory() == "") {
             form.setGrandCategory("カテゴリ無");
         }
 
+        // 親/子/孫でnameAllを作成
         StringBuilder builder = new StringBuilder();
         builder.append(form.getParentCategory());
         builder.append("/");
@@ -73,20 +106,36 @@ public class CategoryService {
         builder.append(form.getGrandCategory());
         String nameAll = builder.toString();
 
+        // categoryテーブルに新規作成
         repository.insertCategory(nameAll);
     }
 
+    /**
+     * nameとname_allの更新
+     * 
+     * @param id       id
+     * @param name     name
+     * @param parentId parent_id
+     * @param nameAll  name_all
+     */
     public void editCategoryNameAndNameAll(int id, String name, int parentId, String nameAll) {
+        // 階層
         int parentCondition = 1;
+        // idで検索した元のname Menとか
         String originalName = repository.findNameById(id);
+        // name_allの変更したい部分に入れる文字列 /Women/とか
         String insertName = null;
+        // name_allの変更したい元の部分 /Men/とか
         String insertOriginalName = null;
+        // name_all検索用の文字列 %/Men/%とか
         String originalNameLike = null;
         StringBuilder nameBuilder = new StringBuilder();
         StringBuilder originalNameBuilder = new StringBuilder();
 
+        // 親、子、孫で動的に変化
         if (parentId != 0) {
             if (nameAll == "") {
+                // 子の時
                 parentCondition = 2;
                 nameBuilder.append("/");
                 nameBuilder.append(name);
@@ -101,6 +150,7 @@ public class CategoryService {
                 originalNameBuilder.append("%");
                 originalNameLike = originalNameBuilder.toString();
             } else {
+                // 孫の時
                 parentCondition = 3;
                 nameBuilder.append("/");
                 nameBuilder.append(name);
@@ -111,9 +161,9 @@ public class CategoryService {
                 insertOriginalName = originalNameBuilder.toString();
                 originalNameBuilder.insert(0, "%");
                 originalNameLike = originalNameBuilder.toString();
-
             }
         } else {
+            // 親の時
             nameBuilder.append(name);
             nameBuilder.append("/");
             insertName = nameBuilder.toString();
@@ -125,145 +175,261 @@ public class CategoryService {
             originalNameLike = originalNameBuilder.toString();
         }
 
+        // nameの更新
         repository.editCategoryName(id, name, parentCondition);
-        repository.editCategoryNameAll(id, insertName, insertOriginalName, originalNameLike, parentCondition);
+        // name_allの更新
+        repository.editCategoryNameAll(id, insertName, insertOriginalName, originalNameLike);
     }
 
+    /**
+     * pageに対応した３０件の親カテゴリ取得
+     * 
+     * @param page page
+     * @return 検索結果
+     */
     public List<Category> findAllParentCategory(int page) {
         List<Category> categoryList = repository.findAllParentCategory(page);
         return categoryList;
     }
 
+    /**
+     * pageに対応した３０件の子カテゴリ取得
+     * 
+     * @param page page
+     * @return 検索結果
+     */
     public List<Category> findAllChildCategory(int page) {
         List<Category> categoryList = repository.findAllChildCategory(page);
         return categoryList;
     }
 
+    /**
+     * pageに対応した３０件の孫カテゴリ取得
+     * 
+     * @param page page
+     * @return 検索結果
+     */
     public List<Category> findAllGrandCategory(int page) {
         List<Category> categoryList = repository.findAllGrandCategory(page);
         return categoryList;
     }
 
+    /**
+     * 親カテゴリのトータル件数取得
+     * 
+     * @return 検索結果
+     */
     public int totalParentPage() {
         int totalSize = repository.parentListSize();
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
+    /**
+     * 子カテゴリのトータル件数取得
+     * 
+     * @return 検索結果
+     */
     public int totalChildPage() {
         int totalSize = repository.childListSize();
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
+    /**
+     * 孫カテゴリのトータル件数取得
+     * 
+     * @return 検索結果
+     */
     public int totalGrandPage() {
         int totalSize = repository.grandListSize();
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
+    /**
+     * 検索結果に合う親カテゴリの取得（pageに対応する３０件）
+     * 
+     * @param searchCondition 検索条件
+     * @param page            page
+     * @return 検索結果
+     */
     public List<Category> searchParentCategory(String searchCondition, int page) {
+        // 曖昧検索用の文字列作成
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        List<Category> categoryList = repository.searchParentCategory(condition, page);
+        // 作成した文字列を用いて検索
+        List<Category> categoryList = repository.searchParentCategory(nameLike, page);
         return categoryList;
     }
 
+    /**
+     * 検索結果に合う子カテゴリの取得（pageに対応する３０件）
+     * 
+     * @param searchCondition 検索条件
+     * @param page            page
+     * @return 検索結果
+     */
     public List<Category> searchChildCategory(String searchCondition, int page) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        List<Category> categoryList = repository.searchChildCategory(condition, page);
+        List<Category> categoryList = repository.searchChildCategory(nameLike, page);
         return categoryList;
     }
 
+    /**
+     * 検索結果に合う孫カテゴリの取得（pageに対応する３０件）
+     * 
+     * @param searchCondition 検索条件
+     * @param page            page
+     * @return 検索結果
+     */
     public List<Category> searchGrandCategory(String searchCondition, int page) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        List<Category> categoryList = repository.searchGrandCategory(condition, page);
+        List<Category> categoryList = repository.searchGrandCategory(nameLike, page);
         return categoryList;
     }
 
+    /**
+     * 検索条件に一致する親カテゴリのトータル件数取得
+     * 
+     * @param searchCondition 検索条件
+     * @return 検索結果
+     */
     public int searchParentTotalPage(String searchCondition) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        int totalSize = repository.searchParentTotalPage(condition);
+        int totalSize = repository.searchParentTotal(nameLike);
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
+    /**
+     * 検索条件に一致する子カテゴリのトータル件数取得
+     * 
+     * @param searchCondition 検索条件
+     * @return 検索結果
+     */
     public int searchChildTotalPage(String searchCondition) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        int totalSize = repository.searchChildTotalPage(condition);
+        int totalSize = repository.searchChildTotal(nameLike);
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
+    /**
+     * 検索条件に一致する孫カテゴリのトータル件数取得
+     * 
+     * @param searchCondition 検索条件
+     * @return 検索結果
+     */
     public int searchGrandTotalPage(String searchCondition) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        int totalSize = repository.searchGrandTotalPage(condition);
+        int totalSize = repository.searchGrandTotal(nameLike);
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
 
+    /**
+     * idで検索
+     * 
+     * @param id id
+     * @return 検索結果
+     */
     public Category findById(int id) {
         Category category = repository.findById(id);
         return category;
     }
 
+    /**
+     * idに対応するカテゴリの子カテゴリ数を取得
+     * 
+     * @param id id
+     * @return 検索結果
+     */
     public int childCategoryCount(int id) {
         int count = repository.childCategorySize(id);
         return count;
     }
 
-    public Category findParentCategory(int parentId) {
-        Category category = repository.findParentCategory(parentId);
-        return category;
-    }
-
+    /**
+     * idに対応するカテゴリの子カテゴリを取得
+     * 
+     * @param id id
+     * @return 検索結果
+     */
     public List<Category> findChildCategory(int id) {
         List<Category> categoryList = repository.findChildCategory(id);
         return categoryList;
     }
 
+    /**
+     * parent_idから親カテゴリを取得
+     * 
+     * @param parentId parent_id
+     * @return 検索結果
+     */
+    public Category findParentCategory(int parentId) {
+        Category category = repository.findParentCategory(parentId);
+        return category;
+    }
+
+    /**
+     * カテゴリの更新に伴い、変更が必要なレコードのID取得
+     * 
+     * @param id       id
+     * @param parentId parent_id
+     * @param nameAll  name_all
+     * @return 検索結果
+     */
     public List<Integer> findChangeRecordId(int id, int parentId, String nameAll) {
+        // 親カテゴリならparentConditionが０、子なら１、孫なら２
         int parentCondition = 1;
         List<Integer> changeRecordId = new ArrayList<>();
         if (parentId != 0 && nameAll == "") {
             parentCondition = 2;
         } else if (parentId != 0 && nameAll != "") {
+            // 孫の場合はそのIDのみ渡す
             changeRecordId.add(id);
             return changeRecordId;
         }
+        // 親、子の場合は変更が必要なレコードが複数のため、検索を行う
         changeRecordId = repository.findChangeRecordId(id, parentCondition);
         return changeRecordId;
     }
 
+    /**
+     * 削除
+     * 
+     * @param id id
+     */
     public void delete(int id) {
         repository.delete(id);
     }
