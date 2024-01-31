@@ -1,5 +1,7 @@
 package com.example.productmanagementex.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +25,8 @@ public class UserController {
 
     @Autowired
     private UserService service;
+
+    private static final Logger logger = LogManager.getLogger(UserController.class);
 
     /**
      * ユーザー新規作成画面への遷移
@@ -48,8 +52,11 @@ public class UserController {
      */
     @PostMapping("register")
     public String registerUser(@Validated UserForm form, BindingResult rs, Model model) {
+        logger.info("registerUser method started call: {}", form);
+
         // validationチェック
         if (rs.hasErrors()) {
+            logger.warn("registerUser, validation error");
             return toRegister(form, model);
         }
         // mailが重複していないか確認
@@ -57,10 +64,14 @@ public class UserController {
         if (service.findUserByMail(form.getMail()) != null) {
             model.addAttribute("error", true);
             model.addAttribute("userForm", form);
+
+            logger.warn("registerUser, findUserByMail error");
             return "register";
         }
         // ユーザーの新規作成
         service.registerUser(form);
+
+        logger.info("registerUser method finished");
         return "confirm/user-register-confirm";
     }
 
