@@ -126,7 +126,7 @@ public class CategoryService {
         }
 
         repository.editCategoryName(id, name, parentCondition);
-        repository.editCategoryNameAll(id, insertName, insertOriginalName, originalNameLike, parentCondition);
+        repository.editCategoryNameAll(id, insertName, insertOriginalName, originalNameLike);
     }
 
     public List<Category> findAllParentCategory(int page) {
@@ -189,9 +189,9 @@ public class CategoryService {
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        List<Category> categoryList = repository.searchGrandCategory(condition, page);
+        List<Category> categoryList = repository.searchGrandCategory(nameLike, page);
         return categoryList;
     }
 
@@ -200,9 +200,9 @@ public class CategoryService {
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        int totalSize = repository.searchParentTotalPage(condition);
+        int totalSize = repository.searchParentTotal(nameLike);
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
@@ -212,9 +212,9 @@ public class CategoryService {
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        int totalSize = repository.searchChildTotalPage(condition);
+        int totalSize = repository.searchChildTotal(nameLike);
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }
@@ -224,9 +224,9 @@ public class CategoryService {
         builder.append("%");
         builder.append(searchCondition);
         builder.append("%");
-        String condition = builder.toString();
+        String nameLike = builder.toString();
 
-        int totalSize = repository.searchGrandTotalPage(condition);
+        int totalSize = repository.searchGrandTotal(nameLike);
         int totalpage = totalSize / 30 + 1;
         return totalpage;
     }

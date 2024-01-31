@@ -11,6 +11,11 @@ import org.springframework.stereotype.Repository;
 
 import com.example.productmanagementex.domain.User;
 
+/**
+ * userのrepositoryクラス
+ * 
+ * @author hiraizumi
+ */
 @Repository
 public class UserRepository {
 
@@ -27,6 +32,7 @@ public class UserRepository {
         return user;
     };
 
+    // 新規追加用のクエリ
     private static final String INSERT_SQL = """
             INSERT INTO
                 users(name, mail, password)
@@ -35,6 +41,7 @@ public class UserRepository {
             ;
             """;
 
+    // mail重複確認用のクエリ
     private static final String FIND_BY_MAIL_SQL = """
             SELECT
                 id, name, mail, password, authority
@@ -45,12 +52,25 @@ public class UserRepository {
             ;
             """;
 
+    /**
+     * ユーザーの新規作成
+     * 
+     * @param name     name
+     * @param mail     mail
+     * @param password password
+     */
     public void insertUser(String name, String mail, String password) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("mail", mail)
                 .addValue("password", password);
         template.update(INSERT_SQL, param);
     }
 
+    /**
+     * メールの重複確認
+     * 
+     * @param mail mail
+     * @return 検索結果があればuser, なければnull
+     */
     public User findUserByMail(String mail) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("mail", mail);
         List<User> users = template.query(FIND_BY_MAIL_SQL, param, USER_ROW_MAPPER);
