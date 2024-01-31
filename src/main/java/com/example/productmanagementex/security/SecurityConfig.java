@@ -7,8 +7,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import com.example.productmanagementex.service.CustomUserDetailsService;
+import com.example.productmanagementex.custom.CustomLoginSuccessHandler;
+import com.example.productmanagementex.custom.CustomUserDetailsService;
 
 /**
  * Spring Security設定を提供
@@ -35,6 +37,11 @@ public class SecurityConfig {
         return new SHA256PasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomLoginSuccessHandler();
+    }
+
     /**
      * HTTPリクエストのフィルタチェーンを提供
      * 特定のURLへのアクセスを許可し、他の全てのリクエストを認証
@@ -52,7 +59,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/itemList", true)
+                        .successHandler(authenticationSuccessHandler())
                         .permitAll())
                 .logout((logout) -> logout
                         .logoutUrl("/logout") // ログアウト処理を行うURL
