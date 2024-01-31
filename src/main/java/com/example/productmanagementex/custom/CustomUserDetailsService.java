@@ -1,4 +1,4 @@
-package com.example.productmanagementex.service;
+package com.example.productmanagementex.custom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
