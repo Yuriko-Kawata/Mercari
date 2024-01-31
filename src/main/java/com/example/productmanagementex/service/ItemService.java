@@ -19,6 +19,8 @@ import java.sql.Timestamp;
 public class ItemService {
 
     @Autowired
+    private CategoryService categoryService;
+    @Autowired
     private ItemRepository repository;
 
     public List<Item> findAllItems(int page) {
@@ -191,7 +193,8 @@ public class ItemService {
         repository.changeDeleteStatus(id);
     }
 
-    public void updateCategory(List<Integer> changeRecordIdList) {
+    public void updateCategory(int id, int parentId, String nameAll) {
+        List<Integer> changeRecordIdList = categoryService.findChangeRecordId(id, parentId, nameAll);
         repository.updateCategory(changeRecordIdList);
     }
 

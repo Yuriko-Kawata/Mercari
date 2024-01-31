@@ -1,5 +1,11 @@
 package com.example.productmanagementex.form;
 
+/**
+ * カテゴリーのformクラス
+ * 
+ * @author hiraizumi
+ * 
+ */
 public class CategoryForm {
     // ID
     private int id;

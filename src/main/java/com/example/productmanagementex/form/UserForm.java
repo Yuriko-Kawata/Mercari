@@ -5,6 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * userのformクラス
+ * 
+ * @author hiraizumi
+ */
 public class UserForm {
     // 名前
     @NotBlank(message = "入力は必須です")
