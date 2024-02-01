@@ -136,7 +136,7 @@
     
 
     <!-- edit form -->
-    <form action="#" th:action="@{/edit(id=${itemData.id})}" method="post" class="form-horizontal" id="edit-item">
+    <form action="#" th:action="@{/edit(id=${itemData.id})}" method="post" class="form-horizontal" id="edit-item" enctype="multipart/form-data">
       <!-- name -->
       <div class="form-group">
         <label for="inputName" class="col-sm-2 control-label">name</label>

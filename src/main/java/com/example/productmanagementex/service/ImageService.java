@@ -41,4 +41,18 @@ public class ImageService {
         }
         return path;
     }
+
+    /**
+     * pathの更新
+     * 
+     * @param itemId item id
+     * @param path   path
+     */
+    public void updatePath(int itemId, String path) {
+        if (repository.findPathByItemId(itemId) == null) {
+            repository.insert(itemId, path);
+        } else {
+            repository.updatePath(itemId, path);
+        }
+    }
 }

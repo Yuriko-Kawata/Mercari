@@ -93,7 +93,7 @@ public class CategoryController {
         logger.info("searchCategory method started call: {}", searchCategory, parentPage, childPage, grandPage);
 
         // 検索条件が””であれば、ページを更新して一覧表示へ
-        if (searchCategory == "") {
+        if (searchCategory.equals("")) {
 
             logger.info("searchCategory method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
@@ -312,7 +312,7 @@ public class CategoryController {
         logger.info("editCategory method started call: {}", form);
 
         // 入力がなければエラーで返す（
-        if (form.getName() == null || form.getName() == "") {
+        if (form.getName() == null || form.getName().equals("")) {
             model.addAttribute("inputError", true);
 
             logger.warn("editCategory, input error");

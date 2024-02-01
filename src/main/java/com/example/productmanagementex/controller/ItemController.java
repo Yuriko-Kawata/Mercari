@@ -202,7 +202,7 @@ public class ItemController {
         SearchForm form = new SearchForm();
         if (parentId == 0) {
             form.setParentCategory(name);
-        } else if (nameAll == "") {
+        } else if (nameAll.equals("")) {
             Category parentCategory = categoryService.findParentCategory(parentId);
             form.setParentCategory(parentCategory.getName());
             form.setChildCategory(name);
@@ -358,7 +358,7 @@ public class ItemController {
     public String toEditItem(int id, CategoryForm categoryForm, Model model) {
         // itemsのupdate timeの取得
         model.addAttribute("updateTime", itemService.getUpdateTime(id));
-        // 画像の取得
+        // image pathの取得
         model.addAttribute("imagePath", imageService.getPath(id));
         // エラーがあった場合はこれに入れて返す（初期は空）
         model.addAttribute("categoryForm", categoryForm);
@@ -407,7 +407,7 @@ public class ItemController {
         logger.info("editItem method started call: {}", itemForm, categoryForm);
 
         // 入力チェック エラーがあれば元の画面に戻る
-        if (itemForm.getName() == "" || itemForm.getPrice() == 0 || itemForm.getDescription() == "") {
+        if (itemForm.getName().equals("") || itemForm.getPrice() == 0 || itemForm.getDescription().equals("")) {
             model.addAttribute("inputError", model);
 
             logger.warn("editItem, validation error");
@@ -415,8 +415,7 @@ public class ItemController {
         }
 
         // categoryの入力がなければ、categoryは元情報のまま更新
-        if (categoryForm.getParentCategory() == "" && categoryForm.getChildCategory() == null
-                && categoryForm.getGrandCategory() == null) {
+        if (categoryForm.getParentCategory().equals("")) {
             Item item = itemService.findById(itemForm.getId());
             String originalParentCategory = null;
             String originalChildCategory = null;
@@ -437,6 +436,12 @@ public class ItemController {
             categoryForm.setChildCategory(originalChildCategory);
             categoryForm.setGrandCategory(originalGrandCategory);
 
+            // ファイルが送られた場合は、pathの更新を行う
+            if (itemForm.getImage() != null) {
+                String imagePath = fileStorageService.storeFile(itemForm.getImage());
+                imageService.updatePath(itemForm.getId(), imagePath);
+            }
+
             // item情報の更新
             itemService.editItem(itemForm, categoryForm);
             // 画面遷移用のid受け取り
@@ -444,15 +449,21 @@ public class ItemController {
             return "confirm/edit-item-confirm";
 
             // 親を選択したが、子、孫まで入力がなければエラーとして元の画面に戻る
-        } else if (categoryForm.getParentCategory() != "" && categoryForm.getChildCategory() == "") {
-            model.addAttribute("choiceError", model);
-            return toEditItem(itemForm.getId(), categoryForm, model);
-        } else if (categoryForm.getParentCategory() != "" && categoryForm.getChildCategory() != ""
-                && categoryForm.getGrandCategory() == "") {
+        } else if (categoryForm.getChildCategory().equals("")) {
             model.addAttribute("choiceError", model);
 
-            logger.info("editItem method finished");
+            logger.warn("editItem, category choice error");
             return toEditItem(itemForm.getId(), categoryForm, model);
+        } else if (categoryForm.getGrandCategory().equals("")) {
+            model.addAttribute("choiceError", model);
+
+            logger.warn("editItem, category choice error");
+            return toEditItem(itemForm.getId(), categoryForm, model);
+        }
+
+        if (itemForm.getImage() != null) {
+            String imagePath = fileStorageService.storeFile(itemForm.getImage());
+            imageService.updatePath(itemForm.getId(), imagePath);
         }
 
         itemService.editItem(itemForm, categoryForm);

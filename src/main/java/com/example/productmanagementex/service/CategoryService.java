@@ -41,11 +41,11 @@ public class CategoryService {
     public int checkCategory(CategoryForm form) {
         logger.debug("Starting checkCategory");
         // 子カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getChildCategory() == null || form.getChildCategory() == "") {
+        if (form.getChildCategory() == null || form.getChildCategory().equals("")) {
             form.setChildCategory("カテゴリ無");
         }
         // 孫カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getGrandCategory() == null || form.getGrandCategory() == "") {
+        if (form.getGrandCategory() == null || form.getGrandCategory().equals("")) {
             form.setGrandCategory("カテゴリ無");
         }
 
@@ -79,7 +79,7 @@ public class CategoryService {
         // 親カテゴリならparentConditionが０、子なら１、孫なら２
         int parentCondition = 0;
         if (parentId != 0) {
-            if (nameAll == "") {
+            if (nameAll.equals("")) {
                 parentCondition = 1;
             } else {
                 parentCondition = 2;
@@ -102,11 +102,11 @@ public class CategoryService {
         logger.debug("Started insertCategory");
 
         // 子カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getChildCategory() == null || form.getChildCategory() == "") {
+        if (form.getChildCategory() == null || form.getChildCategory().equals("")) {
             form.setChildCategory("カテゴリ無");
         }
         // 孫カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getGrandCategory() == null || form.getGrandCategory() == "") {
+        if (form.getGrandCategory() == null || form.getGrandCategory().equals("")) {
             form.setGrandCategory("カテゴリ無");
         }
 
@@ -150,7 +150,7 @@ public class CategoryService {
 
         // 親、子、孫で動的に変化
         if (parentId != 0) {
-            if (nameAll == "") {
+            if (nameAll.equals("")) {
                 // 子の時
                 parentCondition = 2;
                 nameBuilder.append("/");
@@ -444,9 +444,9 @@ public class CategoryService {
         // 親カテゴリならparentConditionが０、子なら１、孫なら２
         int parentCondition = 1;
         List<Integer> changeRecordId = new ArrayList<>();
-        if (parentId != 0 && nameAll == "") {
+        if (parentId != 0 && nameAll.equals("")) {
             parentCondition = 2;
-        } else if (parentId != 0 && nameAll != "") {
+        } else if (parentId != 0 && !(nameAll.equals(""))) {
             // 孫の場合はそのIDのみ渡す
             changeRecordId.add(id);
 

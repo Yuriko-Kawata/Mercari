@@ -43,6 +43,17 @@ public class ImageRepository {
             ;
             """;
 
+    // pathのupdateを行うクエリ
+    private static final String UPDATE_PATH_SQL = """
+            UPDATE
+                images
+            SET
+                path = :path
+            WHERE
+                item_id = :itemId
+            ;
+            """;
+
     /**
      * 新規作成
      * 
@@ -69,5 +80,10 @@ public class ImageRepository {
             return null;
         });
         return path;
+    }
+
+    public void updatePath(int itemId, String path) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("itemId", itemId).addValue("path", path);
+        template.update(UPDATE_PATH_SQL, param);
     }
 }
