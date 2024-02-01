@@ -1,5 +1,7 @@
 package com.example.productmanagementex.form;
 
+import jakarta.validation.constraints.Size;
+
 /**
  * 検索用のformクラス
  * 
@@ -7,8 +9,10 @@ package com.example.productmanagementex.form;
  */
 public class SearchForm {
     // 商品名
+    @Size(max = 255, message = "２５５文字以内で入力してください")
     private String name;
     // ブランド名
+    @Size(max = 255, message = "２５５文字以内で入力してください")
     private String brand;
     // 親カテゴリ（１次）
     private String parentCategory;

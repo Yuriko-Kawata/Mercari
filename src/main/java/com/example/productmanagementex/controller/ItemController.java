@@ -110,8 +110,14 @@ public class ItemController {
      * @return 商品一覧へ
      */
     @RequestMapping("search")
-    public String toSearch(SearchForm form, Model model, @RequestParam(defaultValue = "1") int page) {
+    public String toSearch(@Validated SearchForm form, BindingResult rs, Model model,
+            @RequestParam(defaultValue = "1") int page) {
         logger.info("search method started call: {}", form);
+
+        if (rs.hasErrors()) {
+            logger.warn("search, validation error");
+            return toItemList(page, model);
+        }
 
         // 検索条件のsessionスコープへの格納
         session.setAttribute("form", form);
@@ -355,12 +361,13 @@ public class ItemController {
      * @return 商品編集画面へ
      */
     @RequestMapping("toEdit")
-    public String toEditItem(int id, CategoryForm categoryForm, Model model) {
+    public String toEditItem(int id, ItemForm itemForm, CategoryForm categoryForm, Model model) {
         // itemsのupdate timeの取得
         model.addAttribute("updateTime", itemService.getUpdateTime(id));
         // image pathの取得
         model.addAttribute("imagePath", imageService.getPath(id));
         // エラーがあった場合はこれに入れて返す（初期は空）
+        model.addAttribute("itemForm", itemForm);
         model.addAttribute("categoryForm", categoryForm);
         // カテゴリリストの取得
         model.addAttribute("categoryList", categoryService.findAllCategory());
@@ -403,15 +410,12 @@ public class ItemController {
      * @return 成功ならconfirm画面へ、失敗なら編集画面に戻る
      */
     @PostMapping("edit")
-    public String editItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
+    public String editItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
         logger.info("editItem method started call: {}", itemForm, categoryForm);
 
-        // 入力チェック エラーがあれば元の画面に戻る
-        if (itemForm.getName().equals("") || itemForm.getPrice() == 0 || itemForm.getDescription().equals("")) {
-            model.addAttribute("inputError", model);
-
+        if (rs.hasErrors()) {
             logger.warn("editItem, validation error");
-            return toEditItem(itemForm.getId(), categoryForm, model);
+            return toEditItem(itemForm.getId(), itemForm, categoryForm, model);
         }
 
         // categoryの入力がなければ、categoryは元情報のまま更新
@@ -437,7 +441,7 @@ public class ItemController {
             categoryForm.setGrandCategory(originalGrandCategory);
 
             // ファイルが送られた場合は、pathの更新を行う
-            if (itemForm.getImage() != null) {
+            if (!(itemForm.getImage().isEmpty())) {
                 String imagePath = fileStorageService.storeFile(itemForm.getImage());
                 imageService.updatePath(itemForm.getId(), imagePath);
             }
@@ -453,12 +457,12 @@ public class ItemController {
             model.addAttribute("choiceError", model);
 
             logger.warn("editItem, category choice error");
-            return toEditItem(itemForm.getId(), categoryForm, model);
+            return toEditItem(itemForm.getId(), itemForm, categoryForm, model);
         } else if (categoryForm.getGrandCategory().equals("")) {
             model.addAttribute("choiceError", model);
 
             logger.warn("editItem, category choice error");
-            return toEditItem(itemForm.getId(), categoryForm, model);
+            return toEditItem(itemForm.getId(), itemForm, categoryForm, model);
         }
 
         if (itemForm.getImage() != null) {

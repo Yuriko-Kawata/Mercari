@@ -20,7 +20,7 @@ public class UserForm {
     private String mail;
     // パスワード
     @NotBlank(message = "入力は必須です")
-    @Size(min = 8, max = 16, message = "８文字以上１６文字以内で入力してください")
+    @Size(min = 8, max = 20, message = "８文字以上２０文字以内で入力してください")
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{0,}", message = "英大文字、英小文字、数字を１文字以上含めてください")
     private String password;
     // パスワードの再入力
