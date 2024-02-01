@@ -118,3 +118,7 @@ Temporary Items
 
 # log
 *.log
+*.log.gz
+
+# image
+*.png

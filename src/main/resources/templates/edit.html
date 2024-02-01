@@ -53,6 +53,15 @@
     .important{
       color: red;
     }
+    img{
+      width: 300px;
+    }
+    .original-image{
+      text-align: center;
+      width: 350px;
+      border: double;
+      margin-top: 20px;
+    }
       /* モーダルのスタイル */
     .modal {
       display: none;
@@ -127,7 +136,7 @@
     
 
     <!-- edit form -->
-    <form action="#" th:action="@{/edit(id=${itemData.id})}" method="post" class="form-horizontal" id="edit-item">
+    <form action="#" th:action="@{/edit(id=${itemData.id})}" method="post" class="form-horizontal" id="edit-item" enctype="multipart/form-data">
       <!-- name -->
       <div class="form-group">
         <label for="inputName" class="col-sm-2 control-label">name</label>
@@ -220,6 +229,21 @@
           rows="5" th:text="${itemData.description}" required></textarea>
         </div>
       </div>
+      <!-- image -->
+      <div class="form-group">
+        <label for="description"
+          class="col-sm-2 control-label">image</label>
+        <div class="col-sm-8">
+          <input type="file" name="image" id="image">
+          <div style="display: flex; justify-content: center;">
+            <div class="original-image">
+              <img th:src="@{${imagePath}}" alt="変更前画像" title="変更前画像">
+              <p>変更前画像</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- submit button -->
       <div class="form-group" style="display: flex;">
         <div class="col-sm-offset-2 col-sm-8" style="display: flex; justify-content: space-between;">

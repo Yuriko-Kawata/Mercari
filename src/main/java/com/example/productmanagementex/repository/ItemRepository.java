@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.example.productmanagementex.domain.Category;
@@ -431,15 +433,22 @@ public class ItemRepository {
      * @param item    item
      * @param nameAll name_all
      */
-    public void insertItem(Item item, String nameAll) {
+    public Integer insertItem(Item item, String nameAll) {
         logger.debug("Started insertItem");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", item.getName())
                 .addValue("condition", item.getCondition()).addValue("brand", item.getBrand())
                 .addValue("price", item.getPrice()).addValue("description", item.getDescription())
                 .addValue("nameAll", nameAll);
-        template.update(INSERT_SQL, param);
+        // serialで作成されたIDの取得
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        // insertとIDの取得
+        template.update(INSERT_SQL, param, keyHolder, new String[] { "id" });
+        Integer key = (Integer) keyHolder.getKey();
+
         logger.debug("Finished insertItem");
+        return key;
     }
 
     /**
