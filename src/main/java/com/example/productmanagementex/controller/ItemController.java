@@ -341,6 +341,8 @@ public class ItemController {
     public String detail(int id, Model model) {
         // idからitem情報の取得
         model.addAttribute("item", itemService.findById(id));
+        // idからimage pathの取得
+        model.addAttribute("imagePath", imageService.getPath(id));
         return "detail";
     }
 

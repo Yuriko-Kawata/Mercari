@@ -23,6 +23,10 @@
       background-color: unset;
       border: none;
     }
+    img{
+      width: 300px;
+      height: 300px;
+    }
   </style>
   <!-- script -->
   <script
@@ -100,6 +104,10 @@
           <tr>
             <th>description</th>
             <td th:text="${item.description}"></td>
+          </tr>
+          <tr>
+            <th>image</th>
+            <td><img th:src="@{${imagePath}}" alt="image"></td>
           </tr>
         </tbody>
       </table>
