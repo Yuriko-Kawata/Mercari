@@ -279,9 +279,10 @@ public class ItemController {
      * @return 新規作成画面へ
      */
     @RequestMapping("toAdd")
-    public String toAddItem(ItemForm itemForm, Model model) {
+    public String toAddItem(ItemForm itemForm, CategoryForm categoryForm, Model model) {
         // エラーがあった場合はこれに入れて返す（初期は空）
         model.addAttribute("itemForm", itemForm);
+        model.addAttribute("categoryForm", categoryForm);
         // カテゴリリストの取得
         model.addAttribute("categoryList", categoryService.findAllCategory());
 
@@ -298,25 +299,18 @@ public class ItemController {
      * @return 成功ならconfirmへ、失敗なら新規作成画面にもどる
      */
     @PostMapping("add")
-    public String addItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
+    public String addItem(@Validated ItemForm itemForm, BindingResult itemRs, @Validated CategoryForm categoryForm,
+            BindingResult categoryRs, Model model) {
         logger.info("addItem method started call: {}", itemForm, categoryForm);
 
-        // カテゴリ全てが入力されているかチェック
-        // エラーがあれば元の画面に戻る
-        if (categoryForm.getParentCategory() == "") {
-            model.addAttribute("error", true);
-            return toAddItem(itemForm, model);
-        } else if (categoryForm.getChildCategory() == "") {
-            model.addAttribute("error", true);
-            return toAddItem(itemForm, model);
-        } else if (categoryForm.getGrandCategory() == "") {
-            model.addAttribute("error", true);
-            return toAddItem(itemForm, model);
-        }
         // validationエラーがあれば元の画面に戻る
-        if (rs.hasErrors()) {
-            logger.warn("addItem, validation error");
-            return toAddItem(itemForm, model);
+        if (itemRs.hasErrors()) {
+            logger.warn("addItem, item validation error");
+            return toAddItem(itemForm, categoryForm, model);
+        }
+        if (categoryRs.hasErrors()) {
+            logger.warn("addItem,category validation error");
+            return toAddItem(itemForm, categoryForm, model);
         }
 
         // itemsに新規追加

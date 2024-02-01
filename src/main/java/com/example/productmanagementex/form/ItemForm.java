@@ -1,5 +1,7 @@
 package com.example.productmanagementex.form;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -34,6 +36,8 @@ public class ItemForm {
     private String description;
     // 状態（論理削除）
     private boolean delete;
+    // image path
+    private MultipartFile image;
 
     public Integer getId() {
         return id;
@@ -115,11 +119,19 @@ public class ItemForm {
         this.delete = delete;
     }
 
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "ItemForm [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category
                 + ", brand=" + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping
-                + ", description=" + description + ", delete=" + delete + "]";
+                + ", description=" + description + ", delete=" + delete + ", image=" + image + "]";
     }
 
 }
