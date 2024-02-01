@@ -209,7 +209,7 @@ public class ItemService {
      * @param itemForm     item情報
      * @param categoryForm category情報
      */
-    public void addItem(ItemForm itemForm, CategoryForm categoryForm) {
+    public int addItem(ItemForm itemForm, CategoryForm categoryForm) {
         logger.debug("Started addItem");
 
         // categoryFormからname_all作成
@@ -225,8 +225,9 @@ public class ItemService {
         Item item = new Item();
         BeanUtils.copyProperties(itemForm, item);
 
-        repository.insertItem(item, nameAll);
+        int itemId = repository.insertItem(item, nameAll);
         logger.debug("Finished addItem");
+        return itemId;
     }
 
     /**

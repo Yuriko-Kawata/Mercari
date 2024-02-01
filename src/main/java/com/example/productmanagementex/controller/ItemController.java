@@ -20,6 +20,8 @@ import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.form.ItemForm;
 import com.example.productmanagementex.form.SearchForm;
 import com.example.productmanagementex.service.CategoryService;
+import com.example.productmanagementex.service.FileStorageService;
+import com.example.productmanagementex.service.ImageService;
 import com.example.productmanagementex.service.ItemService;
 import com.example.productmanagementex.service.UserService;
 
@@ -44,6 +46,10 @@ public class ItemController {
     private UserService userService;
     @Autowired
     private HttpSession session;
+    @Autowired
+    private FileStorageService fileStorageService;
+    @Autowired
+    private ImageService imageService;
 
     private static final Logger logger = LogManager.getLogger(ItemController.class);
 
@@ -309,12 +315,16 @@ public class ItemController {
             return toAddItem(itemForm, categoryForm, model);
         }
         if (categoryRs.hasErrors()) {
-            logger.warn("addItem,category validation error");
+            logger.warn("addItem, category validation error");
             return toAddItem(itemForm, categoryForm, model);
         }
 
-        // itemsに新規追加
-        itemService.addItem(itemForm, categoryForm);
+        // itemsに新規追加と作成されたIDの取得
+        int itemId = itemService.addItem(itemForm, categoryForm);
+
+        // image pathを作成し、テーブルに保存
+        String imagePath = fileStorageService.storeFile(itemForm.getImage());
+        imageService.storage(itemId, imagePath);
 
         logger.info("addItem method finished");
         return "confirm/add-item-confirm";
