@@ -62,7 +62,12 @@ public class ImageRepository {
      */
     public String findPathByItemId(int itemId) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("itemId", itemId);
-        String path = template.queryForObject(FIND_PATH_BY_ITEM_ID_SQL, param, String.class);
+        String path = template.query(FIND_PATH_BY_ITEM_ID_SQL, param, rs -> {
+            if (rs.next()) {
+                return rs.getString("path");
+            }
+            return null;
+        });
         return path;
     }
 }

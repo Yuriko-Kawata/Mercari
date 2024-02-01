@@ -36,6 +36,9 @@ public class ImageService {
      */
     public String getPath(int itemId) {
         String path = repository.findPathByItemId(itemId);
+        if (path == null) {
+            path = "/uploaded-img/no-image.png";
+        }
         return path;
     }
 }
