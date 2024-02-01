@@ -13,10 +13,12 @@ import jakarta.validation.constraints.Size;
 public class UserForm {
     // 名前
     @NotBlank(message = "入力は必須です")
+    @Size(max = 50, message = "５０文字以内で入力してください")
     private String name;
     // メールアドレス
     @NotBlank(message = "入力は必須です")
     @Email(message = "形式が不正です")
+    @Size(max = 255, message = "２５５文字以内で入力してください")
     private String mail;
     // パスワード
     @NotBlank(message = "入力は必須です")
