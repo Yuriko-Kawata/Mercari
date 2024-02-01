@@ -358,6 +358,8 @@ public class ItemController {
     public String toEditItem(int id, CategoryForm categoryForm, Model model) {
         // itemsのupdate timeの取得
         model.addAttribute("updateTime", itemService.getUpdateTime(id));
+        // 画像の取得
+        model.addAttribute("imagePath", imageService.getPath(id));
         // エラーがあった場合はこれに入れて返す（初期は空）
         model.addAttribute("categoryForm", categoryForm);
         // カテゴリリストの取得
