@@ -116,57 +116,6 @@ public class ItemRepository {
             ;
             """;
 
-    // pageに対応する３０件を取得するクエリ
-    private final String FIND_BY_PAGE_SQL = """
-            SELECT
-                i.id AS i_id,
-                i.name AS i_name,
-                i.condition AS i_condition,
-                i.category AS i_category,
-                i.brand AS i_brand,
-                i.price AS i_price,
-                i.stock AS i_stock,
-                i.shipping AS i_shipping,
-                i.description AS i_description,
-                i.update_time AS i_update_time,
-                i.del_flg AS i_del_flg,
-                grand.id AS grand_id,
-                grand.name AS grand_name,
-                grand.parent_id AS grand_parent_id,
-                grand.name_all AS grand_name_all,
-                child.id AS child_id,
-                child.name AS child_name,
-                child.parent_id AS child_parent_id,
-                child.name_all AS child_name_all,
-                parent.id AS parent_id,
-                parent.name AS parent_name,
-                parent.parent_id AS parent_parent_id,
-                parent.name_all AS parent_name_all
-            FROM
-                items AS i
-            LEFT OUTER JOIN
-                category AS grand
-            ON
-                i.category = grand.id
-            LEFT OUTER JOIN
-                category AS child
-            ON
-                grand.parent_id = child.id
-            LEFT OUTER JOIN
-                category AS parent
-            ON
-                child.parent_id = parent.id
-            WHERE
-                    i.del_flg = 0
-            ORDER BY
-                i.id
-            LIMIT
-                30
-            OFFSET
-                (:page - 1) * 30
-            ;
-            """;
-
     // itemのトータル件数を取得するクエリ
     private final String ITEMLIST_SIZE_SQL = """
             SELECT
@@ -288,7 +237,7 @@ public class ItemRepository {
                         name_all LIKE :nameAll
                         )
             ORDER BY
-                i.id
+                :sort
             LIMIT
                 30
             OFFSET
@@ -450,8 +399,12 @@ public class ItemRepository {
      * @return item全件
      */
     public List<Item> findAllItems() {
+        logger.debug("Started findAllItems");
+
         SqlParameterSource param = new MapSqlParameterSource();
         List<Item> items = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
+
+        logger.debug("Finished findAllItems");
         return items;
     }
 
@@ -461,13 +414,28 @@ public class ItemRepository {
      * @param page page
      * @return 検索結果
      */
-    public List<Item> findItems(int page) {
-        logger.debug("Started findAllItems");
+    public List<Item> findItems(String sort, String order, int page) {
+        logger.debug("Started findItems");
+        String sortCondition = "ORDER BY " + sort + " " + order;
+
+        // ソート機能の実装のため、動的にクエリを変更
+        String sql = "SELECT i.id AS i_id, i.name AS i_name, i.condition AS i_condition, i.category AS i_category, i.brand AS i_brand, i.price AS i_price, i.stock AS i_stock, i.shipping AS i_shipping, i.description AS i_description, i.update_time AS i_update_time, i.del_flg AS i_del_flg,"
+                +
+                " grand.id AS grand_id, grand.name AS grand_name, grand.parent_id AS grand_parent_id, grand.name_all AS grand_name_all, child.id AS child_id, child.name AS child_name, child.parent_id AS child_parent_id, child.name_all AS child_name_all, parent.id AS parent_id, parent.name AS parent_name, parent.parent_id AS parent_parent_id, parent.name_all AS parent_name_all"
+                +
+                " FROM items AS i" +
+                " LEFT OUTER JOIN category AS grand ON i.category = grand.id" +
+                " LEFT OUTER JOIN category AS child ON grand.parent_id = child.id" +
+                " LEFT OUTER JOIN category AS parent ON child.parent_id = parent.id" +
+                " WHERE i.del_flg = 0 " +
+                sortCondition +
+                " LIMIT 30" +
+                " OFFSET (:page - 1) * 30;";
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
-        List<Item> itemList = template.query(FIND_BY_PAGE_SQL, param, ITEM_ROWMAPPER);
+        List<Item> itemList = template.query(sql, param, ITEM_ROWMAPPER);
 
-        logger.debug("Finished findAllItems");
+        logger.debug("Finished findItems");
         return itemList;
     }
 
@@ -514,12 +482,28 @@ public class ItemRepository {
      * @param page    page
      * @return 検索結果
      */
-    public List<Item> searchItems(String name, String brand, String nameAll, int page) {
+    public List<Item> searchItems(String name, String brand, String nameAll, String sort, String order, int page) {
         logger.debug("Started searchItems");
+        // ソート準備
+        String sortCondition = "ORDER BY " + sort + " " + order;
+
+        // ソート機能の実装のため、動的にクエリを変更
+        String sql = "SELECT i.id AS i_id, i.name AS i_name, i.condition AS i_condition, i.category AS i_category, i.brand AS i_brand, i.price AS i_price, i.stock AS i_stock, i.shipping AS i_shipping, i.description AS i_description, i.update_time AS i_update_time, i.del_flg AS i_del_flg, "
+                +
+                "grand.id AS grand_id, grand.name AS grand_name, grand.parent_id AS grand_parent_id, grand.name_all AS grand_name_all, child.id AS child_id, child.name AS child_name, child.parent_id AS child_parent_id, child.name_all AS child_name_all, parent.id AS parent_id, parent.name AS parent_name, parent.parent_id AS parent_parent_id, parent.name_all AS parent_name_all "
+                +
+                "FROM items AS i " +
+                "LEFT OUTER JOIN category AS grand ON i.category = grand.id " +
+                "LEFT OUTER JOIN category AS child ON grand.parent_id = child.id " +
+                "LEFT OUTER JOIN category AS parent ON child.parent_id = parent.id " +
+                "WHERE i.del_flg = 0 AND (i.name LIKE :name) AND (i.brand LIKE :brand) AND  i.category IN (SELECT id FROM category WHERE name_all LIKE :nameAll) "
+                +
+                sortCondition +
+                " LIMIT 30 OFFSET (:page - 1) * 30;";
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll).addValue("page", page);
-        List<Item> itemList = template.query(SEARCH_SQL, param, ITEM_ROWMAPPER);
+        List<Item> itemList = template.query(sql, param, ITEM_ROWMAPPER);
 
         logger.debug("Finished searchItems");
         return itemList;

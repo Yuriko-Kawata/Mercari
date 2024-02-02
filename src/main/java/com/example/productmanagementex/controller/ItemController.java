@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,9 +66,10 @@ public class ItemController {
      * @return 商品一覧へ
      */
     @RequestMapping("itemList")
-    public String toItemList(@RequestParam(defaultValue = "1") int page, Model model) {
+    public String toItemList(@RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "i.id") String sort, @RequestParam(defaultValue = "ASC") String order,
+            Model model) {
         // sessionに検索条件があれば削除
-        SearchForm form = new SearchForm();
         if (session.getAttribute("form") != null) {
             session.removeAttribute("form");
         }
@@ -82,10 +82,16 @@ public class ItemController {
         session.setAttribute("userName", user.getName());
         logger.info("getAuthentication method finished with response: {}", user);
 
+        // defaultのソート情報の定義
+        SearchForm form = new SearchForm();
+        form.setSort(sort);
+        form.setOrder(order);
+        session.setAttribute("form", form);
+
         // 検索条件の作成（初期は””）
         model.addAttribute("searchCondition", form);
         // current pageから３０件取得
-        model.addAttribute("itemList", itemService.findItems(page));
+        model.addAttribute("itemList", itemService.findItems(sort, order, page));
 
         // トータル件数の取得と、ページ数の計算
         int totalItem = itemService.totalItem();
@@ -120,10 +126,9 @@ public class ItemController {
             @RequestParam(defaultValue = "1") int page) {
         logger.info("search method started call: {}", form);
 
-        if (rs.hasErrors()) {
-            logger.warn("search, validation error");
-            return toItemList(page, model);
-        }
+        // defaultのソート情報の定義（serviceで条件分岐めんどくさくなるからここで）
+        form.setSort("i.id");
+        form.setOrder("ASC");
 
         // 検索条件のsessionスコープへの格納
         session.setAttribute("form", form);
@@ -133,7 +138,7 @@ public class ItemController {
         // 検索結果の取得
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), page));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), page));
 
         // 検索件数の取得と、ページ数の計算
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
@@ -154,6 +159,37 @@ public class ItemController {
         return "item-list";
     }
 
+    @RequestMapping("sort")
+    public String toSort(String sort, String order, Model model) {
+        SearchForm form = (SearchForm) session.getAttribute("form");
+
+        form.setSort(sort);
+        form.setOrder(order);
+        session.setAttribute("form", form);
+        model.addAttribute("searchCondition", form);
+
+        model.addAttribute("itemList",
+                itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
+
+        int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
+                form.getChildCategory(), form.getGrandCategory());
+        int totalPage = 0;
+        if (totalItem % 30 == 0) {
+            totalPage = totalItem / 30;
+        } else {
+            totalPage = totalItem / 30 + 1;
+        }
+
+        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalItemCount", totalItem);
+        model.addAttribute("currentPage", 1);
+        model.addAttribute("categoryList", categoryService.findAllCategory());
+
+        logger.info("sort method finished with response: {}", totalItem);
+        return "item-list";
+    }
+
     /**
      * ページ遷移
      * 
@@ -169,14 +205,16 @@ public class ItemController {
         SearchForm form = (SearchForm) session.getAttribute("form");
         if (form == null) {
             logger.info("searchPage method finished");
-            return toItemList(page, model);
+            String sort = "i.id";
+            String order = "ASC";
+            return toItemList(page, sort, order, model);
         }
 
         // 検索条件のpageを更新して取得
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), page));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), page));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
 
@@ -230,7 +268,7 @@ public class ItemController {
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), 1));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
 
@@ -269,7 +307,7 @@ public class ItemController {
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), 1));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
 
