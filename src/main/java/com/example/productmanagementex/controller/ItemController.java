@@ -1,5 +1,11 @@
 package com.example.productmanagementex.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,9 +32,8 @@ import com.example.productmanagementex.service.ImageService;
 import com.example.productmanagementex.service.ItemService;
 import com.example.productmanagementex.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import java.sql.Timestamp;
 
 /**
  * itemsのcontroller
@@ -79,7 +85,7 @@ public class ItemController {
         // 検索条件の作成（初期は””）
         model.addAttribute("searchCondition", form);
         // current pageから３０件取得
-        model.addAttribute("itemList", itemService.findAllItems(page));
+        model.addAttribute("itemList", itemService.findItems(page));
 
         // トータル件数の取得と、ページ数の計算
         int totalItem = itemService.totalItem();
@@ -162,7 +168,6 @@ public class ItemController {
         // 検索条件がなければ、ページを更新して一覧表示へ
         SearchForm form = (SearchForm) session.getAttribute("form");
         if (form == null) {
-
             logger.info("searchPage method finished");
             return toItemList(page, model);
         }
@@ -499,6 +504,31 @@ public class ItemController {
 
         logger.info("deleteItem method finished");
         return "confirm/delete-item-confirm";
+    }
+
+    @GetMapping("download")
+    public void downloadItemData(HttpServletResponse response) throws IOException {
+        List<Item> items;
+        SearchForm form = (SearchForm) session.getAttribute("form");
+        if (form == null) {
+            items = itemService.findAllItems(); // 商品データの取得
+        } else {
+            items = itemService.searchAllItems(form.getName(), form.getBrand(), form.getParentCategory(),
+                    form.getChildCategory(), form.getGrandCategory());
+        }
+
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"products.csv\"");
+
+        PrintWriter writer = response.getWriter();
+        writer.println("Product ID,Product Name,Price"); // ヘッダーの書き込み
+
+        for (Item item : items) {
+            writer.println(item.getId() + "," + item.getName() + "," + item.getPrice());
+        }
+
+        writer.flush();
+        writer.close();
     }
 
 }

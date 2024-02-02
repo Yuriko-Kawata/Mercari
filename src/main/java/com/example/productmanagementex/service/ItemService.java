@@ -33,13 +33,23 @@ public class ItemService {
     private static final Logger logger = LogManager.getLogger(ItemService.class);
 
     /**
+     * 全件取得
+     * 
+     * @return 全件
+     */
+    public List<Item> findAllItems() {
+        List<Item> items = repository.findAllItems();
+        return items;
+    }
+
+    /**
      * pageに対応する３０件を取得
      * 
      * @param page page
      * @return 検索結果
      */
-    public List<Item> findAllItems(int page) {
-        List<Item> itemList = repository.findAllItems(page);
+    public List<Item> findItems(int page) {
+        List<Item> itemList = repository.findItems(page);
         return itemList;
     }
 
@@ -51,6 +61,81 @@ public class ItemService {
     public int totalItem() {
         int itemListSize = repository.itemListSize();
         return itemListSize;
+    }
+
+    /**
+     * 検索条件に一致するレコードの全件取得
+     * 
+     * @param name           name
+     * @param brand          brand
+     * @param parentCategory 親カテゴリ
+     * @param childCategory  子カテゴリ
+     * @param grandCategory  孫カテゴリ
+     * @return 検索結果
+     */
+    public List<Item> searchAllItems(String name, String brand, String parentCategory, String childCategory,
+            String grandCategory) {
+        logger.debug("Started searchAllItems");
+
+        StringBuilder nameBuilder = new StringBuilder();
+        StringBuilder brandBuilder = new StringBuilder();
+        StringBuilder nameAllBuilder = new StringBuilder();
+        String nameAll = null;
+
+        // nameの入力がなければ全件
+        if (name == null) {
+            name = "%";
+        } else {
+            nameBuilder.append("%");
+            nameBuilder.append(name);
+            nameBuilder.append("%");
+            name = nameBuilder.toString();
+        }
+
+        // brandの入力がなければ全件
+        if (brand == null) {
+            brand = "%";
+        } else {
+            brandBuilder.append("%");
+            brandBuilder.append(brand);
+            brandBuilder.append("%");
+            brand = brandBuilder.toString();
+        }
+
+        // categoryの選択条件で分岐
+        if (parentCategory != "" && parentCategory != null) {
+            if (childCategory != "" && childCategory != null) {
+                if (grandCategory != "" && grandCategory != null) {
+                    // 親、子、孫まで選択した時は 親/子/孫 で検索
+                    nameAllBuilder.append(parentCategory);
+                    nameAllBuilder.append("/");
+                    nameAllBuilder.append(childCategory);
+                    nameAllBuilder.append("/");
+                    nameAllBuilder.append(grandCategory);
+                    nameAll = nameAllBuilder.toString();
+                } else {
+                    // 孫を選択していない時は 親/子/% で検索
+                    nameAllBuilder.append(parentCategory);
+                    nameAllBuilder.append("/");
+                    nameAllBuilder.append(childCategory);
+                    nameAllBuilder.append("/%");
+                    nameAll = nameAllBuilder.toString();
+                }
+            } else {
+                // 親だけ選択の時は 親/% で検索
+                nameAllBuilder.append(parentCategory);
+                nameAllBuilder.append("/%");
+                nameAll = nameAllBuilder.toString();
+            }
+        } else {
+            // 選択がなかった場合は全件
+            nameAll = "%";
+        }
+
+        List<Item> itemList = repository.searchAllItems(name, brand, nameAll);
+
+        logger.debug("Finished searchAllItems");
+        return itemList;
     }
 
     /**
