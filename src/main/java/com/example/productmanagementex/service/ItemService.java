@@ -48,8 +48,8 @@ public class ItemService {
      * @param page page
      * @return 検索結果
      */
-    public List<Item> findItems(int page) {
-        List<Item> itemList = repository.findItems(page);
+    public List<Item> findItems(String sort, String order, int page) {
+        List<Item> itemList = repository.findItems(sort, order, page);
         return itemList;
     }
 
@@ -150,12 +150,13 @@ public class ItemService {
      * @return 検索結果
      */
     public List<Item> searchItems(String name, String brand, String parentCategory, String childCategory,
-            String grandCategory, int page) {
+            String grandCategory, String sort, String order, int page) {
         logger.debug("Started searchItems");
 
         StringBuilder nameBuilder = new StringBuilder();
         StringBuilder brandBuilder = new StringBuilder();
         StringBuilder nameAllBuilder = new StringBuilder();
+        StringBuilder sortBuilder = new StringBuilder();
         String nameAll = null;
 
         // nameの入力がなければ全件
@@ -208,7 +209,7 @@ public class ItemService {
             nameAll = "%";
         }
 
-        List<Item> itemList = repository.searchItems(name, brand, nameAll, page);
+        List<Item> itemList = repository.searchItems(name, brand, nameAll, sort, order, page);
 
         logger.debug("Finished searchItems");
         return itemList;

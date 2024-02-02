@@ -143,15 +143,13 @@
       <table id="item-table" class="table table-hover table-condensed">
         <thead>
           <tr>
-            <form>
-              <th>name&nbsp;<button type="submit" th:formaction="@{sort(page=${currentPage}, sort='name', order=${order == 'asc' ? 'desc' : 'asc'})}">&udhar;</button></th>
-              <th>price&nbsp;<button type="submit" th:formaction="@{sort(page=${currentPage}, sort='price', order=${order == 'asc' ? 'desc' : 'asc'})}">&udhar;</button></th>
+              <th>name&nbsp;<a type="button" class="btn btn-default" th:href="@{/sort(sort='i.name', order=${searchCondition.order == 'ASC' ? 'DESC' : 'ASC'})}">&udarr;</a></th>
+              <th>price&nbsp;<a type="button" class="btn btn-default" th:href="@{/sort(sort='i.price', order=${searchCondition.order == 'ASC' ? 'DESC' : 'ASC'})}">&udarr;</a></th>
               <th>category</th>
               <th>brand</th>
-              <th>cond&nbsp;<button type="submit" th:formaction="@{sort(page=${currentPage}, sort='condition', order=${order == 'asc' ? 'desc' : 'asc'})}">&udhar;</button></th>
+              <th>cond&nbsp;<a type="button" class="btn btn-default" th:href="@{/sort(sort='i.condition', order=${searchCondition.order == 'ASC' ? 'DESC' : 'ASC'})}">&udarr;</a></th>
               <!-- <th colspan="2">delete status</th>
               <th>change status</th> -->
-            </form>
           <tr>
         </thead>
         <tbody th:each="item : ${itemList}">
@@ -210,7 +208,7 @@
             <a th:href="@{toSearch(page=${totalPage})}" th:text="${totalPage}">20</a>
             <a th:href="@{/toSearch(page=${currentPage+1})}">&gt;&gt;</a>
           </div>
-          <div th:if="${currentPage+3 >= totalPage}">
+          <div th:if="${currentPage >= 6 && currentPage+3 >= totalPage}">
             <a th:href="@{/toSearch(page=${currentPage-1})}">&lt;&lt;</a>
             <a th:href="@{/toSearch(page=1)}">1</a>&hellip;
             <a th:each="pageNum: ${#numbers.sequence(totalPage-4, totalPage)}"
