@@ -69,8 +69,55 @@ public class ItemRepository {
         return item;
     };
 
+    // 全件取得するクエリ
+    private static final String FIND_ALL_SQL = """
+            SELECT
+                i.id AS i_id,
+                i.name AS i_name,
+                i.condition AS i_condition,
+                i.category AS i_category,
+                i.brand AS i_brand,
+                i.price AS i_price,
+                i.stock AS i_stock,
+                i.shipping AS i_shipping,
+                i.description AS i_description,
+                i.update_time AS i_update_time,
+                i.del_flg AS i_del_flg,
+                grand.id AS grand_id,
+                grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
+                child.id AS child_id,
+                child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
+                parent.id AS parent_id,
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
+            FROM
+                items AS i
+            LEFT OUTER JOIN
+                category AS grand
+            ON
+                i.category = grand.id
+            LEFT OUTER JOIN
+                category AS child
+            ON
+                grand.parent_id = child.id
+            LEFT OUTER JOIN
+                category AS parent
+            ON
+                child.parent_id = parent.id
+            WHERE
+                    i.del_flg = 0
+            ORDER BY
+                i.id
+            ;
+            """;
+
     // pageに対応する３０件を取得するクエリ
-    private final String FIND_ALL_SQL = """
+    private final String FIND_BY_PAGE_SQL = """
             SELECT
                 i.id AS i_id,
                 i.name AS i_name,
@@ -128,6 +175,63 @@ public class ItemRepository {
                 items
             WHERE
                 del_flg = 0
+            ;
+            """;
+
+    // 検索条件に一致するレコードを全件取得するクエリ
+    private static final String SEARCH_ALL_ITEMS_SQL = """
+            SELECT
+                i.id AS i_id,
+                i.name AS i_name,
+                i.condition AS i_condition,
+                i.category AS i_category,
+                i.brand AS i_brand,
+                i.price AS i_price,
+                i.stock AS i_stock,
+                i.shipping AS i_shipping,
+                i.description AS i_description,
+                i.update_time AS i_update_time,
+                i.del_flg AS i_del_flg,
+                grand.id AS grand_id,
+                grand.name AS grand_name,
+                grand.parent_id AS grand_parent_id,
+                grand.name_all AS grand_name_all,
+                child.id AS child_id,
+                child.name AS child_name,
+                child.parent_id AS child_parent_id,
+                child.name_all AS child_name_all,
+                parent.id AS parent_id,
+                parent.name AS parent_name,
+                parent.parent_id AS parent_parent_id,
+                parent.name_all AS parent_name_all
+            FROM
+                items AS i
+            LEFT OUTER JOIN
+                category AS grand
+            ON
+                i.category = grand.id
+            LEFT OUTER JOIN
+                category AS child
+            ON
+                grand.parent_id = child.id
+            LEFT OUTER JOIN
+                category AS parent
+            ON
+                child.parent_id = parent.id
+            WHERE
+                i.del_flg = 0
+                AND (i.name LIKE :name)
+                AND (i.brand LIKE :brand)
+                AND  i.category IN
+                    (SELECT
+                        id
+                    FROM
+                        category
+                    WHERE
+                        name_all LIKE :nameAll
+                        )
+            ORDER BY
+                i.id
             ;
             """;
 
@@ -341,16 +445,27 @@ public class ItemRepository {
             """;
 
     /**
+     * 全件取得
+     * 
+     * @return item全件
+     */
+    public List<Item> findAllItems() {
+        SqlParameterSource param = new MapSqlParameterSource();
+        List<Item> items = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
+        return items;
+    }
+
+    /**
      * pageに対応する30件取得
      * 
      * @param page page
      * @return 検索結果
      */
-    public List<Item> findAllItems(int page) {
+    public List<Item> findItems(int page) {
         logger.debug("Started findAllItems");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
-        List<Item> itemList = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
+        List<Item> itemList = template.query(FIND_BY_PAGE_SQL, param, ITEM_ROWMAPPER);
 
         logger.debug("Finished findAllItems");
         return itemList;
@@ -369,6 +484,25 @@ public class ItemRepository {
 
         logger.debug("Finished itemListSize");
         return itemsize;
+    }
+
+    /**
+     * 検索条件に一致するレコードの全件取得
+     * 
+     * @param name    name
+     * @param brand   brand
+     * @param nameAll name_all
+     * @return 検索結果
+     */
+    public List<Item> searchAllItems(String name, String brand, String nameAll) {
+        logger.debug("Started searchAllItems");
+
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
+                .addValue("nameAll", nameAll);
+        List<Item> itemList = template.query(SEARCH_ALL_ITEMS_SQL, param, ITEM_ROWMAPPER);
+
+        logger.debug("Finished searchAllItems");
+        return itemList;
     }
 
     /**
