@@ -12,18 +12,19 @@ import jakarta.validation.constraints.Size;
  */
 public class UserForm {
     // 名前
-    @NotBlank(message = "入力は必須です")
-    @Size(max = 50, message = "５０文字以内で入力してください")
+    @NotBlank(message = "error.empty")
+    @Size(max = 50, message = "{error.max}")
     private String name;
     // メールアドレス
-    @NotBlank(message = "入力は必須です")
-    @Email(message = "形式が不正です")
-    @Size(max = 255, message = "２５５文字以内で入力してください")
+    @NotBlank(message = "{error.empty}")
+    @Email(message = "{error.mail.format}")
+    @Size(max = 255, message = "{error.max}")
     private String mail;
     // パスワード
-    @NotBlank(message = "入力は必須です")
-    @Size(min = 8, max = 20, message = "８文字以上２０文字以内で入力してください")
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{0,}", message = "英大文字、英小文字、数字を１文字以上含めてください")
+    @NotBlank(message = "error.empty")
+    @Size(min = 8, max = 20, message = "{error.Range}")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{0,}", message = "{error.password}")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "{error.alphanumeric}")
     private String password;
     // パスワードの再入力
     private String passwordCheck;

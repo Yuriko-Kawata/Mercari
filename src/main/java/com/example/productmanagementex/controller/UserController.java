@@ -1,8 +1,11 @@
 package com.example.productmanagementex.controller;
 
+import java.util.Locale;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +28,8 @@ public class UserController {
 
     @Autowired
     private UserService service;
+    @Autowired
+    private MessageSource messageSource;
 
     private static final Logger logger = LogManager.getLogger(UserController.class);
 
@@ -59,10 +64,18 @@ public class UserController {
             logger.warn("registerUser, validation error");
             return toRegister(form, model);
         }
+
+        // password再入力のチェック
+        if (!(form.getPassword().equals(form.getPasswordCheck()))) {
+            String errorMessage = messageSource.getMessage("error.mail.not.match", null, Locale.getDefault());
+            model.addAttribute("passwordError", errorMessage);
+        }
+
         // mailが重複していないか確認
         // していれば、エラーとして元の画面に戻る
         if (service.findUserByMail(form.getMail()) != null) {
-            model.addAttribute("error", true);
+            String errorMessage = messageSource.getMessage("error.mail.duplicate", null, Locale.getDefault());
+            model.addAttribute("mailError", errorMessage);
             model.addAttribute("userForm", form);
 
             logger.warn("registerUser, findUserByMail error");
