@@ -1,6 +1,7 @@
 package com.example.productmanagementex.form;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * カテゴリーのformクラス
@@ -17,12 +18,15 @@ public class CategoryForm {
     private int parentId;
     // 親カテゴリ
     @NotBlank(message = "選択は必須です")
+    @Pattern(regexp = "^[^/]*$", message = "/は使用できません")
     private String parentCategory;
     // 子カテゴリ
     @NotBlank(message = "選択は必須です")
+    @Pattern(regexp = "^[^/]*$", message = "/は使用できません")
     private String childCategory;
     // 孫カテゴリ
     @NotBlank(message = "選択は必須です")
+    @Pattern(regexp = "^[^/]*$", message = "/は使用できません")
     private String grandCategory;
     // 全カテゴリ名
     private String nameAll;

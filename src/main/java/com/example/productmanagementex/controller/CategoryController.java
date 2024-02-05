@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -267,8 +269,12 @@ public class CategoryController {
      * @return 成功ならconfirm画面へ、失敗なら新規作成画面へ
      */
     @PostMapping("addCategory")
-    public String addCategory(CategoryForm categoryForm, Model model) {
+    public String addCategory(@Validated CategoryForm categoryForm, BindingResult rs, Model model) {
         logger.info("addCategory method started call: {}", categoryForm);
+
+        if (rs.hasErrors()) {
+            return toAddCategory(categoryForm, model);
+        }
 
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategory(categoryForm) != 0) {

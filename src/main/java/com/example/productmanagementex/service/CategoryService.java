@@ -101,15 +101,6 @@ public class CategoryService {
     public void insertCategory(CategoryForm form) {
         logger.debug("Started insertCategory");
 
-        // 子カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getChildCategory() == null || form.getChildCategory().equals("")) {
-            form.setChildCategory("カテゴリ無");
-        }
-        // 孫カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getGrandCategory() == null || form.getGrandCategory().equals("")) {
-            form.setGrandCategory("カテゴリ無");
-        }
-
         // 親/子/孫でnameAllを作成
         StringBuilder builder = new StringBuilder();
         builder.append(form.getParentCategory());
