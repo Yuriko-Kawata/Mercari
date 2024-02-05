@@ -17,16 +17,16 @@ public class CategoryForm {
     // 親カテゴリID
     private int parentId;
     // 親カテゴリ
-    @NotBlank(message = "選択は必須です")
-    @Pattern(regexp = "^[^/]*$", message = "/は使用できません")
+    @NotBlank(message = "{error.empty}")
+    @Pattern(regexp = "^[^/]*$", message = "{error.limitation}")
     private String parentCategory;
     // 子カテゴリ
-    @NotBlank(message = "選択は必須です")
-    @Pattern(regexp = "^[^/]*$", message = "/は使用できません")
+    @NotBlank(message = "{error.empty}")
+    @Pattern(regexp = "^[^/]*$", message = "{error.limitation}")
     private String childCategory;
     // 孫カテゴリ
-    @NotBlank(message = "選択は必須です")
-    @Pattern(regexp = "^[^/]*$", message = "/は使用できません")
+    @NotBlank(message = "{error.empty}")
+    @Pattern(regexp = "^[^/]*$", message = "{error.limitation}")
     private String grandCategory;
     // 全カテゴリ名
     private String nameAll;

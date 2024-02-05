@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -55,6 +57,8 @@ public class ItemController {
     private FileStorageService fileStorageService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private MessageSource messageSource;
 
     private static final Logger logger = LogManager.getLogger(ItemController.class);
 
@@ -143,6 +147,10 @@ public class ItemController {
         // 検索件数の取得と、ページ数の計算
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
+        if (totalItem == 0) {
+            String errorMessage = messageSource.getMessage("error.0", null, Locale.getDefault());
+            model.addAttribute("totalItemCountError", errorMessage);
+        }
         int totalPage = 0;
         if (totalItem % 30 == 0) {
             totalPage = totalItem / 30;
@@ -505,12 +513,14 @@ public class ItemController {
 
             // 親を選択したが、子、孫まで入力がなければエラーとして元の画面に戻る
         } else if (categoryForm.getChildCategory().equals("")) {
-            model.addAttribute("choiceError", model);
+            String errorMessage = messageSource.getMessage("error.choiceCategory", null, Locale.getDefault());
+            model.addAttribute("choiceError", errorMessage);
 
             logger.warn("editItem, category choice error");
             return toEditItem(itemForm.getId(), itemForm, categoryForm, model);
         } else if (categoryForm.getGrandCategory().equals("")) {
-            model.addAttribute("choiceError", model);
+            String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
+            model.addAttribute("choiceError", errorMessage);
 
             logger.warn("editItem, category choice error");
             return toEditItem(itemForm.getId(), itemForm, categoryForm, model);

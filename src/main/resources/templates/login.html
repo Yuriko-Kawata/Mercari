@@ -45,9 +45,7 @@
       <div class="panel-heading">Login</div>
       <div class="panel-body">
         <form action="#" th:action="@{login}" method="post">
-          <div th:if="${param.error}" class="check">
-            該当するユーザーがありません
-          </div>
+          <div class="check" th:if="${loginError}" th:text="#{error.login}" ></div>
           <div class="form-group">
             <label for="mail">mail address</label>
             <input type="email" class="form-control" name="username" id="mail" required>

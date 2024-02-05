@@ -9,10 +9,10 @@ import jakarta.validation.constraints.Size;
  */
 public class SearchForm {
     // 商品名
-    @Size(max = 255, message = "２５５文字以内で入力してください")
+    @Size(max = 255, message = "{error.max}")
     private String name;
     // ブランド名
-    @Size(max = 255, message = "２５５文字以内で入力してください")
+    @Size(max = 255, message = "{error.max}")
     private String brand;
     // 親カテゴリ（１次）
     private String parentCategory;

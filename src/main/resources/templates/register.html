@@ -42,7 +42,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">Register Account<span class="check">全項目入力必須</span></div>
       <div class="panel-body">
-        <div class="check" th:if="${error}">別のメールアドレスを使用してください。</div>
+        <div class="check" th:if="${mailError}" th:text="${mailError}"></div>
         <form action="#" th:action="@{register}" method="post" id="register-user" th:object="${userForm}">
           <div class="form-group">
             <label for="name">name</label>
@@ -56,14 +56,14 @@
           </div>
           <div class="form-group">
             <label for="password">password</label>
-            <span class="description">英大文字、英小文字、数字を１つ以上含め、８〜１６文字</span>
+            <span class="description">英大文字、英小文字、数字を１つ以上含め、８〜２０文字</span>
             <div class="check" th:errors="*{password}"></div>
             <input type="password" class="form-control" id="password" name="password" required>
           </div>
           <div class="form-group">
             <label for="passwordCheck">password(check)</label>
             <span class="description">passwordを再度入力してください</span>
-            <div class="check" id="error-message"></div>
+            <div class="check" th:if="${passwordError}" th:text="${passwordError}"></div>
             <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" required>
           </div>
           <button type="submit" class="btn btn-default">Submit</button>
@@ -83,18 +83,18 @@
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
       <script>
-        document.getElementById("register-user").addEventListener("submit", function(event) {
-          var password = document.getElementById("password").value;
-          var passwordCheck = document.getElementById("passwordCheck").value;
-          var errorMessageDiv = document.getElementById("error-message");
+        // document.getElementById("register-user").addEventListener("submit", function(event) {
+        //   var password = document.getElementById("password").value;
+        //   var passwordCheck = document.getElementById("passwordCheck").value;
+        //   var errorMessageDiv = document.getElementById("error-message");
 
-          if (password !== passwordCheck) {
-              errorMessageDiv.textContent = "passwordの入力内容と一致しません";
-              event.preventDefault(); // フォームの送信を阻止
-          } else {
-              errorMessageDiv.textContent = ""; // エラーメッセージをクリア
-          }
-        });
+        //   if (password !== passwordCheck) {
+        //       errorMessageDiv.textContent = "{error.mail.not.match}";
+        //       event.preventDefault(); // フォームの送信を阻止
+        //   } else {
+        //       errorMessageDiv.textContent = ""; // エラーメッセージをクリア
+        //   }
+        // });
       </script>
     </body>
     </html>
