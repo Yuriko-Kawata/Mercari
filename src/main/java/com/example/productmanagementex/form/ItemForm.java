@@ -2,8 +2,7 @@ package com.example.productmanagementex.form;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
+import com.example.productmanagementex.custom.DecimalRange;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,30 +17,29 @@ public class ItemForm {
     // id
     private Integer id;
     // 商品名
-    @NotBlank(message = "入力は必須です")
-    @Size(max = 100, message = "最大１００文字です")
+    @NotBlank(message = "{error.empty}")
+    @Size(max = 100, message = "{error.max}")
     private String name;
     // 状態
-    @NotNull(message = "選択は必須です")
+    @NotNull(message = "{error.empty}")
     private Integer condition;
     // カテゴリ
     private Integer category;
     // ブランド名
-    @Size(max = 100, message = "最大１００文字です")
+    @Size(max = 100, message = "{error.max}")
     private String brand;
     // 値段
-    @NotNull(message = "入力は必須です")
-    @DecimalMin(value = "0", message = "価格は$0以上でなければなりません")
-    @DecimalMax(value = "80000", message = "価格は$8000000以下でなければなりません")
-    @Digits(integer = 5, fraction = 2, message = "価格は小数点第二位までで入力してください")
+    @NotNull(message = "{error.empty}")
+    @DecimalRange(min = 0, max = 80000, message = "{error.numRange}")
+    @Digits(integer = 5, fraction = 1, message = "{error.fraction}")
     private Double price;
     // 在庫
     private Integer stock;
     // 配送状態
     private Integer shipping;
     // 商品説明
-    @NotBlank(message = "入力は必須です")
-    @Size(max = 500, message = "最大５００文字です")
+    @NotBlank(message = "{error.empty}")
+    @Size(max = 500, message = "{error.max}")
     private String description;
     // 状態（論理削除）
     private boolean delete;
