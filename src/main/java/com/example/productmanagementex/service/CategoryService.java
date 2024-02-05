@@ -415,6 +415,14 @@ public class CategoryService {
         return category;
     }
 
+    /**
+     * 対応する子カテゴリ、商品がないか確認
+     * 
+     * @param id       id
+     * @param parentId parent_id
+     * @param nameAll  name_all
+     * @return 対応するものがあればfalse、なければtrue
+     */
     public boolean checkDeleteCategory(int id, int parentId, String nameAll) {
         List<Category> categoryList = new ArrayList<>();
         int itemCount = 0;

@@ -380,6 +380,12 @@ public class ItemService {
         logger.debug("Finished delete");
     }
 
+    /**
+     * categoryに一致する商品の検索
+     * 
+     * @param id id
+     * @return 検索結果
+     */
     public Integer countItemByCategory(int id) {
         Integer itemCount = repository.countItemByCategory(id);
         return itemCount;
