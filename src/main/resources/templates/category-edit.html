@@ -115,6 +115,9 @@
         <label for="inputName" class="col-sm-2 control-label">name</label>
         <div class="col-sm-8">
           <input type="text" class="form-control" name="name" id="inputName" th:value="${categoryData.name}"/>
+          <span class="text-danger" th:if="${inputError}" th:text="${inputError}"></span>
+          <span class="text-danger" th:if="${checkError}" th:text="${checkError}"></span>
+          <span class="text-danger" th:if="${deleteError}" th:text="${deleteError}"></span>
         </div>
       </div>
       <!-- submit button -->
@@ -124,9 +127,6 @@
             <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
             <a type="button" id="delete-button" class="btn btn-default" th:href="@{deleteCategory(id=${categoryData.id}, parentId=${categoryData.parentId}, nameAll=${categoryData.nameAll})}">&#x1F5D1;&nbsp;delete</a>
           </div>
-          <div th:if="${inputError}" style="color:  red;">入力必須です</div>
-          <div th:if="${checkError}" style="color:  red;">すでに存在しているカテゴリー名です</div>
-          <div th:if="${deleteError}" style="color:  red;">対応する子カテゴリや商品が存在するため、削除できません</div>
         </div>
       </div>
     </form>

@@ -1,8 +1,11 @@
 package com.example.productmanagementex.controller;
 
+import java.util.Locale;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +32,8 @@ public class CategoryController {
     private CategoryService categoryService;
     @Autowired
     private HttpSession session;
+    @Autowired
+    private MessageSource messageSource;
 
     private static final Logger logger = LogManager.getLogger(CategoryController.class);
 
@@ -275,7 +280,8 @@ public class CategoryController {
 
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategory(categoryForm) != 0) {
-            model.addAttribute("error", true);
+            String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
+            model.addAttribute("error", errorMessage);
 
             logger.warn("addCategory, checkCategory error");
             return toAddCategory(categoryForm, model);
@@ -315,15 +321,16 @@ public class CategoryController {
         logger.info("editCategory method started call: {}", form);
 
         // 入力がなければエラーで返す（
-        if (form.getName() == null || form.getName().equals("")) {
-            model.addAttribute("inputError", true);
-
+        if (form.getName().equals("")) {
+            // ここだけエラーメッセージ直書き（validated使えないため）
+            model.addAttribute("inputError", "nameを入力してください");
             logger.warn("editCategory, input error");
             return toEditCategory(form.getId(), model);
         }
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategoryName(form.getName(), form.getParentId(), form.getNameAll()) != 0) {
-            model.addAttribute("checkError", true);
+            String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
+            model.addAttribute("checkError", errorMessage);
 
             logger.warn("editCategory, checkCategoryName error");
             return toEditCategory(form.getId(), model);
@@ -352,7 +359,8 @@ public class CategoryController {
         logger.info("deleteCategory method started call: {}", id, parentId, nameAll);
 
         if (!(categoryService.checkDeleteCategory(id, parentId, nameAll))) {
-            model.addAttribute("deleteError", true);
+            String errorMessage = messageSource.getMessage("error.checkDeleteCategory", null, Locale.getDefault());
+            model.addAttribute("deleteError", errorMessage);
             return toEditCategory(id, model);
         }
 
