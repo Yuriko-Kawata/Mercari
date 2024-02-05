@@ -483,8 +483,16 @@ public class ItemController {
             categoryForm.setChildCategory(originalChildCategory);
             categoryForm.setGrandCategory(originalGrandCategory);
 
-            // ファイルが送られた場合は、pathの更新を行う
+            // ファイルが送られた場合は、元画像の削除とpathの更新を行う
             if (!(itemForm.getImage().isEmpty())) {
+                // 元画像の削除ようにpathの取得
+                String currentImagePath = imageService.getPath(itemForm.getId());
+                // defaultの画像（no-image）でなければ削除
+                if (!(currentImagePath.equals("uploaded-img/no-image.png"))) {
+                    fileStorageService.deleteFile(currentImagePath);
+                }
+
+                // pathの更新
                 String imagePath = fileStorageService.storeFile(itemForm.getImage());
                 imageService.updatePath(itemForm.getId(), imagePath);
             }
