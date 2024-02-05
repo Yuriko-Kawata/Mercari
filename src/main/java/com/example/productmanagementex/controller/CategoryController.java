@@ -5,13 +5,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.service.CategoryService;
-import com.example.productmanagementex.service.ItemService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -26,8 +27,6 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private ItemService itemService;
     @Autowired
     private HttpSession session;
 
@@ -267,8 +266,12 @@ public class CategoryController {
      * @return 成功ならconfirm画面へ、失敗なら新規作成画面へ
      */
     @PostMapping("addCategory")
-    public String addCategory(CategoryForm categoryForm, Model model) {
+    public String addCategory(@Validated CategoryForm categoryForm, BindingResult rs, Model model) {
         logger.info("addCategory method started call: {}", categoryForm);
+
+        if (rs.hasErrors()) {
+            return toAddCategory(categoryForm, model);
+        }
 
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategory(categoryForm) != 0) {
@@ -348,8 +351,11 @@ public class CategoryController {
     public String deleteCategory(int id, int parentId, String nameAll, Model model) {
         logger.info("deleteCategory method started call: {}", id, parentId, nameAll);
 
-        // 変更に関わるitemsの更新
-        itemService.updateCategory(id, parentId, nameAll);
+        if (!(categoryService.checkDeleteCategory(id, parentId, nameAll))) {
+            model.addAttribute("deleteError", true);
+            return toEditCategory(id, model);
+        }
+
         // レコードの削除
         categoryService.delete(id);
 

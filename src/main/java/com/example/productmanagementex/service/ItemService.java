@@ -26,8 +26,6 @@ import java.sql.Timestamp;
 public class ItemService {
 
     @Autowired
-    private CategoryService categoryService;
-    @Autowired
     private ItemRepository repository;
 
     private static final Logger logger = LogManager.getLogger(ItemService.class);
@@ -156,7 +154,6 @@ public class ItemService {
         StringBuilder nameBuilder = new StringBuilder();
         StringBuilder brandBuilder = new StringBuilder();
         StringBuilder nameAllBuilder = new StringBuilder();
-        StringBuilder sortBuilder = new StringBuilder();
         String nameAll = null;
 
         // nameの入力がなければ全件
@@ -383,21 +380,9 @@ public class ItemService {
         logger.debug("Finished delete");
     }
 
-    /**
-     * categoryの更新
-     * 
-     * @param id       id
-     * @param parentId parent_id
-     * @param nameAll  name_all
-     */
-    public void updateCategory(int id, int parentId, String nameAll) {
-        logger.debug("Started updateCategory");
-
-        // 変更が必要なIDリストの取得
-        List<Integer> changeRecordIdList = categoryService.findChangeRecordId(id, parentId, nameAll);
-        repository.updateCategory(changeRecordIdList);
-
-        logger.debug("Finished updateCategory");
+    public Integer countItemByCategory(int id) {
+        Integer itemCount = repository.countItemByCategory(id);
+        return itemCount;
     }
 
 }

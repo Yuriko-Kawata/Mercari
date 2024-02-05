@@ -23,6 +23,8 @@ import com.example.productmanagementex.repository.CategoryRepository;
 public class CategoryService {
 
     @Autowired
+    private ItemService itemService;
+    @Autowired
     private CategoryRepository repository;
 
     private static final Logger logger = LogManager.getLogger(CategoryService.class);
@@ -40,14 +42,6 @@ public class CategoryService {
      */
     public int checkCategory(CategoryForm form) {
         logger.debug("Starting checkCategory");
-        // 子カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getChildCategory() == null || form.getChildCategory().equals("")) {
-            form.setChildCategory("カテゴリ無");
-        }
-        // 孫カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getGrandCategory() == null || form.getGrandCategory().equals("")) {
-            form.setGrandCategory("カテゴリ無");
-        }
 
         // 親/子/孫でnameAllを作成
         StringBuilder builder = new StringBuilder();
@@ -100,15 +94,6 @@ public class CategoryService {
      */
     public void insertCategory(CategoryForm form) {
         logger.debug("Started insertCategory");
-
-        // 子カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getChildCategory() == null || form.getChildCategory().equals("")) {
-            form.setChildCategory("カテゴリ無");
-        }
-        // 孫カテゴリの選択がなければ”カテゴリ無”を代入
-        if (form.getGrandCategory() == null || form.getGrandCategory().equals("")) {
-            form.setGrandCategory("カテゴリ無");
-        }
 
         // 親/子/孫でnameAllを作成
         StringBuilder builder = new StringBuilder();
@@ -430,34 +415,20 @@ public class CategoryService {
         return category;
     }
 
-    /**
-     * カテゴリの更新に伴い、変更が必要なレコードのID取得
-     * 
-     * @param id       id
-     * @param parentId parent_id
-     * @param nameAll  name_all
-     * @return 検索結果
-     */
-    public List<Integer> findChangeRecordId(int id, int parentId, String nameAll) {
-        logger.debug("Started findChangeRecordId");
-
-        // 親カテゴリならparentConditionが０、子なら１、孫なら２
-        int parentCondition = 1;
-        List<Integer> changeRecordId = new ArrayList<>();
-        if (parentId != 0 && nameAll.equals("")) {
-            parentCondition = 2;
-        } else if (parentId != 0 && !(nameAll.equals(""))) {
-            // 孫の場合はそのIDのみ渡す
-            changeRecordId.add(id);
-
-            logger.debug("Finished findChangeRecordId");
-            return changeRecordId;
+    public boolean checkDeleteCategory(int id, int parentId, String nameAll) {
+        List<Category> categoryList = new ArrayList<>();
+        int itemCount = 0;
+        if (nameAll.equals("")) {
+            categoryList = repository.findChildCategory(id);
+        } else {
+            itemCount = itemService.countItemByCategory(id);
         }
-        // 親、子の場合は変更が必要なレコードが複数のため、検索を行う
-        changeRecordId = repository.findChangeRecordId(id, parentCondition);
 
-        logger.debug("Finished findChangeRecordId");
-        return changeRecordId;
+        if (categoryList.size() != 0 || itemCount != 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

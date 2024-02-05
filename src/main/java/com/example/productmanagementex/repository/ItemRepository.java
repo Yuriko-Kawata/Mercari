@@ -184,67 +184,6 @@ public class ItemRepository {
             ;
             """;
 
-    // 検索条件に一致するレコードを取得するクエリ（del_flg = 0のもの）
-    private final String SEARCH_SQL = """
-            SELECT
-                i.id AS i_id,
-                i.name AS i_name,
-                i.condition AS i_condition,
-                i.category AS i_category,
-                i.brand AS i_brand,
-                i.price AS i_price,
-                i.stock AS i_stock,
-                i.shipping AS i_shipping,
-                i.description AS i_description,
-                i.update_time AS i_update_time,
-                i.del_flg AS i_del_flg,
-                grand.id AS grand_id,
-                grand.name AS grand_name,
-                grand.parent_id AS grand_parent_id,
-                grand.name_all AS grand_name_all,
-                child.id AS child_id,
-                child.name AS child_name,
-                child.parent_id AS child_parent_id,
-                child.name_all AS child_name_all,
-                parent.id AS parent_id,
-                parent.name AS parent_name,
-                parent.parent_id AS parent_parent_id,
-                parent.name_all AS parent_name_all
-            FROM
-                items AS i
-            LEFT OUTER JOIN
-                category AS grand
-            ON
-                i.category = grand.id
-            LEFT OUTER JOIN
-                category AS child
-            ON
-                grand.parent_id = child.id
-            LEFT OUTER JOIN
-                category AS parent
-            ON
-                child.parent_id = parent.id
-            WHERE
-                i.del_flg = 0
-                AND (i.name LIKE :name)
-                AND (i.brand LIKE :brand)
-                AND  i.category IN
-                    (SELECT
-                        id
-                    FROM
-                        category
-                    WHERE
-                        name_all LIKE :nameAll
-                        )
-            ORDER BY
-                :sort
-            LIMIT
-                30
-            OFFSET
-                (:page - 1) * 30
-            ;
-            """;
-
     // 検索条件に一致するitemのトータル件数を取得するクエリ
     private static final String SEARCH_ITEM_LIST_SIZE_SQL = """
             SELECT
@@ -375,21 +314,14 @@ public class ItemRepository {
             ;
             """;
 
-    // idに一致するレコードのcategoryを更新するクエリ
-    private static final String UPDATE_CATEGORY_SQL = """
-            UPDATE
+    // categoryに一致するitem数を取得するクエリ
+    private static final String COUNT_ITEM_BY_CATEGORY_SQL = """
+            SELECT
+                count(*)
+            FROM
                 items
-            SET
-                category = (
-                    SELECT
-                        id
-                    FROM
-                        category
-                    WHERE
-                        name_all = 'カテゴリ無/カテゴリ無/カテゴリ無'
-                )
             WHERE
-                category = :id
+                category = :category
             ;
             """;
 
@@ -633,24 +565,10 @@ public class ItemRepository {
         logger.debug("Finished changeDeleteStatus");
     }
 
-    /**
-     * name_allの更新
-     * 
-     * @param changeRecordIdList 変更を行うレコードのidリスト
-     */
-    public void updateCategory(List<Integer> changeRecordIdList) {
-        logger.debug("Started updateCategory");
-
-        List<SqlParameterSource> parameters = new ArrayList<>();
-
-        for (Integer changeRecordId : changeRecordIdList) {
-            SqlParameterSource param = new MapSqlParameterSource()
-                    .addValue("id", changeRecordId);
-            parameters.add(param);
-        }
-
-        template.batchUpdate(UPDATE_CATEGORY_SQL, parameters.toArray(new SqlParameterSource[0]));
-        logger.debug("Finished updateCategory");
+    public Integer countItemByCategory(int category) {
+        SqlParameterSource param = new MapSqlParameterSource().addValue("category", category);
+        Integer itemCount = template.queryForObject(COUNT_ITEM_BY_CATEGORY_SQL, param, Integer.class);
+        return itemCount;
     }
 
 }
