@@ -123,3 +123,13 @@ function deleteConfirmSubmission(isConfirmed) {
       });
     }
   });
+
+document.getElementById('image').addEventListener('change', function(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+        var output = document.getElementById('imagePreview');
+        output.src = reader.result;
+        output.style.display = 'block'; // 画像を表示
+    };
+    reader.readAsDataURL(event.target.files[0]);
+});
