@@ -126,6 +126,7 @@
           </div>
           <div th:if="${inputError}" style="color:  red;">入力必須です</div>
           <div th:if="${checkError}" style="color:  red;">すでに存在しているカテゴリー名です</div>
+          <div th:if="${deleteError}" style="color:  red;">対応する子カテゴリや商品が存在するため、削除できません</div>
         </div>
       </div>
     </form>
@@ -150,8 +151,7 @@
           <div style="text-align: center; font-size: large; padding-bottom: 10px;">カテゴリを本当に削除してもよろしいですか？</div>
           <div>
             <ul>
-              <li>対応する子、孫カテゴリも削除されます。</li>
-              <li>また、紐づいていた商品のカテゴリは「カテゴリ無」となります。</li>
+              <li>対応する子カテゴリ、商品がある場合は削除できません</li>
             </ul>
           </div>
           <div style="text-align: right; margin-top: 20px;  ">

@@ -778,25 +778,6 @@ public class CategoryRepository {
     }
 
     /**
-     * 階層とparent_id一致するレコードを検索
-     * 
-     * @param parentId        parent_id
-     * @param parentCondition 階層
-     * @return 検索結果
-     */
-    public List<Integer> findChangeRecordId(int parentId, int parentCondition) {
-        logger.debug("Started findChangeRecordId");
-
-        SqlParameterSource param = new MapSqlParameterSource().addValue("parentId", parentId).addValue(
-                "parentCondition",
-                parentCondition);
-        List<Integer> changeRecordId = template.queryForList(FIND_CHANGE_RECORD_ID_SQL, param, Integer.class);
-
-        logger.debug("Finished findChangeRecordId");
-        return changeRecordId;
-    }
-
-    /**
      * 削除
      * 
      * @param id id

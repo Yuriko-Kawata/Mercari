@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.service.CategoryService;
-import com.example.productmanagementex.service.ItemService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,8 +27,6 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private ItemService itemService;
     @Autowired
     private HttpSession session;
 
@@ -354,8 +351,11 @@ public class CategoryController {
     public String deleteCategory(int id, int parentId, String nameAll, Model model) {
         logger.info("deleteCategory method started call: {}", id, parentId, nameAll);
 
-        // 変更に関わるitemsの更新
-        itemService.updateCategory(id, parentId, nameAll);
+        if (!(categoryService.checkDeleteCategory(id, parentId, nameAll))) {
+            model.addAttribute("deleteError", true);
+            return toEditCategory(id, model);
+        }
+
         // レコードの削除
         categoryService.delete(id);
 
