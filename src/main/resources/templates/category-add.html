@@ -121,16 +121,11 @@
             <span class="text-danger" th:errors="${categoryForm.grandCategory}"></span>
           </div>
         </div>
-        <div class="form-group">
-          <label for="category" class="col-sm-2 control-label"></label>
-          <div class="col-sm-8">
-          </div>
-        </div>
-        <div class="text-danger" th:if="${error}" th:text="${error}"></div>
         <!-- submit button -->
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
             <button type="submit" id="submit-button" class="btn btn-default" disabled>Submit</button>
+            <span class="text-danger" th:if="${error}" th:text="${error}">aaa</span>
           </div>
         </div>
       </form>
