@@ -80,9 +80,7 @@
       <a class="btn btn-default" th:href="@{toAdd}"><i
         class="fa fa-plus-square-o"></i> Add New Item</a>
     </div>
-    <div th:if="${totalItemCount == 0}">
-      <span style="color: red;">該当の商品はありません</span>
-    </div>
+    <div style="color: red;" th:if="${totalItemCountError}" th:text="${totalItemCountError}"></div>
 
     <!-- 検索フォーム -->
     <div id="forms">

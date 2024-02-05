@@ -147,6 +147,10 @@ public class ItemController {
         // 検索件数の取得と、ページ数の計算
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
+        if (totalItem == 0) {
+            String errorMessage = messageSource.getMessage("error.0", null, Locale.getDefault());
+            model.addAttribute("totalItemCountError", errorMessage);
+        }
         int totalPage = 0;
         if (totalItem % 30 == 0) {
             totalPage = totalItem / 30;
