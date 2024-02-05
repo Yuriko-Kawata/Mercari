@@ -56,7 +56,7 @@
     img{
       width: 300px;
     }
-    .original-image{
+    .preview-image{
       text-align: center;
       width: 350px;
       border: double;
@@ -239,9 +239,13 @@
         <div class="col-sm-8">
           <input type="file" name="image" id="image">
           <div style="display: flex; justify-content: center;">
-            <div class="original-image">
+            <div class="preview-image">
               <img th:src="@{${imagePath}}" alt="変更前画像" title="変更前画像">
               <p>変更前画像</p>
+            </div>
+            <div class="preview-image">
+              <img id="imagePreview" alt="変更後画像" title="変更後画像" style="display: none;">
+              <p>変更後画像</p>
             </div>
           </div>
         </div>
