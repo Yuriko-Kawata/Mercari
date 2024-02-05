@@ -565,6 +565,12 @@ public class ItemRepository {
         logger.debug("Finished changeDeleteStatus");
     }
 
+    /**
+     * categoryでの商品検索
+     * 
+     * @param category category
+     * @return 検索結果
+     */
     public Integer countItemByCategory(int category) {
         SqlParameterSource param = new MapSqlParameterSource().addValue("category", category);
         Integer itemCount = template.queryForObject(COUNT_ITEM_BY_CATEGORY_SQL, param, Integer.class);

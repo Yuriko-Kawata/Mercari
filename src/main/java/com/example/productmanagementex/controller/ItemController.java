@@ -544,6 +544,12 @@ public class ItemController {
         return "confirm/delete-item-confirm";
     }
 
+    /**
+     * csvファイルでの商品データのダウンロード
+     * 
+     * @param response response
+     * @throws IOException
+     */
     @GetMapping("download")
     public void downloadItemData(HttpServletResponse response) throws IOException {
         List<Item> items;
