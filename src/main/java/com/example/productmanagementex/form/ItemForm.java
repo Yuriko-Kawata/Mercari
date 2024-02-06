@@ -42,7 +42,7 @@ public class ItemForm {
     @Size(max = 500, message = "{error.max}")
     private String description;
     // 状態（論理削除）
-    private boolean delete;
+    private Integer delFlg;
     // image path
     private MultipartFile image;
 
@@ -118,12 +118,12 @@ public class ItemForm {
         this.description = description;
     }
 
-    public boolean isDelete() {
-        return delete;
+    public Integer getDelFlg() {
+        return delFlg;
     }
 
-    public void setDelete(boolean delete) {
-        this.delete = delete;
+    public void setDelFlg(Integer delFlg) {
+        this.delFlg = delFlg;
     }
 
     public MultipartFile getImage() {
@@ -138,7 +138,7 @@ public class ItemForm {
     public String toString() {
         return "ItemForm [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category
                 + ", brand=" + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping
-                + ", description=" + description + ", delete=" + delete + ", image=" + image + "]";
+                + ", description=" + description + ", delFlg=" + delFlg + ", image=" + image + "]";
     }
 
 }
