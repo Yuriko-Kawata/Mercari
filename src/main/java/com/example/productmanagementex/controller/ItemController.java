@@ -99,13 +99,7 @@ public class ItemController {
 
         // トータル件数の取得と、ページ数の計算
         int totalItem = itemService.totalItem();
-        int totalPage = 0;
-        if (totalItem % 30 == 0) {
-            totalPage = totalItem / 30;
-        } else {
-            totalPage = totalItem / 30 + 1;
-        }
-
+        int totalPage = totalPageCount(totalItem);
         // トータルページの格納
         model.addAttribute("totalPage", totalPage);
         // トータル件数の格納
@@ -151,12 +145,7 @@ public class ItemController {
             String errorMessage = messageSource.getMessage("error.0", null, Locale.getDefault());
             model.addAttribute("totalItemCountError", errorMessage);
         }
-        int totalPage = 0;
-        if (totalItem % 30 == 0) {
-            totalPage = totalItem / 30;
-        } else {
-            totalPage = totalItem / 30 + 1;
-        }
+        int totalPage = totalPageCount(totalItem);
 
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
@@ -182,12 +171,7 @@ public class ItemController {
 
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
-        int totalPage = 0;
-        if (totalItem % 30 == 0) {
-            totalPage = totalItem / 30;
-        } else {
-            totalPage = totalItem / 30 + 1;
-        }
+        int totalPage = totalPageCount(totalItem);
 
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
@@ -225,13 +209,8 @@ public class ItemController {
                         form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), page));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
+        int totalPage = totalPageCount(totalItem);
 
-        int totalPage = 0;
-        if (totalItem % 30 == 0) {
-            totalPage = totalItem / 30;
-        } else {
-            totalPage = totalItem / 30 + 1;
-        }
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", page);
@@ -279,13 +258,8 @@ public class ItemController {
                         form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
+        int totalPage = totalPageCount(totalItem);
 
-        int totalPage = 0;
-        if (totalItem % 30 == 0) {
-            totalPage = totalItem / 30;
-        } else {
-            totalPage = totalItem / 30 + 1;
-        }
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", 1);
@@ -318,13 +292,8 @@ public class ItemController {
                         form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
+        int totalPage = totalPageCount(totalItem);
 
-        int totalPage = 0;
-        if (totalItem % 30 == 0) {
-            totalPage = totalItem / 30;
-        } else {
-            totalPage = totalItem / 30 + 1;
-        }
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("totalItemCount", totalItem);
         model.addAttribute("currentPage", 1);
@@ -591,6 +560,24 @@ public class ItemController {
 
         writer.flush();
         writer.close();
+    }
+
+    /**
+     * トータル件数からのトータルページ数の計算
+     * 
+     * @param totalItemCount トータル件数
+     * @return トータルページ数
+     */
+    private int totalPageCount(int totalItemCount) {
+        int totalPage = 0;
+        // 表示の３０件で割り、ページ数を計算
+        if (totalItemCount % 30 == 0) {
+            totalPage = totalItemCount / 30;
+            return totalPage;
+        } else {
+            totalPage = totalItemCount / 30 + 1;
+            return totalPage;
+        }
     }
 
 }

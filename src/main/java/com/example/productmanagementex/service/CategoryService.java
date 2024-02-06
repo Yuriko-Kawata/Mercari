@@ -44,14 +44,7 @@ public class CategoryService {
         logger.debug("Starting checkCategory");
 
         // 親/子/孫でnameAllを作成
-        StringBuilder builder = new StringBuilder();
-        builder.append(form.getParentCategory());
-        builder.append("/");
-        builder.append(form.getChildCategory());
-        builder.append("/");
-        builder.append(form.getGrandCategory());
-        String nameAll = builder.toString();
-
+        String nameAll = makeNameAll(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory());
         // nameAllに一致するものがあるか確認
         int count = repository.checkCategory(nameAll);
 
@@ -96,13 +89,7 @@ public class CategoryService {
         logger.debug("Started insertCategory");
 
         // 親/子/孫でnameAllを作成
-        StringBuilder builder = new StringBuilder();
-        builder.append(form.getParentCategory());
-        builder.append("/");
-        builder.append(form.getChildCategory());
-        builder.append("/");
-        builder.append(form.getGrandCategory());
-        String nameAll = builder.toString();
+        String nameAll = makeNameAll(form.getParentCategory(), form.getChildCategory(), form.getGrandCategory());
 
         // categoryテーブルに新規作成
         repository.insertCategory(nameAll);
@@ -221,10 +208,9 @@ public class CategoryService {
      * 
      * @return 検索結果
      */
-    public int totalParentPage() {
+    public int totalParentCount() {
         int totalSize = repository.parentListSize();
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -232,10 +218,9 @@ public class CategoryService {
      * 
      * @return 検索結果
      */
-    public int totalChildPage() {
+    public int totalChildCount() {
         int totalSize = repository.childListSize();
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -243,10 +228,9 @@ public class CategoryService {
      * 
      * @return 検索結果
      */
-    public int totalGrandPage() {
+    public int totalGrandCount() {
         int totalSize = repository.grandListSize();
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -260,11 +244,7 @@ public class CategoryService {
         logger.debug("Started searchParentCategory");
 
         // 曖昧検索用の文字列作成
-        StringBuilder builder = new StringBuilder();
-        builder.append("%");
-        builder.append(searchCondition);
-        builder.append("%");
-        String nameLike = builder.toString();
+        String nameLike = ambigiousSearch(searchCondition);
 
         // 作成した文字列を用いて検索
         List<Category> categoryList = repository.searchParentCategory(nameLike, page);
@@ -283,11 +263,7 @@ public class CategoryService {
     public List<Category> searchChildCategory(String searchCondition, int page) {
         logger.debug("Started searchChildCategory");
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("%");
-        builder.append(searchCondition);
-        builder.append("%");
-        String nameLike = builder.toString();
+        String nameLike = ambigiousSearch(searchCondition);
 
         List<Category> categoryList = repository.searchChildCategory(nameLike, page);
 
@@ -305,11 +281,7 @@ public class CategoryService {
     public List<Category> searchGrandCategory(String searchCondition, int page) {
         logger.debug("Started searchGrandCategory");
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("%");
-        builder.append(searchCondition);
-        builder.append("%");
-        String nameLike = builder.toString();
+        String nameLike = ambigiousSearch(searchCondition);
 
         List<Category> categoryList = repository.searchGrandCategory(nameLike, page);
 
@@ -323,16 +295,11 @@ public class CategoryService {
      * @param searchCondition 検索条件
      * @return 検索結果
      */
-    public int searchParentTotalPage(String searchCondition) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("%");
-        builder.append(searchCondition);
-        builder.append("%");
-        String nameLike = builder.toString();
+    public int searchTotalParentCount(String searchCondition) {
+        String nameLike = ambigiousSearch(searchCondition);
 
         int totalSize = repository.searchParentTotal(nameLike);
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -341,16 +308,11 @@ public class CategoryService {
      * @param searchCondition 検索条件
      * @return 検索結果
      */
-    public int searchChildTotalPage(String searchCondition) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("%");
-        builder.append(searchCondition);
-        builder.append("%");
-        String nameLike = builder.toString();
+    public int searchTotalChildCount(String searchCondition) {
+        String nameLike = ambigiousSearch(searchCondition);
 
         int totalSize = repository.searchChildTotal(nameLike);
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -359,16 +321,11 @@ public class CategoryService {
      * @param searchCondition 検索条件
      * @return 検索結果
      */
-    public int searchGrandTotalPage(String searchCondition) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("%");
-        builder.append(searchCondition);
-        builder.append("%");
-        String nameLike = builder.toString();
+    public int searchTotalGrandCount(String searchCondition) {
+        String nameLike = ambigiousSearch(searchCondition);
 
         int totalSize = repository.searchGrandTotal(nameLike);
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -448,4 +405,37 @@ public class CategoryService {
         repository.delete(id);
     }
 
+    /**
+     * name_allを作成
+     * 
+     * @param parentCategory 親カテゴリ名
+     * @param childCategory  子カテゴリ名
+     * @param grandCategory  孫カテゴリ名
+     * @return name_all
+     */
+    private String makeNameAll(String parentCategory, String childCategory, String grandCategory) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(parentCategory);
+        builder.append("/");
+        builder.append(childCategory);
+        builder.append("/");
+        builder.append(grandCategory);
+        String nameAll = builder.toString();
+        return nameAll;
+    }
+
+    /**
+     * 曖昧検索用の文字列作成
+     * 
+     * @param searchCondition 検索条件
+     * @return 曖昧検索用の文字列
+     */
+    private String ambigiousSearch(String searchCondition) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String nameLike = builder.toString();
+        return nameLike;
+    }
 }

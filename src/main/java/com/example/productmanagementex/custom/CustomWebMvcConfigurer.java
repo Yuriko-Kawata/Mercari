@@ -4,6 +4,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * imageアップロードの絶対パス指定
+ * 
+ * @author hiraizumi
+ */
 @Configuration
 public class CustomWebMvcConfigurer implements WebMvcConfigurer {
     @Override
