@@ -221,10 +221,9 @@ public class CategoryService {
      * 
      * @return 検索結果
      */
-    public int totalParentPage() {
+    public int totalParentCount() {
         int totalSize = repository.parentListSize();
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -232,10 +231,9 @@ public class CategoryService {
      * 
      * @return 検索結果
      */
-    public int totalChildPage() {
+    public int totalChildCount() {
         int totalSize = repository.childListSize();
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -243,10 +241,9 @@ public class CategoryService {
      * 
      * @return 検索結果
      */
-    public int totalGrandPage() {
+    public int totalGrandCount() {
         int totalSize = repository.grandListSize();
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -323,7 +320,7 @@ public class CategoryService {
      * @param searchCondition 検索条件
      * @return 検索結果
      */
-    public int searchParentTotalPage(String searchCondition) {
+    public int searchTotalParentCount(String searchCondition) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
@@ -331,8 +328,7 @@ public class CategoryService {
         String nameLike = builder.toString();
 
         int totalSize = repository.searchParentTotal(nameLike);
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -341,7 +337,7 @@ public class CategoryService {
      * @param searchCondition 検索条件
      * @return 検索結果
      */
-    public int searchChildTotalPage(String searchCondition) {
+    public int searchTotalChildCount(String searchCondition) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
@@ -349,8 +345,7 @@ public class CategoryService {
         String nameLike = builder.toString();
 
         int totalSize = repository.searchChildTotal(nameLike);
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**
@@ -359,7 +354,7 @@ public class CategoryService {
      * @param searchCondition 検索条件
      * @return 検索結果
      */
-    public int searchGrandTotalPage(String searchCondition) {
+    public int searchTotalGrandCount(String searchCondition) {
         StringBuilder builder = new StringBuilder();
         builder.append("%");
         builder.append(searchCondition);
@@ -367,8 +362,7 @@ public class CategoryService {
         String nameLike = builder.toString();
 
         int totalSize = repository.searchGrandTotal(nameLike);
-        int totalpage = totalSize / 30 + 1;
-        return totalpage;
+        return totalSize;
     }
 
     /**

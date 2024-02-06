@@ -63,19 +63,28 @@ public class CategoryController {
         // 孫カテゴリリストの取得
         session.setAttribute("grandCategoryList", categoryService.findAllGrandCategory(grandPage));
 
-        // 親カテゴリのトータル件数の取得
-        session.setAttribute("parentTotalPage", categoryService.totalParentPage());
-        // 子カテゴリのトータル件数の取得
-        session.setAttribute("childTotalPage", categoryService.totalChildPage());
-        // 孫カテゴリのトータル件数の取得
-        session.setAttribute("grandTotalPage", categoryService.totalGrandPage());
+        // 親カテゴリのトータル件数の取得とページ数の計算
+        int totalParentCategoryCount = categoryService.totalParentCount();
+        int totalParentPage = totalPageCount(totalParentCategoryCount);
+        session.setAttribute("totalParentCategoryCount", totalParentCategoryCount);
+        session.setAttribute("totalParentCategoryPage", totalParentPage);
+        // 子カテゴリのトータル件数の取得とページ数の計算
+        int totalChildCategoryCount = categoryService.totalChildCount();
+        int totalChildPage = totalPageCount(totalChildCategoryCount);
+        session.setAttribute("totalChildCategoryCount", totalChildCategoryCount);
+        session.setAttribute("totalChildCategoryPage", totalChildPage);
+        // 孫カテゴリのトータル件数の取得とページ数の計算
+        int totalGrandCategoryCount = categoryService.totalGrandCount();
+        int totalGrandPage = totalPageCount(totalGrandCategoryCount);
+        session.setAttribute("totalGrandCategoryCount", totalGrandCategoryCount);
+        session.setAttribute("totalGrandCategoryPage", totalGrandPage);
 
         // 親カテゴリのcurrent pageの更新
-        session.setAttribute("parentCurrentPage", parentPage);
+        session.setAttribute("currentParentCategoryPage", parentPage);
         // 子カテゴリのcurrent pageの更新
-        session.setAttribute("childCurrentPage", childPage);
+        session.setAttribute("currentChildCategoryPage", childPage);
         // 孫カテゴリのcurrent pageの更新
-        session.setAttribute("grandCurrentPage", grandPage);
+        session.setAttribute("currentGrandCategoryPage", grandPage);
 
         return "category-list";
     }
@@ -112,16 +121,24 @@ public class CategoryController {
         session.setAttribute("grandCategoryList",
                 categoryService.searchGrandCategory(searchCategory, grandPage));
 
-        session.setAttribute("parentTotalPage",
-                categoryService.searchParentTotalPage(searchCategory));
-        session.setAttribute("childTotalPage",
-                categoryService.searchChildTotalPage(searchCategory));
-        session.setAttribute("grandTotalPage",
-                categoryService.searchGrandTotalPage(searchCategory));
+        int totalParentCategoryCount = categoryService.searchTotalParentCount(searchCategory);
+        int totalParentPage = totalPageCount(totalParentCategoryCount);
+        session.setAttribute("totalParentCategoryCount", totalParentCategoryCount);
+        session.setAttribute("totalParentCategoryPage", totalParentPage);
 
-        session.setAttribute("parentCurrentPage", parentPage);
-        session.setAttribute("childCurrentPage", childPage);
-        session.setAttribute("grandCurrentPage", grandPage);
+        int totalChildCategoryCount = categoryService.searchTotalChildCount(searchCategory);
+        int totalChildPage = totalPageCount(totalChildCategoryCount);
+        session.setAttribute("totalChildCategoryCount", totalChildCategoryCount);
+        session.setAttribute("totalChildCategoryPage", totalChildPage);
+
+        int totalGrandCategoryCount = categoryService.searchTotalGrandCount(searchCategory);
+        int totalGrandPage = totalPageCount(totalGrandCategoryCount);
+        session.setAttribute("totalGrandCategoryCount", totalGrandCategoryCount);
+        session.setAttribute("totalGrandCategoryPage", totalGrandPage);
+
+        session.setAttribute("currentParentCategoryPage", parentPage);
+        session.setAttribute("currentChildCategoryPage", childPage);
+        session.setAttribute("currentGrandCategoryPage", grandPage);
 
         logger.info("searchCategory method finished");
         return "category-list";
@@ -141,8 +158,8 @@ public class CategoryController {
         // 検索条件がなければ、ページを更新して一覧表示へ
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
-            int childPage = (int) session.getAttribute("childCurrentPage");
-            int grandPage = (int) session.getAttribute("grandCurrentPage");
+            int childPage = (int) session.getAttribute("currentChildCategoryPage");
+            int grandPage = (int) session.getAttribute("currentGrandCategoryPage");
 
             logger.info("searchParentPage method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
@@ -150,9 +167,12 @@ public class CategoryController {
         model.addAttribute("searchCondition", searchCondition);
         session.setAttribute("parentCategoryList",
                 categoryService.searchParentCategory(searchCondition, parentPage));
-        session.setAttribute("parentTotalPage",
-                categoryService.searchParentTotalPage(searchCondition));
-        session.setAttribute("parentCurrentPage", parentPage);
+
+        int totalParentCategoryCount = categoryService.searchTotalParentCount(searchCondition);
+        int totalParentPage = totalPageCount(totalParentCategoryCount);
+        session.setAttribute("totalParentCategoryCount", totalParentCategoryCount);
+        session.setAttribute("totalParentCategoryPage", totalParentPage);
+        session.setAttribute("currentParentCategoryPage", parentPage);
 
         logger.info("searchParentPage method finished");
         return "category-list";
@@ -172,8 +192,8 @@ public class CategoryController {
         // 検索条件がなければ、ページを更新して一覧表示へ
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
-            int parentPage = (int) session.getAttribute("parentCurrentPage");
-            int grandPage = (int) session.getAttribute("grandCurrentPage");
+            int parentPage = (int) session.getAttribute("currentParentCategoryPage");
+            int grandPage = (int) session.getAttribute("currentGrandCategoryPage");
 
             logger.info("searchChildPage method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
@@ -181,9 +201,11 @@ public class CategoryController {
         model.addAttribute("searchCondition", searchCondition);
         session.setAttribute("childCategoryList",
                 categoryService.searchChildCategory(searchCondition, childPage));
-        session.setAttribute("childTotalPage",
-                categoryService.searchChildTotalPage(searchCondition));
-        session.setAttribute("childCurrentPage", childPage);
+        int totalChildCategoryCount = categoryService.searchTotalChildCount(searchCondition);
+        int totalChildPage = totalPageCount(totalChildCategoryCount);
+        session.setAttribute("totalChildCategoryCount", totalChildCategoryCount);
+        session.setAttribute("totalChildCategoryPage", totalChildPage);
+        session.setAttribute("currentChildCategoryPage", childPage);
 
         logger.info("searchChildPage method finished");
         return "category-list";
@@ -203,8 +225,8 @@ public class CategoryController {
         // 検索条件がなければ、ページを更新して一覧表示へ
         String searchCondition = (String) session.getAttribute("categorySearchCondition");
         if (searchCondition == null) {
-            int parentPage = (int) session.getAttribute("parentCurrentPage");
-            int childPage = (int) session.getAttribute("childCurrentPage");
+            int parentPage = (int) session.getAttribute("currentParentCategoryPage");
+            int childPage = (int) session.getAttribute("currentChildCategoryPage");
 
             logger.info("searchGrandPage method finished");
             return toCategoryList(parentPage, childPage, grandPage, model);
@@ -213,9 +235,11 @@ public class CategoryController {
         model.addAttribute("searchCondition", searchCondition);
         session.setAttribute("grandCategoryList",
                 categoryService.searchGrandCategory(searchCondition, grandPage));
-        session.setAttribute("grandTotalPage",
-                categoryService.searchGrandTotalPage(searchCondition));
-        session.setAttribute("grandCurrentPage", grandPage);
+        int totalGrandCategoryCount = categoryService.searchTotalGrandCount(searchCondition);
+        int totalGrandPage = totalPageCount(totalGrandCategoryCount);
+        session.setAttribute("totalGrandCategoryCount", totalGrandCategoryCount);
+        session.setAttribute("totalGrandCategoryPage", totalGrandPage);
+        session.setAttribute("currentGrandCategoryPage", grandPage);
 
         logger.info("searchGrandPage method finished");
         return "category-list";
@@ -369,6 +393,17 @@ public class CategoryController {
 
         logger.info("deleteCategory method finished");
         return "confirm/delete-category-confirm";
+    }
+
+    private int totalPageCount(int totalCategoryCount) {
+        int totalPage = 0;
+        if (totalCategoryCount % 30 == 0) {
+            totalPage = totalCategoryCount / 30;
+            return totalPage;
+        } else {
+            totalPage = totalCategoryCount / 30 + 1;
+            return totalPage;
+        }
     }
 
 }
