@@ -395,8 +395,15 @@ public class CategoryController {
         return "confirm/delete-category-confirm";
     }
 
+    /**
+     * トータル件数からのトータルページ数の計算
+     * 
+     * @param totalCategoryCount トータル件数
+     * @return トータルページ数
+     */
     private int totalPageCount(int totalCategoryCount) {
         int totalPage = 0;
+        // 表示の３０件で割り、ページ数を計算
         if (totalCategoryCount % 30 == 0) {
             totalPage = totalCategoryCount / 30;
             return totalPage;
