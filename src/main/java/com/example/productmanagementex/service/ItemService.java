@@ -75,60 +75,22 @@ public class ItemService {
             String grandCategory) {
         logger.debug("Started searchAllItems");
 
-        StringBuilder nameBuilder = new StringBuilder();
-        StringBuilder brandBuilder = new StringBuilder();
-        StringBuilder nameAllBuilder = new StringBuilder();
-        String nameAll = null;
-
         // nameの入力がなければ全件
         if (name == null) {
             name = "%";
         } else {
-            nameBuilder.append("%");
-            nameBuilder.append(name);
-            nameBuilder.append("%");
-            name = nameBuilder.toString();
+            name = ambigiousSearch(name);
         }
 
         // brandの入力がなければ全件
         if (brand == null) {
             brand = "%";
         } else {
-            brandBuilder.append("%");
-            brandBuilder.append(brand);
-            brandBuilder.append("%");
-            brand = brandBuilder.toString();
+            brand = ambigiousSearch(brand);
         }
 
         // categoryの選択条件で分岐
-        if (parentCategory != "" && parentCategory != null) {
-            if (childCategory != "" && childCategory != null) {
-                if (grandCategory != "" && grandCategory != null) {
-                    // 親、子、孫まで選択した時は 親/子/孫 で検索
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    // 孫を選択していない時は 親/子/% で検索
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/%");
-                    nameAll = nameAllBuilder.toString();
-                }
-            } else {
-                // 親だけ選択の時は 親/% で検索
-                nameAllBuilder.append(parentCategory);
-                nameAllBuilder.append("/%");
-                nameAll = nameAllBuilder.toString();
-            }
-        } else {
-            // 選択がなかった場合は全件
-            nameAll = "%";
-        }
+        String nameAll = makeNameAll(parentCategory, childCategory, grandCategory);
 
         List<Item> itemList = repository.searchAllItems(name, brand, nameAll);
 
@@ -151,60 +113,22 @@ public class ItemService {
             String grandCategory, String sort, String order, int page) {
         logger.debug("Started searchItems");
 
-        StringBuilder nameBuilder = new StringBuilder();
-        StringBuilder brandBuilder = new StringBuilder();
-        StringBuilder nameAllBuilder = new StringBuilder();
-        String nameAll = null;
-
         // nameの入力がなければ全件
         if (name == null) {
             name = "%";
         } else {
-            nameBuilder.append("%");
-            nameBuilder.append(name);
-            nameBuilder.append("%");
-            name = nameBuilder.toString();
+            name = ambigiousSearch(name);
         }
 
         // brandの入力がなければ全件
         if (brand == null) {
             brand = "%";
         } else {
-            brandBuilder.append("%");
-            brandBuilder.append(brand);
-            brandBuilder.append("%");
-            brand = brandBuilder.toString();
+            brand = ambigiousSearch(brand);
         }
 
         // categoryの選択条件で分岐
-        if (parentCategory != "" && parentCategory != null) {
-            if (childCategory != "" && childCategory != null) {
-                if (grandCategory != "" && grandCategory != null) {
-                    // 親、子、孫まで選択した時は 親/子/孫 で検索
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    // 孫を選択していない時は 親/子/% で検索
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/%");
-                    nameAll = nameAllBuilder.toString();
-                }
-            } else {
-                // 親だけ選択の時は 親/% で検索
-                nameAllBuilder.append(parentCategory);
-                nameAllBuilder.append("/%");
-                nameAll = nameAllBuilder.toString();
-            }
-        } else {
-            // 選択がなかった場合は全件
-            nameAll = "%";
-        }
+        String nameAll = makeNameAll(parentCategory, childCategory, grandCategory);
 
         List<Item> itemList = repository.searchItems(name, brand, nameAll, sort, order, page);
 
@@ -224,53 +148,20 @@ public class ItemService {
      */
     public int searchTotalItem(String name, String brand, String parentCategory, String childCategory,
             String grandCategory) {
-        StringBuilder nameBuilder = new StringBuilder();
-        StringBuilder brandBuilder = new StringBuilder();
-        StringBuilder nameAllBuilder = new StringBuilder();
-        String nameAll = null;
 
         if (name == "" || name == null) {
             name = "%";
         } else {
-            nameBuilder.append("%");
-            nameBuilder.append(name);
-            nameBuilder.append("%");
-            name = nameBuilder.toString();
+            name = ambigiousSearch(name);
         }
 
         if (brand == "" || brand == null) {
             brand = "%";
         } else {
-            brandBuilder.append("%");
-            brandBuilder.append(brand);
-            brandBuilder.append("%");
-            brand = brandBuilder.toString();
+            brand = ambigiousSearch(brand);
         }
 
-        if (parentCategory != "" && parentCategory != null) {
-            if (childCategory != "" && childCategory != null) {
-                if (grandCategory != "" && grandCategory != null) {
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(grandCategory);
-                    nameAll = nameAllBuilder.toString();
-                } else {
-                    nameAllBuilder.append(parentCategory);
-                    nameAllBuilder.append("/");
-                    nameAllBuilder.append(childCategory);
-                    nameAllBuilder.append("/%");
-                    nameAll = nameAllBuilder.toString();
-                }
-            } else {
-                nameAllBuilder.append(parentCategory);
-                nameAllBuilder.append("/%");
-                nameAll = nameAllBuilder.toString();
-            }
-        } else {
-            nameAll = "%";
-        }
+        String nameAll = makeNameAll(parentCategory, childCategory, grandCategory);
 
         int itemListSize = repository.searchItemsSize(name, brand, nameAll);
         return itemListSize;
@@ -296,13 +187,8 @@ public class ItemService {
         logger.debug("Started addItem");
 
         // categoryFormからname_all作成
-        StringBuilder builder = new StringBuilder();
-        builder.append(categoryForm.getParentCategory());
-        builder.append("/");
-        builder.append(categoryForm.getChildCategory());
-        builder.append("/");
-        builder.append(categoryForm.getGrandCategory());
-        String nameAll = builder.toString();
+        String nameAll = makeFullNameAll(categoryForm.getParentCategory(), categoryForm.getChildCategory(),
+                categoryForm.getGrandCategory());
 
         // domainクラスにコピー
         Item item = new Item();
@@ -322,13 +208,8 @@ public class ItemService {
     public void editItem(ItemForm itemForm, CategoryForm categoryForm) {
         logger.debug("Started editItem");
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(categoryForm.getParentCategory());
-        builder.append("/");
-        builder.append(categoryForm.getChildCategory());
-        builder.append("/");
-        builder.append(categoryForm.getGrandCategory());
-        String nameAll = builder.toString();
+        String nameAll = makeFullNameAll(categoryForm.getParentCategory(), categoryForm.getChildCategory(),
+                categoryForm.getGrandCategory());
 
         Item item = new Item();
         BeanUtils.copyProperties(itemForm, item);
@@ -389,6 +270,84 @@ public class ItemService {
     public Integer countItemByCategory(int id) {
         Integer itemCount = repository.countItemByCategory(id);
         return itemCount;
+    }
+
+    /**
+     * name_allを作成（親、子、孫全てNULLでない時）
+     * 
+     * @param parentCategory 親カテゴリ名
+     * @param childCategory  子カテゴリ名
+     * @param grandCategory  孫カテゴリ名
+     * @return name_all
+     */
+    private String makeFullNameAll(String parentCategory, String childCategory, String grandCategory) {
+        // 曖昧検索用の文字列作成（parent/child/grand）
+        StringBuilder builder = new StringBuilder();
+        builder.append(parentCategory);
+        builder.append("/");
+        builder.append(childCategory);
+        builder.append("/");
+        builder.append(grandCategory);
+        String nameAll = builder.toString();
+        return nameAll;
+    }
+
+    /**
+     * name_allの作成（全条件）
+     * 
+     * @param parentCategory 親カテゴリ名
+     * @param childCategory  子カテゴリ名
+     * @param grandCategory  孫カテゴリ名
+     * @return name_all
+     */
+    private String makeNameAll(String parentCategory, String childCategory, String grandCategory) {
+        StringBuilder nameAllBuilder = new StringBuilder();
+        String nameAll;
+        if (parentCategory != "" && parentCategory != null) {
+            if (childCategory != "" && childCategory != null) {
+                if (grandCategory != "" && grandCategory != null) {
+                    // 親、子、孫まであれば 親/子/孫
+                    nameAllBuilder.append(parentCategory);
+                    nameAllBuilder.append("/");
+                    nameAllBuilder.append(childCategory);
+                    nameAllBuilder.append("/");
+                    nameAllBuilder.append(grandCategory);
+                    nameAll = nameAllBuilder.toString();
+                } else {
+                    // 親、子まであれば 親/子/%
+                    nameAllBuilder.append(parentCategory);
+                    nameAllBuilder.append("/");
+                    nameAllBuilder.append(childCategory);
+                    nameAllBuilder.append("/%");
+                    nameAll = nameAllBuilder.toString();
+                }
+            } else {
+                // 親まであれば 親/%
+                nameAllBuilder.append(parentCategory);
+                nameAllBuilder.append("/%");
+                nameAll = nameAllBuilder.toString();
+            }
+        } else {
+            // なければ全件
+            nameAll = "%";
+        }
+        return nameAll;
+    }
+
+    /**
+     * 曖昧検索用の文字列作成
+     * 
+     * @param searchCondition 検索条件
+     * @return 曖昧検索用の文字列
+     */
+    private String ambigiousSearch(String searchCondition) {
+        // 曖昧検索用の文字列作成（%condition%）
+        StringBuilder builder = new StringBuilder();
+        builder.append("%");
+        builder.append(searchCondition);
+        builder.append("%");
+        String nameLike = builder.toString();
+        return nameLike;
     }
 
 }
