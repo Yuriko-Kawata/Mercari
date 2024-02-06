@@ -58,7 +58,7 @@ public class CategoryRepository {
             """;
 
     // name_allで該当するレコードがあるかチェックするクエリ
-    private final String CHECK_CATEGORY_SQL = """
+    private final String CHECK_CATEGORY_BY_NAMEALL_SQL = """
             SELECT
                 count(*)
             FROM
@@ -120,7 +120,7 @@ public class CategoryRepository {
             """;
 
     // 親カテゴリのみ取得するクエリ
-    private static final String FIND_PARENT_SQL = """
+    private static final String FIND_PARENT_CATEGORY_SQL = """
             SELECT
                 id, name, parent_id, name_all
             FROM
@@ -137,7 +137,7 @@ public class CategoryRepository {
             """;
 
     // 子カテゴリのみ取得するクエリ
-    private static final String FIND_CHILD_SQL = """
+    private static final String FIND_CHILD_CATEGORY_SQL = """
             SELECT
                 id, name, parent_id, name_all
             FROM
@@ -154,7 +154,7 @@ public class CategoryRepository {
             """;
 
     // 孫カテゴリのみ取得するクエリ
-    private static final String FIND_GRAND_SQL = """
+    private static final String FIND_GRAND_CATEGORY_SQL = """
             SELECT
                 id, name, parent_id, name_all
             FROM
@@ -171,7 +171,7 @@ public class CategoryRepository {
             """;
 
     // 親カテゴリのトータル件数を取得するクエリ
-    private static final String PARENT_SIZE_SQL = """
+    private static final String PARENT_CATEGORY_SIZE_SQL = """
             SELECT
                 count(*)
             FROM
@@ -183,7 +183,7 @@ public class CategoryRepository {
             """;
 
     // 子カテゴリのトータル件数を取得するクエリ
-    private static final String CHILD_SIZE_SQL = """
+    private static final String CHILD_CATEGORY_SIZE_SQL = """
             SELECT
                 count(*)
             FROM
@@ -194,7 +194,7 @@ public class CategoryRepository {
             """;
 
     // 孫カテゴリのトータル件数を取得するクエリ
-    private static final String GRAND_SIZE_SQL = """
+    private static final String GRAND_CATEGORY_SIZE_SQL = """
             SELECT
                 count(*)
             FROM
@@ -205,7 +205,7 @@ public class CategoryRepository {
             """;
 
     // 検索条件に合う親カテゴリを取得するクエリ
-    private static final String SEARCH_PARENT_SQL = """
+    private static final String SEARCH_PARENT_BY_NAME_SQL = """
             SELECT
                 id, name, parent_id, name_all
             FROM
@@ -223,7 +223,7 @@ public class CategoryRepository {
             """;
 
     // 検索条件に合う子カテゴリを取得するクエリ
-    private static final String SEARCH_CHILD_SQL = """
+    private static final String SEARCH_CHILD_CATEGORY_BY_NAME_SQL = """
             SELECT
                 id, name, parent_id, name_all
             FROM
@@ -241,7 +241,7 @@ public class CategoryRepository {
             """;
 
     // 検索条件に合う孫カテゴリを取得するクエリ
-    private static final String SEARCH_GRAND_SQL = """
+    private static final String SEARCH_GRAND_CATEGORY_BY_NAME_SQL = """
             SELECT
                 id, name, parent_id, name_all
             FROM
@@ -259,7 +259,7 @@ public class CategoryRepository {
             """;
 
     // 検索条件に合う親カテゴリのトータル件数を取得するクエリ
-    private static final String SEARCH_PARENT_SIZE_SQL = """
+    private static final String SEARCH_PARENT_CATEGORY_SIZE_BY_NAME_SQL = """
             SELECT
                 count(*)
             FROM
@@ -271,7 +271,7 @@ public class CategoryRepository {
             """;
 
     // 検索条件に合う子カテゴリのトータル件数を取得するクエリ
-    private static final String SEARCH_CHILD_SIZE_SQL = """
+    private static final String SEARCH_CHILD_CATEGORY_SIZE_BY_NAME_SQL = """
             SELECT
                 count(*)
             FROM
@@ -283,7 +283,7 @@ public class CategoryRepository {
             """;
 
     // 検索条件に合う孫カテゴリのトータル件数を取得するクエリ
-    private static final String SEARCH_GRAND_SIZE_SQL = """
+    private static final String SEARCH_GRAND_CATEGORY_SIZE_BY_NAME_SQL = """
             SELECT
                 count(*)
             FROM
@@ -340,24 +340,6 @@ public class CategoryRepository {
             ;
             """;
 
-    // 階層とparent_idで検索し取得するクエリ
-    private static final String FIND_CHANGE_RECORD_ID_SQL = """
-            SELECT
-                id
-            FROM
-                category
-            WHERE
-                (:parentCondition = 1 AND parent_id IN (
-                    SELECT
-                        id
-                    FROM
-                        category
-                    WHERE
-                        parent_id = :parentId
-                ))
-            OR (:parentCondition = 2 AND parent_id = :id);
-                """;
-
     // 物理削除を行うクエリ
     private static final String DELETE_SQL = """
             DELETE FROM
@@ -399,6 +381,23 @@ public class CategoryRepository {
     }
 
     /**
+     * idで検索
+     * 
+     * @param id id
+     * @return 検索結果
+     */
+    public Category findById(int id) {
+        logger.debug("Started findById");
+
+        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+        List<Category> categoryList = template.query(FIND_BY_ID_SQL, param, CATEGORY_ROWMAPPER);
+        Category category = categoryList.get(0);
+
+        logger.debug("Finished findById");
+        return category;
+    }
+
+    /**
      * 重複するカテゴリがないかチェック
      * 
      * @param nameAll name_all
@@ -408,7 +407,7 @@ public class CategoryRepository {
         logger.debug("Started checkCategory");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("nameAll", nameAll);
-        Integer categoryCount = template.queryForObject(CHECK_CATEGORY_SQL, param, Integer.class);
+        Integer categoryCount = template.queryForObject(CHECK_CATEGORY_BY_NAMEALL_SQL, param, Integer.class);
 
         logger.debug("Finished checkCategory");
         return categoryCount;
@@ -530,7 +529,7 @@ public class CategoryRepository {
         logger.debug("Started findAllParentCategory");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
-        List<Category> categoryList = template.query(FIND_PARENT_SQL, param, CATEGORY_ROWMAPPER);
+        List<Category> categoryList = template.query(FIND_PARENT_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished findAllParentCategory");
         return categoryList;
@@ -546,7 +545,7 @@ public class CategoryRepository {
         logger.debug("Started findAllChildCategory");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
-        List<Category> categoryList = template.query(FIND_CHILD_SQL, param, CATEGORY_ROWMAPPER);
+        List<Category> categoryList = template.query(FIND_CHILD_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished findAllChildCategory");
         return categoryList;
@@ -562,7 +561,7 @@ public class CategoryRepository {
         logger.debug("Started findAllGrandCategory");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
-        List<Category> categoryList = template.query(FIND_GRAND_SQL, param, CATEGORY_ROWMAPPER);
+        List<Category> categoryList = template.query(FIND_GRAND_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished findAllGrandCategory");
         return categoryList;
@@ -577,7 +576,7 @@ public class CategoryRepository {
         logger.debug("Started parentListSize");
 
         SqlParameterSource param = new MapSqlParameterSource();
-        Integer size = template.queryForObject(PARENT_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(PARENT_CATEGORY_SIZE_SQL, param, Integer.class);
 
         logger.debug("Finished parentListSize");
         return size;
@@ -592,7 +591,7 @@ public class CategoryRepository {
         logger.debug("Started childListSize");
 
         SqlParameterSource param = new MapSqlParameterSource();
-        Integer size = template.queryForObject(CHILD_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(CHILD_CATEGORY_SIZE_SQL, param, Integer.class);
 
         logger.debug("Finished childListSize");
         return size;
@@ -607,7 +606,7 @@ public class CategoryRepository {
         logger.debug("Started grandListSize");
 
         SqlParameterSource param = new MapSqlParameterSource();
-        Integer size = template.queryForObject(GRAND_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(GRAND_CATEGORY_SIZE_SQL, param, Integer.class);
 
         logger.debug("Finished grandListSize");
         return size;
@@ -624,7 +623,7 @@ public class CategoryRepository {
         logger.debug("Started searchParentCategory");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
-        List<Category> categoryList = template.query(SEARCH_PARENT_SQL, param, CATEGORY_ROWMAPPER);
+        List<Category> categoryList = template.query(SEARCH_PARENT_BY_NAME_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished searchParentCategory");
         return categoryList;
@@ -641,7 +640,7 @@ public class CategoryRepository {
         logger.debug("Started searchChildCategory");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
-        List<Category> categoryList = template.query(SEARCH_CHILD_SQL, param, CATEGORY_ROWMAPPER);
+        List<Category> categoryList = template.query(SEARCH_CHILD_CATEGORY_BY_NAME_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished searchChildCategory");
         return categoryList;
@@ -658,7 +657,7 @@ public class CategoryRepository {
         logger.debug("Started searchGrandCategory");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
-        List<Category> categoryList = template.query(SEARCH_GRAND_SQL, param, CATEGORY_ROWMAPPER);
+        List<Category> categoryList = template.query(SEARCH_GRAND_CATEGORY_BY_NAME_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished searchGrandCategory");
         return categoryList;
@@ -674,7 +673,7 @@ public class CategoryRepository {
         logger.debug("Started searchParentTotal");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike);
-        Integer size = template.queryForObject(SEARCH_PARENT_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(SEARCH_PARENT_CATEGORY_SIZE_BY_NAME_SQL, param, Integer.class);
 
         logger.debug("Finished searchParentTotal");
         return size;
@@ -690,7 +689,7 @@ public class CategoryRepository {
         logger.debug("Started searchChildTotal");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike);
-        Integer size = template.queryForObject(SEARCH_CHILD_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(SEARCH_CHILD_CATEGORY_SIZE_BY_NAME_SQL, param, Integer.class);
 
         logger.debug("Finished searchChildTotal");
         return size;
@@ -706,27 +705,10 @@ public class CategoryRepository {
         logger.debug("Started searchGrandTotal");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike);
-        Integer size = template.queryForObject(SEARCH_GRAND_SIZE_SQL, param, Integer.class);
+        Integer size = template.queryForObject(SEARCH_GRAND_CATEGORY_SIZE_BY_NAME_SQL, param, Integer.class);
 
         logger.debug("Finished searchGrandTotal");
         return size;
-    }
-
-    /**
-     * idで検索
-     * 
-     * @param id id
-     * @return 検索結果
-     */
-    public Category findById(int id) {
-        logger.debug("Started findById");
-
-        SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
-        List<Category> categoryList = template.query(FIND_BY_ID_SQL, param, CATEGORY_ROWMAPPER);
-        Category category = categoryList.get(0);
-
-        logger.debug("Finished findById");
-        return category;
     }
 
     /**
