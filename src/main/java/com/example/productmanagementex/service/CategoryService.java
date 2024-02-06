@@ -29,9 +29,25 @@ public class CategoryService {
 
     private static final Logger logger = LogManager.getLogger(CategoryService.class);
 
+    /**
+     * 全件検索
+     * 
+     * @return 検索結果
+     */
     public List<Category> findAllCategory() {
         List<Category> categoryList = repository.findAllCategory();
         return categoryList;
+    }
+
+    /**
+     * idで検索
+     * 
+     * @param id id
+     * @return 検索結果
+     */
+    public Category findById(int id) {
+        Category category = repository.findById(id);
+        return category;
     }
 
     /**
@@ -329,17 +345,6 @@ public class CategoryService {
     }
 
     /**
-     * idで検索
-     * 
-     * @param id id
-     * @return 検索結果
-     */
-    public Category findById(int id) {
-        Category category = repository.findById(id);
-        return category;
-    }
-
-    /**
      * idに対応するカテゴリの子カテゴリ数を取得
      * 
      * @param id id
@@ -351,17 +356,6 @@ public class CategoryService {
     }
 
     /**
-     * idに対応するカテゴリの子カテゴリを取得
-     * 
-     * @param id id
-     * @return 検索結果
-     */
-    public List<Category> findChildCategory(int id) {
-        List<Category> categoryList = repository.findChildCategory(id);
-        return categoryList;
-    }
-
-    /**
      * parent_idから親カテゴリを取得
      * 
      * @param parentId parent_id
@@ -370,6 +364,17 @@ public class CategoryService {
     public Category findParentCategory(int parentId) {
         Category category = repository.findParentCategory(parentId);
         return category;
+    }
+
+    /**
+     * idに対応するカテゴリの子カテゴリを取得
+     * 
+     * @param id id
+     * @return 検索結果
+     */
+    public List<Category> findChildCategory(int id) {
+        List<Category> categoryList = repository.findChildCategory(id);
+        return categoryList;
     }
 
     /**
