@@ -431,5 +431,68 @@ title: 商品データ管理システム
         +SHA256PasswordEncoder: matches(CharSequence rawPassword, String encodedPassword) boolean
         }
 
+        class CategoryService{
+        +CategoryService findAllCategory()List~Category~
+        +CategoryService findById(int id) Category
+        +CategoryService checkCategory(CategoryFormform) int
+        +CategoryService checkCategoryName(Stringname, int parentId, String nameAll) int
+        +CategoryService insertCategory(CategoryFormform)
+        +CategoryService editCategoryNameAndNameAl(int id, String name, int parentId, StringnameAll)
+        +CategoryService findAllParentCategory(intpage) List~Category~
+        +CategoryService findAllChildCategory(intpage) List~Category~
+        +CategoryService findAllGrandCategory(intpage) List~Category~
+        +CategoryService totalParentCount() int
+        +CategoryService totalChildCount() int
+        +CategoryService totalGrandCount() int
+        +CategoryService searchParentCategory(StringsearchCondition, int page) List~Category~
+        +CategoryService searchChildCategory(StringsearchCondition, int page) List~Category~
+        +CategoryService searchGrandCategory(StringsearchCondition, int page) List~Category~
+        +CategoryService searchTotalParentCount(StringsearchCondition) int
+        +CategoryService searchTotalChildCount(StringsearchCondition) int
+        +CategoryService searchTotalGrandCount(StringsearchCondition) int
+        +CategoryService childCategoryCount(int id) int
+        +CategoryService findParentCategory(intparentId) Category
+        +CategoryService findChildCategory(int id)List~Category~
+        +CategoryService checkDeleteCategory(int id,int parentId, String nameAll) boolean
+        +CategoryService delete(int id)
+        -CategoryService makeNameAll(StringparentCategory, String childCategory, StringgrandCategory) String
+        -CategoryService ambigiousSearch(StringsearchCondition) String
+        }
+
+        class FileStorageService{
+        +FileStorageService storeFile(MultipartFile file) String
+        +FileStorageService deleteFile(String filePath)
+        }
+
+        class ImageService{
+        +ImageService storage(int itemId, String path)
+        +ImageService getPath(int itemId) String
+        +ImageService updatePath(int itemId, String path)
+        }
+
+        class ItemService{
+        +ItemService findAllItems() List~Item~
+        +ItemService findItems(String sort, String order, int page) List~Item~
+        +ItemService totalItem() int
+        +ItemService searchAllItems(String name, String brand, String parentCategory, String childCategory, String grandCategory) List~Item~
+        +ItemService searchItems(String name, String brand, String parentCategory, String childCategory, String grandCategory, String sort, String order, int page) List~Item~
+        +ItemService searchTotalItem(String name, String brand, String parentCategory, String childCategory, String grandCategory) int
+        +ItemService findById(int id) Item
+        +ItemService addItem(ItemForm itemForm, CategoryForm categoryForm) int
+        +ItemService editItem(ItemForm itemForm, CategoryForm categoryForm)
+        +ItemService getUpdateTime(int id) Timestamp
+        +ItemService checkDelete(int id, Timestamp updateTime) boolean
+        +ItemService delete(int id)
+        +ItemService countItemByCategory(int id) Integer
+        -ItemService makeFullNameAll(String parentCategory, String childCategory, String grandCategory) String
+        -ItemService makeNameAll(String parentCategory, String childCategory, String grandCategory) String
+        -ItemService ambigiousSearch(String searchCondition) String
+        }
+
+        class UserService{
+        +userService registerUser(UserForm form)
+        +userService findUserByMail(String mail) User
+        }
+
 
 ```
