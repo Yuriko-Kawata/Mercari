@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.productmanagementex.form.CategoryForm;
 import com.example.productmanagementex.service.CategoryService;
+import com.example.productmanagementex.service.ItemService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -30,6 +31,8 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private ItemService itemService;
     @Autowired
     private HttpSession session;
     @Autowired
@@ -261,7 +264,11 @@ public class CategoryController {
         // 対応する子カテゴリリストの取得
         model.addAttribute("childCategoryList", categoryService.findChildCategory(id));
         // 子カテゴリの件数の取得
-        model.addAttribute("childCategoryCount", categoryService.childCategoryCount(id));
+        int childCategoryCount = categoryService.childCategoryCount(id);
+        if (childCategoryCount == 0) {
+            model.addAttribute("itemCount", itemService.countItemByCategory(id));
+        }
+        model.addAttribute("childCategoryCount", childCategoryCount);
 
         logger.info("categoryDetail method finished");
         return "category-detail";

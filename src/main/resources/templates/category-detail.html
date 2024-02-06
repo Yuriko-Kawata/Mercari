@@ -54,6 +54,10 @@
               <a th:each="childCategory : ${childCategoryList}" th:href="@{categoryDetail(id=${childCategory.id})}" th:text="${childCategory.name} + ' / '">tops / pants</a>
             </td>
           </tr>
+          <tr th:if="${childCategoryCount == 0}">
+            <th>relation item</th>
+            <td th:text="${#numbers.formatInteger(itemCount, 1, 'COMMA')} + '件'"></td>
+          </tr>
         </tbody>
       </table>
       <div style="display: flex; justify-content: space-between;">
