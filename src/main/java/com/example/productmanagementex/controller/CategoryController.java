@@ -304,6 +304,7 @@ public class CategoryController {
 
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategory(categoryForm) != 0) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
             model.addAttribute("error", errorMessage);
 
@@ -353,6 +354,7 @@ public class CategoryController {
         }
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategoryName(form.getName(), form.getParentId(), form.getNameAll()) != 0) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
             model.addAttribute("checkError", errorMessage);
 
@@ -383,6 +385,7 @@ public class CategoryController {
         logger.info("deleteCategory method started call: {}", id, parentId, nameAll);
 
         if (!(categoryService.checkDeleteCategory(id, parentId, nameAll))) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.checkDeleteCategory", null, Locale.getDefault());
             model.addAttribute("deleteError", errorMessage);
             return toEditCategory(id, model);

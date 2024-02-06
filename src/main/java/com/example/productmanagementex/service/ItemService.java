@@ -183,6 +183,7 @@ public class ItemService {
      * @param itemForm     item情報
      * @param categoryForm category情報
      */
+    @SuppressWarnings("null") // 警告の抑制
     public int addItem(ItemForm itemForm, CategoryForm categoryForm) {
         logger.debug("Started addItem");
 
@@ -205,6 +206,7 @@ public class ItemService {
      * @param itemForm     item情報
      * @param categoryForm category情報
      */
+    @SuppressWarnings("null") // 警告の抑制
     public void editItem(ItemForm itemForm, CategoryForm categoryForm) {
         logger.debug("Started editItem");
 

@@ -330,6 +330,7 @@ public class ItemRepository {
      * 
      * @return item全件
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Item> findAllItems() {
         logger.debug("Started findAllItems");
 
@@ -346,6 +347,7 @@ public class ItemRepository {
      * @param page page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Item> findItems(String sort, String order, int page) {
         logger.debug("Started findItems");
         String sortCondition = "ORDER BY " + sort + " " + order;
@@ -394,6 +396,7 @@ public class ItemRepository {
      * @param nameAll name_all
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Item> searchAllItems(String name, String brand, String nameAll) {
         logger.debug("Started searchAllItems");
 
@@ -414,6 +417,7 @@ public class ItemRepository {
      * @param page    page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Item> searchItems(String name, String brand, String nameAll, String sort, String order, int page) {
         logger.debug("Started searchItems");
         // ソート準備
@@ -466,6 +470,7 @@ public class ItemRepository {
      * @param id id
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public Item findById(int id) {
         logger.debug("Started findById");
 

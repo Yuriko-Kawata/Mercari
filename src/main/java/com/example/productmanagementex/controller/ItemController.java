@@ -142,6 +142,7 @@ public class ItemController {
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
         if (totalItem == 0) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.0", null, Locale.getDefault());
             model.addAttribute("totalItemCountError", errorMessage);
         }
@@ -482,12 +483,14 @@ public class ItemController {
 
             // 親を選択したが、子、孫まで入力がなければエラーとして元の画面に戻る
         } else if (categoryForm.getChildCategory().equals("")) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.choiceCategory", null, Locale.getDefault());
             model.addAttribute("choiceError", errorMessage);
 
             logger.warn("editItem, category choice error");
             return toEditItem(itemForm.getId(), itemForm, categoryForm, model);
         } else if (categoryForm.getGrandCategory().equals("")) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
             model.addAttribute("choiceError", errorMessage);
 

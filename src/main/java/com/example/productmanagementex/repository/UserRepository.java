@@ -78,6 +78,7 @@ public class UserRepository {
      * @param mail mail
      * @return 検索結果があればuser, なければnull
      */
+    @SuppressWarnings("null") // 警告の抑制
     public User findUserByMail(String mail) {
         logger.debug("Started findUserByMail");
 

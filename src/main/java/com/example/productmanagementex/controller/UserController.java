@@ -67,6 +67,7 @@ public class UserController {
 
         // password再入力のチェック
         if (!(form.getPassword().equals(form.getPasswordCheck()))) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.mail.not.match", null, Locale.getDefault());
             model.addAttribute("passwordError", errorMessage);
         }
@@ -74,6 +75,7 @@ public class UserController {
         // mailが重複していないか確認
         // していれば、エラーとして元の画面に戻る
         if (service.findUserByMail(form.getMail()) != null) {
+            @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.mail.duplicate", null, Locale.getDefault());
             model.addAttribute("mailError", errorMessage);
             model.addAttribute("userForm", form);

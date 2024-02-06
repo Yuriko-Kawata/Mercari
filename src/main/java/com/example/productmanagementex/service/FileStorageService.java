@@ -31,6 +31,7 @@ public class FileStorageService {
      * @param file file
      * @return path
      */
+    @SuppressWarnings("null") // 警告の抑制
     public String storeFile(MultipartFile file) {
         logger.debug("Started storeFile");
 
