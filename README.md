@@ -1,5 +1,92 @@
 # 商品データ管理システム演習
 
+## データ準備
+
+### 1. テーブル準備
+
+- sql/create-table.sql を用いて、DB 上にテーブルを作成してください。
+
+### 2. original テーブルへのデータ挿入
+
+- ターミナル上でルートディレクトリに移動し、下記コマンドを実行してください。（ホスト名等は各自で変更してください）
+
+```plaintext
+psql -h [ホスト名] -p [ポート] -U [ユーザ名] [データベース名]
+```
+
+- 下記コマンドを実行して、original テーブルにデータを挿入してください。
+
+> 挿入元のファイルは Download フォルダにあると、読み込めないことがあります。（Postgres の権限によって）  
+> その場合は、ホームディレクトリに移動させてから挿入を実行してください。
+
+```plaintext
+COPY original FROM '[挿入元ファイルのパス]' WITH (FORMAT csv, DELIMITER E'\t', HEADER);
+```
+
+- original テーブルにデータが挿入されていることを確認してください。
+  （下記のようになるはずです）
+
+```plaintext
+SELECT * FROM original;
+```
+
+| id  | name     | condition_id | category_name    |
+| --- | -------- | ------------ | ---------------- |
+| 0   | MLB...   | 3            | Men/...          |
+| 1   | Razer... | 3            | Electoronics/... |
+| 2   | AVA...   | 1            | Women/...        |
+
+### 3. original テーブルの update
+
+- original テーブルへのデータ挿入を確認後、sql/update-original.sql を実行してください。
+  （category が null のもの **カテゴリ無/カテゴリ無/カテゴリ無** に、４階層目は削除）
+- 下記クエリで、カテゴリ無になっていることと、４階層目がないことを確認してください。
+
+```plaintext
+-- カテゴリ無/カテゴリ無/カテゴリ無があるかの確認（あればOK）
+SELECT * FROM original WHERE category_name = 'カテゴリ無/カテゴリ無/カテゴリ無';
+```
+
+```plaintext
+-- ４階層目を持つレコードの検索（なにも出なければOK）
+SELECT * FROM original WHERE category_name LIKE '%/%/%/%'
+```
+
+### 4. category, items テーブルへのデータの挿入
+
+- sql/insert.sql を実行してください
+  （実行に１０数秒かかるかと思います。）
+
+- 下記クエリで、category テーブルにデータが挿入されていることを確認してください。
+
+```plaintext
+SELECT * FROM category ORDER BY id;
+```
+
+トータルレコード：1437 件で、下記のような表示になるはずです。
+
+| id  | parent_id | name     | name_all            |
+| --- | --------- | -------- | ------------------- |
+| 1   | null      | Kids     | null                |
+| 2   | 1         | Stroller | null                |
+| 3   | 2         | Prams    | Kids/Stroller/Prams |
+
+- 下記クエリで、items テーブルにデータが挿入されていることを確認してください。
+
+```plaintext
+SELECT * FROM items
+```
+
+トータルレコード：1482535 件で、下記のような表示になるはずです。
+
+| id  | name     | condition | category |
+| --- | -------- | --------- | -------- |
+| 1   | MLB...   | 3         | 503      |
+| 2   | Razer... | 3         | 1378     |
+| 3   | AVA...   | 1         | 111      |
+
+---
+
 ## 機能実装についての補足
 
 ### 1. ログイン画面
