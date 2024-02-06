@@ -462,7 +462,7 @@ public class ItemController {
 
             // ファイルが送られた場合は、元画像の削除とpathの更新を行う
             if (!(itemForm.getImage().isEmpty())) {
-                // 元画像の削除ようにpathの取得
+                // 元画像の削除用にpathの取得
                 String currentImagePath = imageService.getPath(itemForm.getId());
                 // defaultの画像（no-image）でなければ削除
                 if (!(currentImagePath.equals("uploaded-img/no-image.png"))) {
@@ -541,6 +541,7 @@ public class ItemController {
     public void downloadItemData(HttpServletResponse response) throws IOException {
         List<Item> items;
         SearchForm form = (SearchForm) session.getAttribute("form");
+        // 検索条件があればその条件のリストを、なければ全件取得
         if (form == null) {
             items = itemService.findAllItems(); // 商品データの取得
         } else {
@@ -548,12 +549,15 @@ public class ItemController {
                     form.getChildCategory(), form.getGrandCategory());
         }
 
+        // ファイル形式の指定
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"products.csv\"");
 
+        // ヘッダーの書き込み
         PrintWriter writer = response.getWriter();
-        writer.println("Product ID,Product Name,Price"); // ヘッダーの書き込み
+        writer.println("Product ID,Product Name,Price");
 
+        // リストの書き込み
         for (Item item : items) {
             writer.println(item.getId() + "," + item.getName() + "," + item.getPrice());
         }
