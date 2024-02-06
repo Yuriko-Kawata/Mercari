@@ -71,34 +71,7 @@
   <title>Rakus Items</title>
 </head>
 <body>
-  <!-- navbar -->
-  <nav class="navbar navbar-inverse">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed"
-        data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-        aria-controls="navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" th:href="@{itemList}">Rakus Items</a>
-    </div>
-    <div id="navbar" class="collapse navbar-collapse">
-      <div>
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <form th:action="@{/logout}" method="post">
-              <input type="submit" class="navbar-text logout" value="Logout"/>
-            </form>
-          </li>
-          <li><a th:href="@{categoryList}">カテゴリ一覧へ</a></li>
-        </ul>
-        <p class="navbar-text navbar-right">
-          user&nbsp;:&nbsp;<span id="loginName" th:text="${session.userName}"></span>
-        </p>
-      </div>
-    </div>
-  </nav>
+  <div th:replace="nav-bar :: navbar"></div>
 
   <!-- details -->
   <div id="input-main" class="container">
