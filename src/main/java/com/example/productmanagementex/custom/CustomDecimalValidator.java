@@ -3,6 +3,11 @@ package com.example.productmanagementex.custom;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * カスタムValidationの作成
+ * 
+ * @author hiraizumi
+ */
 public class CustomDecimalValidator implements ConstraintValidator<DecimalRange, Double> {
     private double min;
     private double max;

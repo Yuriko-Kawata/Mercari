@@ -9,6 +9,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * ログイン成功時のカスタム
+ * 
+ * @author hiraizumi
+ */
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final Logger logger = LogManager.getLogger(CustomLoginSuccessHandler.class);

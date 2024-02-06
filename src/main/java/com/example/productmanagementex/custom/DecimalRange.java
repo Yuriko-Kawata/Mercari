@@ -9,6 +9,11 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
+/**
+ * カスタムValidationの作成
+ * 
+ * @author hiraizumi
+ */
 @Documented
 @Constraint(validatedBy = CustomDecimalValidator.class)
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })
