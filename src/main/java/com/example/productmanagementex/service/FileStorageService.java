@@ -63,7 +63,13 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * ファイルの削除
+     * 
+     * @param filePath
+     */
     public void deleteFile(String filePath) {
+        // 受け取ったpathにあるファイルを削除
         try {
             Path path = Paths.get(filePath);
             Files.deleteIfExists(path);
