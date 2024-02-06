@@ -161,6 +161,7 @@
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
             </div>
           </select>
+          <span class="text-danger" th:if="${choiceError}" th:text="${choiceError}"></span>
         </div>
       </div>
 
