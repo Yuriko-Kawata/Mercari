@@ -35,6 +35,7 @@ public class UserService {
      * 
      * @param form form
      */
+    @SuppressWarnings("null") // 警告の抑制
     public void registerUser(UserForm form) {
         logger.debug("Started registerUser");
 

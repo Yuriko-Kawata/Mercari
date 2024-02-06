@@ -354,6 +354,7 @@ public class CategoryRepository {
      * 
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> findAllCategory() {
         logger.debug("Started findAllCategory");
 
@@ -386,6 +387,7 @@ public class CategoryRepository {
      * @param id id
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public Category findById(int id) {
         logger.debug("Started findById");
 
@@ -525,6 +527,7 @@ public class CategoryRepository {
      * @param page page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> findAllParentCategory(int page) {
         logger.debug("Started findAllParentCategory");
 
@@ -541,6 +544,7 @@ public class CategoryRepository {
      * @param page page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> findAllChildCategory(int page) {
         logger.debug("Started findAllChildCategory");
 
@@ -557,6 +561,7 @@ public class CategoryRepository {
      * @param page page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> findAllGrandCategory(int page) {
         logger.debug("Started findAllGrandCategory");
 
@@ -619,6 +624,7 @@ public class CategoryRepository {
      * @param page     page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> searchParentCategory(String nameLike, Integer page) {
         logger.debug("Started searchParentCategory");
 
@@ -636,6 +642,7 @@ public class CategoryRepository {
      * @param page     page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> searchChildCategory(String nameLike, int page) {
         logger.debug("Started searchChildCategory");
 
@@ -653,6 +660,7 @@ public class CategoryRepository {
      * @param page     page
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> searchGrandCategory(String nameLike, int page) {
         logger.debug("Started searchGrandCategory");
 
@@ -733,6 +741,7 @@ public class CategoryRepository {
      * @param id id
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public List<Category> findChildCategory(int id) {
         logger.debug("Started findChildCategory");
 
@@ -749,6 +758,7 @@ public class CategoryRepository {
      * @param parentId parent_id
      * @return 検索結果
      */
+    @SuppressWarnings("null") // 警告の抑制
     public Category findParentCategory(int parentId) {
         logger.debug("Started findParentCategory");
 
