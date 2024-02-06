@@ -23,6 +23,22 @@
       display: flex;
       align-items:last baseline;
     }
+    .sub-title{
+      width: 85px;
+      font-size:large;
+      border: double;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+    .infomation{
+      border: dashed;
+      padding: 30px;
+      width: 700px;
+      margin: auto;
+    }
+    .important{
+      color: red;
+    }
     .check{
       font-size: small;
       padding-left: 20px;
@@ -31,6 +47,15 @@
     .logout{
       background-color: unset;
       border: none;
+    }
+    img{
+      width: 300px;
+    }
+    .preview-image{
+      text-align: center;
+      width: 350px;
+      border: double;
+      margin-top: 20px;
     }
   </style>
   <title>Rakus Items</title>
@@ -43,7 +68,7 @@
     <a type="button" class="btn btn-default" th:href="@{itemList}"><i
         class="fa fa-reply"></i> back</a>
     <div class="title">
-      <h2>商品追加</h2><span class="check">全項目入力必須</span>
+      <h2>商品追加</h2>
     </div>
 
     <!-- add form -->
@@ -143,19 +168,36 @@
 
       <!-- image -->
       <div class="form-group">
-        <label for="img" class="col-sm-2 control-label">image</label>
+        <label for="description"
+          class="col-sm-2 control-label">image</label>
         <div class="col-sm-8">
-          <input type="file" name="image">
+          <input type="file" name="image" id="image">
+          <div style="display: flex; justify-content: center;">
+            <div class="preview-image">
+              <img id="imagePreview" alt="変更後画像" title="変更後画像" style="display: none;">
+              <p>画像プレビュー</p>
+            </div>
+          </div>
         </div>
       </div>
       <!-- submit button -->
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-default">Submit</button>
+          
         </div>
       </div>
     </form>
   </div>
+  <div class="infomation">
+    <div class="sub-title">注意事項</div>
+    <div class="important">
+      <ul>
+        <li>brand, image以外は入力必須です。</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- script -->
   <script
     src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
