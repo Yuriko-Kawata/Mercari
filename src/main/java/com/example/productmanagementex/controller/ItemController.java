@@ -256,7 +256,7 @@ public class ItemController {
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
+                        form.getChildCategory(), form.getGrandCategory(), "i.id", "ASC", 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
         int totalPage = totalPageCount(totalItem);
@@ -290,7 +290,7 @@ public class ItemController {
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
+                        form.getChildCategory(), form.getGrandCategory(), "i.id", "ASC", 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
         int totalPage = totalPageCount(totalItem);
