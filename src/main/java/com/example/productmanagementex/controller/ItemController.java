@@ -463,20 +463,6 @@ public class ItemController {
             categoryForm.setChildCategory(originalChildCategory);
             categoryForm.setGrandCategory(originalGrandCategory);
 
-            // ファイルが送られた場合は、元画像の削除とpathの更新を行う
-            if (!(itemForm.getImage().isEmpty())) {
-                // 元画像の削除用にpathの取得
-                String currentImagePath = imageService.getPath(itemForm.getId());
-                // defaultの画像（no-image）でなければ削除
-                if (!(currentImagePath.equals("uploaded-img/no-image.png"))) {
-                    fileStorageService.deleteFile(currentImagePath);
-                }
-
-                // pathの更新
-                String imagePath = fileStorageService.storeFile(itemForm.getImage());
-                imageService.updatePath(itemForm.getId(), imagePath);
-            }
-
             // item情報の更新
             itemService.editItem(itemForm, categoryForm);
             // 画面遷移用のid受け取り
@@ -493,14 +479,23 @@ public class ItemController {
             return toEditItem(itemForm.getId(), itemForm, categoryForm, model);
         } else if (categoryForm.getGrandCategory().equals("")) {
             @SuppressWarnings("null") // 警告の抑制
-            String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
+            String errorMessage = messageSource.getMessage("error.choiceCategory", null, Locale.getDefault());
             model.addAttribute("choiceError", errorMessage);
 
             logger.warn("editItem, category choice error");
             return toEditItem(itemForm.getId(), itemForm, categoryForm, model);
         }
 
-        if (itemForm.getImage() != null) {
+        // ファイルが送られた場合は、元画像の削除とpathの更新を行う
+        if (!(itemForm.getImage().isEmpty())) {
+            // 元画像の削除用にpathの取得
+            String currentImagePath = imageService.getPath(itemForm.getId());
+            // defaultの画像（no-image）でなければ削除
+            if (!(currentImagePath.equals("uploaded-img/no-image.png"))) {
+                fileStorageService.deleteFile(currentImagePath);
+            }
+
+            // pathの更新
             String imagePath = fileStorageService.storeFile(itemForm.getImage());
             imageService.updatePath(itemForm.getId(), imagePath);
         }
