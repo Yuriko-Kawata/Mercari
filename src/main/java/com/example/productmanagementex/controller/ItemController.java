@@ -350,8 +350,10 @@ public class ItemController {
         int itemId = itemService.addItem(itemForm, categoryForm);
 
         // image pathを作成し、テーブルに保存
-        String imagePath = fileStorageService.storeFile(itemForm.getImage());
-        imageService.storage(itemId, imagePath);
+        if (!(itemForm.getImage().isEmpty())) {
+            String imagePath = fileStorageService.storeFile(itemForm.getImage());
+            imageService.storage(itemId, imagePath);
+        }
 
         logger.info("addItem method finished");
         return "confirm/add-item-confirm";
