@@ -161,14 +161,10 @@
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
             </div>
           </select>
+          <span class="text-danger" th:if="${choiceError}" th:text="${choiceError}"></span>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="category" class="col-sm-2 control-label"></label>
-        <div class="col-sm-8">
-        </div>
-      </div>
       <!-- brand -->
       <div class="form-group">
         <label for="brand" class="col-sm-2 control-label">brand</label>
