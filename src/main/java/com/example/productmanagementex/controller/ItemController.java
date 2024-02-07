@@ -555,11 +555,12 @@ public class ItemController {
 
         // ヘッダーの書き込み
         PrintWriter writer = response.getWriter();
-        writer.println("Product ID,Product Name,Price");
+        writer.println("Product ID,Name,Condition,Brand,Price,Stock,Shipping");
 
         // リストの書き込み
         for (Item item : items) {
-            writer.println(item.getId() + "," + item.getName() + "," + item.getPrice());
+            writer.println(item.getId() + "," + item.getName() + "," + item.getCondition() + "," + item.getBrand() + ","
+                    + item.getPrice() + item.getStock() + "," + item.getShipping());
         }
 
         writer.flush();
