@@ -39,9 +39,9 @@ public class UserRepository {
     // 新規追加用のクエリ
     private static final String INSERT_SQL = """
             INSERT INTO
-                users(name, mail, password)
+                users(name, mail, password, authority)
             VALUES
-                (:name, :mail, :password)
+                (:name, :mail, :password, :authority)
             ;
             """;
 
@@ -63,11 +63,11 @@ public class UserRepository {
      * @param mail     mail
      * @param password password
      */
-    public void insertUser(String name, String mail, String password) {
+    public void insertUser(String name, String mail, String password, int authority) {
         logger.debug("Started insertUser");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("mail", mail)
-                .addValue("password", password);
+                .addValue("password", password).addValue("authority", authority);
         template.update(INSERT_SQL, param);
         logger.debug("Finished insertUser");
     }

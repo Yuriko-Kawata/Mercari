@@ -70,6 +70,7 @@ public class UserController {
             @SuppressWarnings("null") // 警告の抑制
             String errorMessage = messageSource.getMessage("error.mail.not.match", null, Locale.getDefault());
             model.addAttribute("passwordError", errorMessage);
+            return toRegister(form, model);
         }
 
         // mailが重複していないか確認

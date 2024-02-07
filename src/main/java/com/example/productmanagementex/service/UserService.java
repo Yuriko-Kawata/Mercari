@@ -57,9 +57,13 @@ public class UserService {
         // domainクラスへのコピー
         User user = new User();
         BeanUtils.copyProperties(form, user);
+        // 管理者画面からの追加なら１
+        if (user.getAuthority() == null) {
+            user.setAuthority(1);
+        }
 
         // 新規作成
-        repository.insertUser(user.getName(), user.getMail(), user.getPassword());
+        repository.insertUser(user.getName(), user.getMail(), user.getPassword(), user.getAuthority());
         logger.debug("Finished registerUser");
     }
 
