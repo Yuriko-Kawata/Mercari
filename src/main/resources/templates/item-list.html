@@ -68,13 +68,13 @@
               <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-parent-id="${category.id}"></option>
             </div>
           </select>
-          <select class="form-control" name="childCategory" id="childCategory" th:field="${searchCondition.childCategory}" disabled>
+          <select class="form-control" name="childCategory" id="childCategory" th:field="${searchCondition.childCategory}" th:disabled="${searchCondition.parentCategory != null} ? false : true">
               <option value="">[child category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-child-parentId="${category.parentId}" th:data-child-id="${category.id}"></option>
             </div>
           </select>
-          <select class="form-control" name="grandCategory" id="grandCategory" th:field="${searchCondition.grandCategory}" disabled>
+          <select class="form-control" name="grandCategory" id="grandCategory" th:field="${searchCondition.grandCategory}" th:disabled="${searchCondition.childCategory != null} ? false : true">
               <option value="">[grand category]</option>
             <div th:each="category : ${categoryList}" >
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
