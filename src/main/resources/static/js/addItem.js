@@ -47,6 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ページ読み込み時にも関数を実行
     updateGrandCategories();
+
+    const inputs = document.querySelectorAll('input, select, textarea');
+    const submitButton = document.getElementById('submit-button');
+
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            submitButton.disabled = false;
+        });
+    });
 });
 
 document.getElementById('image').addEventListener('change', function(event) {
