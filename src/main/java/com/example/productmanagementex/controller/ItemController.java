@@ -250,13 +250,15 @@ public class ItemController {
             form.setChildCategory(childCategory.getName());
             form.setGrandCategory(name);
         }
+        form.setSort("i.id");
+        form.setOrder("ASC");
         session.setAttribute("form", form);
 
         // 更新した条件で検索し、取得
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), "i.id", "ASC", 1));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
         int totalPage = totalPageCount(totalItem);
@@ -284,13 +286,15 @@ public class ItemController {
         // 検索条件を取得したbrandに更新
         SearchForm form = new SearchForm();
         form.setBrand(brand);
+        form.setSort("i.id");
+        form.setOrder("ASC");
         session.setAttribute("form", form);
 
         // 更新した条件で検索し、取得
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), "i.id", "ASC", 1));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
         int totalPage = totalPageCount(totalItem);
