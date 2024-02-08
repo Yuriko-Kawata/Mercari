@@ -124,6 +124,7 @@
             </div>
           </select>
           <span class="text-danger" th:errors="${categoryForm.grandCategory}"></span>
+          <span class="text-danger" th:if="${checkError}" th:text="${checkError}"></span>
         </div>
       </div>
       <div class="form-group">

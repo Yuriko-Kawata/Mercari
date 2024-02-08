@@ -350,6 +350,19 @@ public class ItemController {
             return toAddItem(itemForm, categoryForm, model);
         }
 
+        // 存在しない組み合わせであればエラーとして戻る
+        if (categoryService.checkCategory(categoryForm) == 0) {
+            @SuppressWarnings("null") // 警告の抑制
+            String errorMessage = messageSource.getMessage("error.check.not.exist.Category", null, Locale.getDefault());
+            model.addAttribute("checkError", errorMessage);
+
+            // 入力情報のリセット
+            CategoryForm form = new CategoryForm();
+
+            logger.warn("addItem, checkCategory error");
+            return toAddItem(itemForm, form, model);
+        }
+
         // itemsに新規追加と作成されたIDの取得
         int itemId = itemService.addItem(itemForm, categoryForm);
 
