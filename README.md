@@ -1,12 +1,58 @@
 # 商品データ管理システム演習
 
+![Static Badge](https://img.shields.io/badge/IDE-vsCode-blue)
+![Static Badge](https://img.shields.io/badge/Java-version17-a)
+
+## プロジェクトの clone
+
+### 1. github からの clone
+
+- github の<>Code から URL をコピーします。
+- プロジェクトを作成したいディレクトリに移動し、下記コマンドを順に実行してください。
+
+```plaintext
+git clone [コピーしたURL]
+```
+
+```plaintext
+gradle build
+```
+
+---
+
 ## データ準備
 
-### 1. テーブル準備
+### 1. データベース準備
+
+> **_pgAdmin に"postgres"という名前のユーザーがない場合_**
+
+- pgAdmin に、"postgres"という名前で user を作成してください。
+- pgAdmin に、"product-management-ex"という名前で database を作成してください。
+- 作成した database の properties から、orner を"postgres"に変更してください。（postgres でなかった場合）
+- ターミナルで下記コマンドを順に実行してください。
+
+```plaintext
+psql -U postgres
+```
+
+```plaintext
+ALTER ROLE postgres LOGIN;
+```
+
+```plaintext
+\q
+```
+
+> **_pgAdmin に"postgres"という名前のユーザーがある場合_**
+
+- pgAdmin に、"product-management-ex"という名前で database を作成してください。
+- 作成した database の properties から、orner を"postgres"に変更してください。（postgres でなかった場合）
+
+### 2. テーブル準備
 
 - sql/create-table.sql を用いて、DB 上にテーブルを作成してください。
 
-### 2. original テーブルへのデータ挿入
+### 3. original テーブルへのデータ挿入
 
 - ターミナル上でルートディレクトリに移動し、下記コマンドを実行してください。（ホスト名等は各自で変更してください）
 
@@ -23,8 +69,7 @@ psql -h [ホスト名] -p [ポート] -U [ユーザ名] [データベース名]
 COPY original FROM '[挿入元ファイルのパス]' WITH (FORMAT csv, DELIMITER E'\t', HEADER);
 ```
 
-- original テーブルにデータが挿入されていることを確認してください。
-  （下記のようになるはずです）
+- original テーブルにデータが挿入されていることを確認してください。（下記のようになるはずです）
 
 ```plaintext
 SELECT * FROM original;
@@ -36,10 +81,10 @@ SELECT * FROM original;
 | 1   | Razer... | 3            | Electoronics/... |
 | 2   | AVA...   | 1            | Women/...        |
 
-### 3. original テーブルの update
+### 4. original テーブルの update
 
 - original テーブルへのデータ挿入を確認後、sql/update-original.sql を実行してください。
-  （category が null のもの **カテゴリ無/カテゴリ無/カテゴリ無** に、４階層目は削除）
+  （category が null のもの "カテゴリ無/カテゴリ無/カテゴリ無" に、４階層目は削除）
 - 下記クエリで、カテゴリ無になっていることと、４階層目がないことを確認してください。
 
 ```plaintext
@@ -52,7 +97,7 @@ SELECT * FROM original WHERE category_name = 'カテゴリ無/カテゴリ無/�
 SELECT * FROM original WHERE category_name LIKE '%/%/%/%'
 ```
 
-### 4. category, items テーブルへのデータの挿入
+### 5. category, items テーブルへのデータの挿入
 
 - sql/insert.sql を実行してください
   （実行に１０数秒かかるかと思います。）
@@ -85,6 +130,8 @@ SELECT * FROM items
 | 2   | Razer... | 3         | 1378     |
 | 3   | AVA...   | 1         | 111      |
 
+> データの準備はこれで完了です。vsCode 上で起動を確認してください。
+
 ---
 
 ## 機能実装についての補足
@@ -113,7 +160,7 @@ SELECT * FROM items
 
 - default で元情報が表示されていることを明記しました。
 - image の登録ボタンと、元画像、更新画像のプレビュー欄を追加しました。
-（CSSのずれがありますが、許してください）
+  （CSS のずれがありますが、許してください）
 - 元情報に戻すボタンがなかったので、クリアボタンを追加しました。
 - 変更がなければ submit ボタンは押せないようにしました。
 - delete だけでなく、submit ボタンを押した際にもポップアップでの確認を追加しました。
@@ -136,7 +183,7 @@ SELECT * FROM items
 - カテゴリ一覧へのリンクを追加しました。
 - ログアウトボタンが実装の関係でハンバーガーにした時に少しずれます。
   （対応します）
-- （関係ないかもしれませんが）nav-bar はテンプレート化して、nav-bar.HTML として保存してあります。
+- （関係ないかもしれませんが）nav-bar はテンプレート化して、nav-bar.html として保存してあります。
 
 ### 9. 画面一覧、遷移、メッセージ一覧
 
