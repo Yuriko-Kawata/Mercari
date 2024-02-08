@@ -504,6 +504,19 @@ public class ItemController {
             imageService.updatePath(itemForm.getId(), imagePath);
         }
 
+        // 存在しない組み合わせであればエラーとして戻る
+        if (categoryService.checkCategory(categoryForm) == 0) {
+            @SuppressWarnings("null") // 警告の抑制
+            String errorMessage = messageSource.getMessage("error.check.not.exist.Category", null, Locale.getDefault());
+            model.addAttribute("checkError", errorMessage);
+
+            // 入力情報のリセット
+            CategoryForm form = new CategoryForm();
+
+            logger.warn("editItem, checkCategory error");
+            return toEditItem(itemForm.getId(), itemForm, form, model);
+        }
+
         itemService.editItem(itemForm, categoryForm);
         model.addAttribute("itemId", itemForm.getId());
 

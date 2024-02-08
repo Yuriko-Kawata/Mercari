@@ -312,10 +312,10 @@ public class CategoryController {
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategory(categoryForm) != 0) {
             @SuppressWarnings("null") // 警告の抑制
-            String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
+            String errorMessage = messageSource.getMessage("error.check.existCategory", null, Locale.getDefault());
             model.addAttribute("error", errorMessage);
 
-            logger.warn("addCategory, checkCategory error");
+            logger.warn("addCategory, check.existCategory error");
             return toAddCategory(categoryForm, model);
         }
 
@@ -362,7 +362,7 @@ public class CategoryController {
         // すでに存在する組み合わせであればエラーとして戻る
         if (categoryService.checkCategoryName(form.getName(), form.getParentId(), form.getNameAll()) != 0) {
             @SuppressWarnings("null") // 警告の抑制
-            String errorMessage = messageSource.getMessage("error.checkCategory", null, Locale.getDefault());
+            String errorMessage = messageSource.getMessage("error.check.existCategory", null, Locale.getDefault());
             model.addAttribute("checkError", errorMessage);
 
             logger.warn("editCategory, checkCategoryName error");
