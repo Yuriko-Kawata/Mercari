@@ -250,13 +250,15 @@ public class ItemController {
             form.setChildCategory(childCategory.getName());
             form.setGrandCategory(name);
         }
+        form.setSort("i.id");
+        form.setOrder("ASC");
         session.setAttribute("form", form);
 
         // 更新した条件で検索し、取得
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), "i.id", "ASC", 1));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
         int totalPage = totalPageCount(totalItem);
@@ -284,13 +286,15 @@ public class ItemController {
         // 検索条件を取得したbrandに更新
         SearchForm form = new SearchForm();
         form.setBrand(brand);
+        form.setSort("i.id");
+        form.setOrder("ASC");
         session.setAttribute("form", form);
 
         // 更新した条件で検索し、取得
         model.addAttribute("searchCondition", form);
         model.addAttribute("itemList",
                 itemService.searchItems(form.getName(), form.getBrand(), form.getParentCategory(),
-                        form.getChildCategory(), form.getGrandCategory(), "i.id", "ASC", 1));
+                        form.getChildCategory(), form.getGrandCategory(), form.getSort(), form.getOrder(), 1));
         int totalItem = itemService.searchTotalItem(form.getName(), form.getBrand(), form.getParentCategory(),
                 form.getChildCategory(), form.getGrandCategory());
         int totalPage = totalPageCount(totalItem);
@@ -344,6 +348,19 @@ public class ItemController {
         if (categoryRs.hasErrors()) {
             logger.warn("addItem, category validation error");
             return toAddItem(itemForm, categoryForm, model);
+        }
+
+        // 存在しない組み合わせであればエラーとして戻る
+        if (categoryService.checkCategory(categoryForm) == 0) {
+            @SuppressWarnings("null") // 警告の抑制
+            String errorMessage = messageSource.getMessage("error.check.not.exist.Category", null, Locale.getDefault());
+            model.addAttribute("checkError", errorMessage);
+
+            // 入力情報のリセット
+            CategoryForm form = new CategoryForm();
+
+            logger.warn("addItem, checkCategory error");
+            return toAddItem(itemForm, form, model);
         }
 
         // itemsに新規追加と作成されたIDの取得
@@ -498,6 +515,19 @@ public class ItemController {
             // pathの更新
             String imagePath = fileStorageService.storeFile(itemForm.getImage());
             imageService.updatePath(itemForm.getId(), imagePath);
+        }
+
+        // 存在しない組み合わせであればエラーとして戻る
+        if (categoryService.checkCategory(categoryForm) == 0) {
+            @SuppressWarnings("null") // 警告の抑制
+            String errorMessage = messageSource.getMessage("error.check.not.exist.Category", null, Locale.getDefault());
+            model.addAttribute("checkError", errorMessage);
+
+            // 入力情報のリセット
+            CategoryForm form = new CategoryForm();
+
+            logger.warn("editItem, checkCategory error");
+            return toEditItem(itemForm.getId(), itemForm, form, model);
         }
 
         itemService.editItem(itemForm, categoryForm);
