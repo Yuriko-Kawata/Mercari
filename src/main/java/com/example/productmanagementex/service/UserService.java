@@ -35,24 +35,10 @@ public class UserService {
      * 
      * @param form form
      */
-    @SuppressWarnings("null") // 警告の抑制
     public void registerUser(UserForm form) {
         logger.debug("Started registerUser");
 
-        // パスワードのハッシュ化（SHA-256とBase64使用）
-        try {
-            // SHA-256メッセージダイジェストのインスタンスを取得
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-            // パスワードをバイト配列に変換してハッシュ化
-            byte[] hashedBytes = md.digest(form.getPassword().getBytes(StandardCharsets.UTF_8));
-
-            // Base64エンコーディングを使用して、バイト配列を文字列に変換
-            form.setPassword(Base64.getEncoder().encodeToString(hashedBytes));
-        } catch (NoSuchAlgorithmException e) {
-            // SHA-256アルゴリズムが見つからない場合のエラー処理
-            logger.error("No Such Algorithm Exception");
-        }
+        form.setPassword(hashPassword(form.getPassword()));
 
         // domainクラスへのコピー
         User user = new User();
@@ -82,4 +68,19 @@ public class UserService {
         return user;
     }
 
+    /**
+     * パスワードのハッシュ化（SHA-256とBase64使用）
+     * 
+     * @param password パスワード
+     * @return ハッシュ化されたパスワード
+     */
+    protected String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
+    }
 }
