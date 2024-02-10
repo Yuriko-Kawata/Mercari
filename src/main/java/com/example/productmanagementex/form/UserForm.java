@@ -26,6 +26,8 @@ public class UserForm {
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{0,}", message = "{error.password}")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "{error.alphanumeric}")
     private String password;
+    // 権限
+    private Integer authority;
     // パスワードの再入力
     private String passwordCheck;
 
@@ -53,6 +55,14 @@ public class UserForm {
         this.password = password;
     }
 
+    public Integer getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(Integer authority) {
+        this.authority = authority;
+    }
+
     public String getPasswordCheck() {
         return passwordCheck;
     }
@@ -63,8 +73,8 @@ public class UserForm {
 
     @Override
     public String toString() {
-        return "UserForm [name=" + name + ", mail=" + mail + ", password=" + password + ", passwordCheck="
-                + passwordCheck + "]";
+        return "UserForm [name=" + name + ", mail=" + mail + ", password=" + password + ", authority=" + authority
+                + ", passwordCheck=" + passwordCheck + "]";
     }
 
 }

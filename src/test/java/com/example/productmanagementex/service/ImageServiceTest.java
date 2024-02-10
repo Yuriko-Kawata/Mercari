@@ -1,22 +1,16 @@
 package com.example.productmanagementex.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.productmanagementex.repository.ImageRepository;
-
 @SpringBootTest
 @Transactional
 public class ImageServiceTest {
 
-    @Autowired
-    private ImageRepository imageRepository;
     @Autowired
     private ImageService imageService;
 
