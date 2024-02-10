@@ -27,17 +27,26 @@ public class UserServiceTest {
         form.setName("Test Name");
         form.setMail("test@email.com");
         form.setPassword("password");
+        UserForm authorityForm = new UserForm();
+        authorityForm.setName("Test Name2");
+        authorityForm.setMail("test2@email.com");
+        authorityForm.setPassword("password");
+        authorityForm.setAuthority(0);
 
         // ユーザー登録処理の実行
         userService.registerUser(form);
+        userService.registerUser(authorityForm);
 
         // データベースからユーザーを検索
-        User user = userRepository.findUserByMail(form.getMail());
+        User user = userService.findUserByMail(form.getMail());
+        User authorityUser = userService.findUserByMail(authorityForm.getMail());
 
         // 検証
         assertEquals("Test Name", user.getName());
+        assertEquals(1, user.getAuthority());
+        assertEquals("Test Name2", authorityUser.getName());
+        assertEquals(0, authorityUser.getAuthority());
         assertEquals(null, userRepository.findUserByMail("not-found"));
-        // パスワードなど他のフィールドも検証
     }
 
 }
