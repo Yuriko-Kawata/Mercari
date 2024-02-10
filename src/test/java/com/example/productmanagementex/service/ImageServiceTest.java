@@ -1,42 +1,104 @@
 package com.example.productmanagementex.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+
+import com.example.productmanagementex.repository.ImageRepository;
 
 @SpringBootTest
-@Transactional
 public class ImageServiceTest {
+    @Mock
+    private ImageRepository imageRepository;
 
-    @Autowired
+    @InjectMocks
     private ImageService imageService;
 
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    void testStorageAndGetPath() {
-        int itemId = 999;
-        String path = "test.png";
+    public void testStorage() {
+        int itemId = 1;
+        String path = "/path/to/image.jpg";
 
         // Call the method under test
         imageService.storage(itemId, path);
 
-        assertEquals(path, imageService.getPath(itemId));
-        assertEquals("/uploaded-img/no-image.png", imageService.getPath(0));
+        // Verify that the repository's insert method was called with the correct
+        // arguments
+        verify(imageRepository, times(1)).insert(itemId, path);
     }
 
     @Test
-    void testUpdatePath() {
+    public void testGetPathWithExistingPath() {
         int itemId = 1;
-        int newItemId = 9999;
-        String newPath = "test.png";
+        String expectedPath = "/path/to/image.jpg";
 
-        imageService.updatePath(itemId, newPath);
-        imageService.updatePath(newItemId, newPath);
+        // Configure the mock to return the expected path when findPathByItemId is
+        // called
+        when(imageRepository.findPathByItemId(itemId)).thenReturn(expectedPath);
 
-        assertEquals(newPath, imageService.getPath(itemId));
-        assertEquals(newPath, imageService.getPath(newItemId));
+        // Call the method under test
+        String actualPath = imageService.getPath(itemId);
+
+        // Assert that the returned path matches the expected path
+        assertEquals(expectedPath, actualPath);
     }
 
+    @Test
+    public void testGetPathWithoutExistingPath() {
+        int itemId = 2;
+
+        // Configure the mock to return null when findPathByItemId is called
+        when(imageRepository.findPathByItemId(itemId)).thenReturn(null);
+
+        // Call the method under test
+        String actualPath = imageService.getPath(itemId);
+
+        // Assert that the returned path is the default no-image path
+        assertEquals("/uploaded-img/no-image.png", actualPath);
+    }
+
+    @Test
+    public void testUpdatePathWithExistingPath() {
+        int itemId = 1;
+        String newPath = "/new/path/to/image.jpg";
+
+        // Configure the mock to return a non-null value when findPathByItemId is called
+        when(imageRepository.findPathByItemId(itemId)).thenReturn("/old/path/to/image.jpg");
+
+        // Call the method under test
+        imageService.updatePath(itemId, newPath);
+
+        // Verify that the repository's updatePath method was called with the correct
+        // arguments
+        verify(imageRepository, times(1)).updatePath(itemId, newPath);
+    }
+
+    @Test
+    public void testUpdatePathWithoutExistingPath() {
+        int itemId = 2;
+        String newPath = "/new/path/to/image.jpg";
+
+        // Configure the mock to return null when findPathByItemId is called
+        when(imageRepository.findPathByItemId(itemId)).thenReturn(null);
+
+        // Call the method under test
+        imageService.updatePath(itemId, newPath);
+
+        // Verify that the repository's insert method was called with the correct
+        // arguments
+        verify(imageRepository, times(1)).insert(itemId, newPath);
+    }
 }
