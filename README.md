@@ -1,7 +1,7 @@
 # 商品データ管理システム演習
 
-![Static Badge](https://img.shields.io/badge/SQL-postgreSQL-blue)
 ![Static Badge](https://img.shields.io/badge/Java-version17-green)
+![Static Badge](https://img.shields.io/badge/SQL-postgreSQL-blue)
 ![Static Badge](https://img.shields.io/badge/DB-pgAdmin-red)
 
 ## プロジェクトの clone
