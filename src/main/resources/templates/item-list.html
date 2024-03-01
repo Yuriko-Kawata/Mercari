@@ -151,13 +151,13 @@
     <!-- pagination -->
     <div id="pages" th:if="${totalItemCount != 0}">
       <nav class="page-nav" style="text-align: center;">
-        <div th:if="${totalPage <= 4}">
+        <div th:if="${totalPage <= 5}">
           <a th:each="pageNum: ${#numbers.sequence(1, totalPage)}"
           th:href="@{/toSearch(page=${pageNum})}"
           th:class="${pageNum == currentPage} ? 'current-page' : ''"
           th:text="${pageNum + '&nbsp;'}"></a>
         </div>
-        <div th:if="${totalPage >= 5}">
+        <div th:if="${totalPage > 5}">
           <div th:if="${currentPage <= 5}">
             <a th:each="pageNum: ${#numbers.sequence(1, 5)}"
             th:href="@{/toSearch(page=${pageNum})}"

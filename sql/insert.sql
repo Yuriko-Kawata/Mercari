@@ -71,7 +71,7 @@ INSERT INTO items(
 SELECT o.name,
     o.condition_id,
     c.id,
-    (COALESCE(o.brand, '')),
+    COALESCE(o.brand, ' '),
     o.price,
     o.shipping,
     o.description,
