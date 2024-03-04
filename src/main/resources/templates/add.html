@@ -46,11 +46,11 @@
     }
     img{
       width: 300px;
+      border: solid grey;
     }
     .preview-image{
       text-align: center;
-      width: 350px;
-      border: double;
+      width: 300px;
       margin-top: 20px;
     }
   </style>
@@ -177,8 +177,8 @@
           <input type="file" name="image" id="image" accept=".jpeg,.jpg,.png">
           <div style="display: flex; justify-content: center;">
             <div class="preview-image">
-              <img id="imagePreview" alt="変更後画像" title="変更後画像" style="display: none;">
-              <p>画像プレビュー</p>
+              <img id="imagePreview" alt=" " title="変更後画像">
+              <span>画像プレビュー</span>
             </div>
           </div>
         </div>
