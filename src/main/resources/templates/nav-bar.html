@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <style>
+    .logout{
+      background-color: unset;
+      border: none;
+    }
+  </style>
 <body>
   <!-- navbar -->
   <nav class="navbar navbar-inverse" th:fragment="navbar">
@@ -17,7 +23,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
           <form th:action="@{/logout}" method="post">
-            <input type="submit" class="navbar-text logout" value="&#x23FB;&nbsp;Logout"/>
+            <input type="submit" class="navbar-text logout" value="&#x23FB;&nbsp;Logout" style="background-color: unset; border: none;"/>
           </form>
         </li>
         <li><a th:href="@{categoryList}">カテゴリ一覧へ</a></li>

@@ -531,53 +531,66 @@ public class ItemControllerTest {
     }
 
     @Test
+    void whenUpdateTimeErrors_thenRedirectToEdit() {
+        ItemForm itemForm = new ItemForm();
+        itemForm.setId(1);
+        CategoryForm categoryForm = new CategoryForm();
+        Timestamp timestamp = new Timestamp(0);
+        when(itemService.checkDelete(1, timestamp)).thenReturn(false);
+
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
+
+        verify(itemService, never()).editItem(any(ItemForm.class),
+                any(CategoryForm.class));
+        assertEquals("error/4xx", result);
+    }
+
+    @Test
     void whenValidationErrors_thenRedirectToEdit() {
         when(itemRs.hasErrors()).thenReturn(true);
         ItemForm itemForm = new ItemForm();
         itemForm.setId(1);
+        itemForm.setImage(mock(MultipartFile.class));
         CategoryForm categoryForm = new CategoryForm();
+        Timestamp timestamp = new Timestamp(0);
+        when(itemService.checkDelete(1, timestamp)).thenReturn(true);
 
         // toEditItemメソッドの挙動をモック化
-        doReturn("to-edit-item").when(controller).toEditItem(anyInt(), any(ItemForm.class), any(CategoryForm.class),
+        doReturn("to-edit-item").when(controller).toEditItem(anyInt(),
+                any(ItemForm.class), any(CategoryForm.class),
                 any(Model.class));
 
-        String result = controller.editItem(itemForm, itemRs, categoryForm, model);
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
 
-        verify(itemService, never()).editItem(any(ItemForm.class), any(CategoryForm.class));
+        verify(itemService, never()).editItem(any(ItemForm.class),
+                any(CategoryForm.class));
         assertEquals("to-edit-item", result);
-    }
-
-    @Test
-    void whenNoCategoryInput_thenUseOriginalInfo() {
-        ItemForm itemForm = new ItemForm();
-        itemForm.setId(1);
-        CategoryForm categoryForm = new CategoryForm();
-        categoryForm.setParentCategory("");
-
-        Item item = mock(Item.class);
-        when(itemService.findById(anyInt())).thenReturn(item);
-        when(itemRs.hasErrors()).thenReturn(false);
-
-        controller.editItem(itemForm, itemRs, categoryForm, model);
-
-        verify(itemService).editItem(any(ItemForm.class), any(CategoryForm.class));
     }
 
     @Test
     void whenCategoryNotChange_thenUseOriginalInfo() {
         ItemForm itemForm = new ItemForm();
-        itemForm.setId(1);
+        itemForm.setId(0);
+        itemForm.setImage(mock(MultipartFile.class));
         CategoryForm categoryForm = new CategoryForm();
         categoryForm.setParentCategory("");
+        Timestamp timestamp = mock(Timestamp.class);
+        when(itemService.checkDelete(itemForm.getId(), timestamp)).thenReturn(true);
+        when(itemForm.getImage().isEmpty()).thenReturn(true);
 
         Item item = mock(Item.class);
         when(itemService.findById(anyInt())).thenReturn(item);
         when(itemRs.hasErrors()).thenReturn(false);
         when(item.getCategory()).thenReturn(createCompleteCategoryList());
 
-        controller.editItem(itemForm, itemRs, categoryForm, model);
+        // toEditItemメソッドの挙動をモック化
+        doReturn("to-edit-item").when(controller).toEditItem(anyInt(),
+                any(ItemForm.class), any(CategoryForm.class),
+                any(Model.class));
 
-        verify(itemService).editItem(any(ItemForm.class), any(CategoryForm.class));
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
+
+        assertEquals("to-edit-item", result);
     }
 
     @Test
@@ -587,14 +600,17 @@ public class ItemControllerTest {
         CategoryForm categoryForm = new CategoryForm();
         categoryForm.setParentCategory("parent");
         categoryForm.setChildCategory("");
+        Timestamp timestamp = new Timestamp(0);
+        when(itemService.checkDelete(1, timestamp)).thenReturn(true);
 
         when(itemRs.hasErrors()).thenReturn(false);
 
         // toEditItemメソッドの挙動をモック化
-        doReturn("to-edit-item").when(controller).toEditItem(anyInt(), any(ItemForm.class), any(CategoryForm.class),
+        doReturn("to-edit-item").when(controller).toEditItem(anyInt(),
+                any(ItemForm.class), any(CategoryForm.class),
                 any(Model.class));
 
-        String result = controller.editItem(itemForm, itemRs, categoryForm, model);
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
 
         assertEquals("to-edit-item", result);
     }
@@ -607,14 +623,17 @@ public class ItemControllerTest {
         categoryForm.setParentCategory("parent");
         categoryForm.setChildCategory("child");
         categoryForm.setGrandCategory("");
+        Timestamp timestamp = new Timestamp(0);
+        when(itemService.checkDelete(1, timestamp)).thenReturn(true);
 
         when(itemRs.hasErrors()).thenReturn(false);
 
         // toEditItemメソッドの挙動をモック化
-        doReturn("to-edit-item").when(controller).toEditItem(anyInt(), any(ItemForm.class), any(CategoryForm.class),
+        doReturn("to-edit-item").when(controller).toEditItem(anyInt(),
+                any(ItemForm.class), any(CategoryForm.class),
                 any(Model.class));
 
-        String result = controller.editItem(itemForm, itemRs, categoryForm, model);
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
 
         assertEquals("to-edit-item", result);
     }
@@ -628,6 +647,8 @@ public class ItemControllerTest {
         categoryForm.setParentCategory("parent");
         categoryForm.setChildCategory("child");
         categoryForm.setGrandCategory("grand");
+        Timestamp timestamp = new Timestamp(0);
+        when(itemService.checkDelete(1, timestamp)).thenReturn(true);
 
         when(itemForm.getImage().isEmpty()).thenReturn(false);
         when(imageService.getPath(anyInt())).thenReturn("old/path/to/image.jpg");
@@ -635,10 +656,11 @@ public class ItemControllerTest {
         when(itemRs.hasErrors()).thenReturn(false);
 
         // toEditItemメソッドの挙動をモック化
-        doReturn("to-edit-item").when(controller).toEditItem(anyInt(), any(ItemForm.class), any(CategoryForm.class),
+        doReturn("to-edit-item").when(controller).toEditItem(anyInt(),
+                any(ItemForm.class), any(CategoryForm.class),
                 any(Model.class));
 
-        String result = controller.editItem(itemForm, itemRs, categoryForm, model);
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
 
         verify(fileStorageService).deleteFile("old/path/to/image.jpg");
         verify(imageService).updatePath(anyInt(), eq("new/path/to/image.jpg"));
@@ -659,11 +681,14 @@ public class ItemControllerTest {
         when(itemForm.getImage().isEmpty()).thenReturn(false);
         when(imageService.getPath(anyInt())).thenReturn("uploaded-img/no-image.png");
         when(itemRs.hasErrors()).thenReturn(false);
+        Timestamp timestamp = new Timestamp(0);
+        when(itemService.checkDelete(1, timestamp)).thenReturn(true);
 
         // toEditItemメソッドの挙動をモック化
-        doNothing().when(itemService).editItem(any(ItemForm.class), any(CategoryForm.class));
+        doNothing().when(itemService).editItem(any(ItemForm.class),
+                any(CategoryForm.class));
 
-        String result = controller.editItem(itemForm, itemRs, categoryForm, model);
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
 
         assertEquals("confirm/edit-item-confirm", result);
     }
@@ -677,15 +702,18 @@ public class ItemControllerTest {
         ItemForm itemForm = new ItemForm();
         itemForm.setId(1);
         itemForm.setImage(mock(MultipartFile.class));
+        Timestamp timestamp = new Timestamp(0);
+        when(itemService.checkDelete(1, timestamp)).thenReturn(true);
 
         when(categoryService.checkCategory(categoryForm)).thenReturn(1);
         when(itemForm.getImage().isEmpty()).thenReturn(true);
         when(itemRs.hasErrors()).thenReturn(false);
 
         // toEditItemメソッドの挙動をモック化
-        doNothing().when(itemService).editItem(any(ItemForm.class), any(CategoryForm.class));
+        doNothing().when(itemService).editItem(any(ItemForm.class),
+                any(CategoryForm.class));
 
-        String result = controller.editItem(itemForm, itemRs, categoryForm, model);
+        String result = controller.editItem(itemForm, itemRs, categoryForm, timestamp, model);
 
         assertEquals("confirm/edit-item-confirm", result);
     }
@@ -715,7 +743,7 @@ public class ItemControllerTest {
 
         // Assert
         verify(itemService, never()).delete(anyInt());
-        assertEquals("4xx", viewName);
+        assertEquals("error/4xx", viewName);
     }
 
     @Test

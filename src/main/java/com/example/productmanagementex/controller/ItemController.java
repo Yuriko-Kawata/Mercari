@@ -450,8 +450,15 @@ public class ItemController {
      * @return 成功ならconfirm画面へ、失敗なら編集画面に戻る
      */
     @PostMapping("edit")
-    public String editItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm, Model model) {
+    public String editItem(@Validated ItemForm itemForm, BindingResult rs, CategoryForm categoryForm,
+            Timestamp updateTime, Model model) {
         logger.info("editItem method started call: {}", itemForm, categoryForm);
+
+        // 排他制御を行い、update_timeが同じでなければエラー画面に遷移
+        if (!(itemService.checkDelete(itemForm.getId(), updateTime))) {
+            logger.warn("deleteItem, checkDelete error");
+            return "error/4xx";
+        }
 
         if (rs.hasErrors()) {
             logger.warn("editItem, validation error");
@@ -479,12 +486,6 @@ public class ItemController {
             categoryForm.setParentCategory(originalParentCategory);
             categoryForm.setChildCategory(originalChildCategory);
             categoryForm.setGrandCategory(originalGrandCategory);
-
-            // item情報の更新
-            itemService.editItem(itemForm, categoryForm);
-            // 画面遷移用のid受け取り
-            model.addAttribute("itemId", itemForm.getId());
-            return "confirm/edit-item-confirm";
 
             // 親を選択したが、子、孫まで入力がなければエラーとして元の画面に戻る
         } else if (categoryForm.getChildCategory().equals("")) {
@@ -554,7 +555,7 @@ public class ItemController {
             itemService.delete(id);
         } else {
             logger.warn("deleteItem, checkDelete error");
-            return "4xx";
+            return "error/4xx";
         }
 
         logger.info("deleteItem method finished");
