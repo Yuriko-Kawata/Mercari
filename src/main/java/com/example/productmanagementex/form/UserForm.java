@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
  */
 public class UserForm {
     // 名前
-    @NotBlank(message = "error.empty")
+    @NotBlank(message = "{error.empty}")
     @Size(max = 50, message = "{error.max}")
     private String name;
     // メールアドレス
