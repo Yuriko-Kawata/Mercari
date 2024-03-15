@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -29,6 +30,9 @@ public class ItemRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate template;
+
+    @Value("${page-size}")
+    private int pageSize;
 
     private static final Logger logger = LogManager.getLogger(ItemRepository.class);
 
@@ -363,10 +367,10 @@ public class ItemRepository {
                 " LEFT OUTER JOIN category AS parent ON child.parent_id = parent.id" +
                 " WHERE i.del_flg = 0 " +
                 sortCondition +
-                " LIMIT 30" +
-                " OFFSET (:page - 1) * 30;";
+                " LIMIT :pageSize" +
+                " OFFSET (:page - 1) * :pageSize;";
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("pageSize", pageSize).addValue("page", page);
         List<Item> itemList = template.query(sql, param, ITEM_ROWMAPPER);
 
         logger.debug("Finished findItems");
@@ -435,10 +439,10 @@ public class ItemRepository {
                 "WHERE i.del_flg = 0 AND (i.name LIKE :name) AND (i.brand LIKE :brand) AND  i.category IN (SELECT id FROM category WHERE name_all LIKE :nameAll) "
                 +
                 sortCondition +
-                " LIMIT 30 OFFSET (:page - 1) * 30;";
+                " LIMIT :pageSize OFFSET (:page - 1) * :pageSize;";
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
-                .addValue("nameAll", nameAll).addValue("page", page);
+                .addValue("nameAll", nameAll).addValue("pageSize", pageSize).addValue("page", page);
         List<Item> itemList = template.query(sql, param, ITEM_ROWMAPPER);
 
         logger.debug("Finished searchItems");

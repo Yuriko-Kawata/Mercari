@@ -9,6 +9,7 @@ import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,6 +60,9 @@ public class ItemController {
     private ImageService imageService;
     @Autowired
     private MessageSource messageSource;
+
+    @Value("${page-size}")
+    private int pageSize;
 
     private static final Logger logger = LogManager.getLogger(ItemController.class);
 
@@ -607,11 +611,11 @@ public class ItemController {
     private int totalPageCount(int totalItemCount) {
         int totalPage = 0;
         // 表示の３０件で割り、ページ数を計算
-        if (totalItemCount % 30 == 0) {
-            totalPage = totalItemCount / 30;
+        if (totalItemCount % pageSize == 0) {
+            totalPage = totalItemCount / pageSize;
             return totalPage;
         } else {
-            totalPage = totalItemCount / 30 + 1;
+            totalPage = totalItemCount / pageSize + 1;
             return totalPage;
         }
     }
