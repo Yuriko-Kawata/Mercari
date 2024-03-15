@@ -19,7 +19,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // select要素の変更時に関数を実行
-    document.getElementById('parentCategory').addEventListener('change', updateChildCategories);
+    document.getElementById('parentCategory').addEventListener('change', function(){
+        updateChildCategories();
+        var childSelect = document.getElementById('childCategory');
+        var grandSelect = document.getElementById('grandCategory');
+
+        // childCategoryとgrandCategoryの現在の選択をクリア
+        childSelect.value = '';
+        grandSelect.value = '';
+        childSelect.classList.remove('changed');
+        
+        // grandCategoryが有効であれば無効に
+        if (!grandSelect.disabled) {
+            grandSelect.disabled = true;
+            grandSelect.classList.remove('changed');
+        }
+    });
 
     // ページ読み込み時にも関数を実行
     updateChildCategories();
@@ -43,7 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // select要素の変更時に関数を実行
-    document.getElementById('childCategory').addEventListener('change', updateGrandCategories);
+    document.getElementById('childCategory').addEventListener('change', function(){
+        updateGrandCategories();
+        var grandSelect = document.getElementById('grandCategory');
+        grandSelect.value = '';
+        grandSelect.classList.remove('changed');
+    });
 
     // ページ読み込み時にも関数を実行
     updateGrandCategories();

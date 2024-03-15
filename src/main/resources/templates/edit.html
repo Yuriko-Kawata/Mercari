@@ -131,7 +131,7 @@
       <div class="form-group">
         <label for="parentCategory" class="col-sm-2 control-label">parent category</label>
         <div class="col-sm-8">
-          <select class="form-control" name="parentCategory" id="parentCategory" th:field="${categoryForm.parentCategory}">
+          <select class="form-control" name="parentCategory" id="parentCategory">
             <option th:text="${originalParentCategory + ' : 元情報'}" value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.parentId == 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-parent-id="${category.id}"></option>
@@ -142,7 +142,7 @@
       <div class="form-group">
         <label for="childCategory" class="col-sm-2 control-label">child category</label>
         <div class="col-sm-8">
-          <select class="form-control" name="childCategory" id="childCategory" th:field="${categoryForm.childCategory}" th:disabled="${categoryForm.parentCategory != null} ? false : true">
+          <select class="form-control" name="childCategory" id="childCategory" th:disabled="${categoryForm.parentCategory != null} ? false : true">
             <option th:text="${originalChildCategory + ' : 元情報'}" value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.parentId != 0 && category.nameAll == null}" th:text="${category.name}" th:value="${category.name}" th:data-child-parentId="${category.parentId}" th:data-child-id="${category.id}"></option>
@@ -153,7 +153,7 @@
       <div class="form-group">
         <label for="grandCategory" class="col-sm-2 control-label">grand category</label>
         <div class="col-sm-8">
-          <select class="form-control" name="grandCategory" id="grandCategory" th:field="${categoryForm.grandCategory}" th:disabled="${categoryForm.childCategory != null} ? false : true">
+          <select class="form-control" name="grandCategory" id="grandCategory" th:disabled="${categoryForm.childCategory != null} ? false : true">
             <option th:text="${originalGrandCategory + ' : 元情報'}" value=""></option>
             <div th:each="category : ${categoryList}">
               <option th:if="${category.nameAll != null}" th:text="${category.name}" th:value="${category.name}" th:data-grand-id="${category.parentId}"></option>
