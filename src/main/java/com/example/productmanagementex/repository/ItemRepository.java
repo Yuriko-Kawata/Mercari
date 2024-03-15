@@ -74,7 +74,7 @@ public class ItemRepository {
     };
 
     // クエリ共通部分(SELECTからFROMまで)
-    private static final String SELECT_TO_FROM = """
+    private static final String SELECT_TO_JOIN = """
                 SELECT
                 i.id AS i_id,
                 i.name AS i_name,
@@ -267,7 +267,7 @@ public class ItemRepository {
         logger.debug("Started findAllItems");
 
         StringBuilder sql = new StringBuilder();
-        sql.append(SELECT_TO_FROM);
+        sql.append(SELECT_TO_JOIN);
         sql.append(FIND_ALL_SQL);
 
         SqlParameterSource param = new MapSqlParameterSource();
@@ -289,7 +289,7 @@ public class ItemRepository {
         String sortCondition = "ORDER BY " + sort + " " + order;
 
         StringBuilder sql = new StringBuilder();
-        sql.append(SELECT_TO_FROM);
+        sql.append(SELECT_TO_JOIN);
         sql.append(" WHERE i.del_flg = 0 ");
         sql.append(sortCondition);
         sql.append(" LIMIT :pageSize");
@@ -330,7 +330,7 @@ public class ItemRepository {
         logger.debug("Started searchAllItems");
 
         StringBuilder sql = new StringBuilder();
-        sql.append(SELECT_TO_FROM);
+        sql.append(SELECT_TO_JOIN);
         sql.append(SEARCH_ALL_ITEMS_SQL);
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
@@ -357,7 +357,7 @@ public class ItemRepository {
         String sortCondition = "ORDER BY " + sort + " " + order;
 
         StringBuilder sql = new StringBuilder();
-        sql.append(SELECT_TO_FROM);
+        sql.append(SELECT_TO_JOIN);
         sql.append(
                 "WHERE i.del_flg = 0 AND (i.name LIKE :name) AND (i.brand LIKE :brand) AND  i.category IN (SELECT id FROM category WHERE name_all LIKE :nameAll) ");
         sql.append(sortCondition);
@@ -401,7 +401,7 @@ public class ItemRepository {
         logger.debug("Started findById");
 
         StringBuilder sql = new StringBuilder();
-        sql.append(SELECT_TO_FROM);
+        sql.append(SELECT_TO_JOIN);
         sql.append(FIND_BY_ID_SQL);
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
