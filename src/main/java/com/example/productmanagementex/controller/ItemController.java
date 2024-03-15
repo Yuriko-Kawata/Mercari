@@ -418,7 +418,7 @@ public class ItemController {
         String originalChildCategory = null;
         String originalGrandCategory = null;
         // itemのcategoryに対して、親、子、孫カテゴリのnameを取得
-        for (Category category : item.getCategory()) {
+        for (Category category : item.getCategories()) {
             if (category.getParentId() != 0) {
                 if (category.getNameAll() != null) {
                     originalGrandCategory = category.getName();
@@ -471,7 +471,7 @@ public class ItemController {
             String originalParentCategory = null;
             String originalChildCategory = null;
             String originalGrandCategory = null;
-            for (Category category : item.getCategory()) {
+            for (Category category : item.getCategories()) {
                 if (category.getParentId() != 0) {
                     if (category.getNameAll() != null) {
                         originalGrandCategory = category.getName();

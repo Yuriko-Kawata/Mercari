@@ -65,7 +65,7 @@ public class ItemRepository {
         grandCategory.setNameAll(rs.getString("grand_name_all"));
         categoryList.add(grandCategory);
 
-        item.setCategory(categoryList);
+        item.setCategories(categoryList);
         return item;
     };
 

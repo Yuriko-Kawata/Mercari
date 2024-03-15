@@ -16,7 +16,7 @@ public class Item {
     // 状態
     private Integer condition;
     // カテゴリ
-    private List<Category> category;
+    private List<Category> categories;
     // ブランド名
     private String brand;
     // 値段
@@ -56,12 +56,12 @@ public class Item {
         this.condition = condition;
     }
 
-    public List<Category> getCategory() {
-        return category;
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public void setCategory(List<Category> category) {
-        this.category = category;
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public String getBrand() {
@@ -122,7 +122,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item [id=" + id + ", name=" + name + ", condition=" + condition + ", category=" + category + ", brand="
+        return "Item [id=" + id + ", name=" + name + ", condition=" + condition + ", categories=" + categories + ", brand="
                 + brand + ", price=" + price + ", stock=" + stock + ", shipping=" + shipping + ", description="
                 + description + ", updateTime=" + updateTime + ", delFlg=" + delFlg + "]";
     }
