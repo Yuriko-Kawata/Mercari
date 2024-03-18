@@ -506,7 +506,7 @@ public class ItemControllerTest {
         ItemForm itemForm = new ItemForm();
         CategoryForm categoryForm = new CategoryForm();
         Item item = mock(Item.class);
-        when(item.getCategory()).thenReturn(Collections.emptyList()); // カテゴリなし
+        when(item.getCategories()).thenReturn(Collections.emptyList()); // カテゴリなし
         when(itemService.findById(id)).thenReturn(item);
 
         String result = controller.toEditItem(id, itemForm, categoryForm, model);
@@ -523,7 +523,7 @@ public class ItemControllerTest {
         int id = 1;
         Item item = mock(Item.class);
         // カテゴリリストを設定するロジックをシミュレートします
-        when(item.getCategory()).thenReturn(createCompleteCategoryList());
+        when(item.getCategories()).thenReturn(createCompleteCategoryList());
         when(itemService.findById(id)).thenReturn(item);
         when(categoryService.findAllCategory()).thenReturn(List.of());
 
@@ -581,7 +581,7 @@ public class ItemControllerTest {
         Item item = mock(Item.class);
         when(itemService.findById(anyInt())).thenReturn(item);
         when(itemRs.hasErrors()).thenReturn(false);
-        when(item.getCategory()).thenReturn(createCompleteCategoryList());
+        when(item.getCategories()).thenReturn(createCompleteCategoryList());
 
         // toEditItemメソッドの挙動をモック化
         doReturn("to-edit-item").when(controller).toEditItem(anyInt(),

@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -29,6 +30,9 @@ public class ItemRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate template;
+
+    @Value("${page-size}")
+    private int pageSize;
 
     private static final Logger logger = LogManager.getLogger(ItemRepository.class);
 
@@ -65,13 +69,13 @@ public class ItemRepository {
         grandCategory.setNameAll(rs.getString("grand_name_all"));
         categoryList.add(grandCategory);
 
-        item.setCategory(categoryList);
+        item.setCategories(categoryList);
         return item;
     };
 
-    // 全件取得するクエリ
-    private static final String FIND_ALL_SQL = """
-            SELECT
+    // クエリ共通部分(SELECTからFROMまで)
+    private static final String SELECT_TO_JOIN = """
+                SELECT
                 i.id AS i_id,
                 i.name AS i_name,
                 i.condition AS i_condition,
@@ -109,6 +113,10 @@ public class ItemRepository {
                 category AS parent
             ON
                 child.parent_id = parent.id
+                    """;
+
+    // 全件取得するクエリ
+    private static final String FIND_ALL_SQL = """
             WHERE
                     i.del_flg = 0
             ORDER BY
@@ -129,44 +137,6 @@ public class ItemRepository {
 
     // 検索条件に一致するレコードを全件取得するクエリ
     private static final String SEARCH_ALL_ITEMS_SQL = """
-            SELECT
-                i.id AS i_id,
-                i.name AS i_name,
-                i.condition AS i_condition,
-                i.category AS i_category,
-                i.brand AS i_brand,
-                i.price AS i_price,
-                i.stock AS i_stock,
-                i.shipping AS i_shipping,
-                i.description AS i_description,
-                i.update_time AS i_update_time,
-                i.del_flg AS i_del_flg,
-                grand.id AS grand_id,
-                grand.name AS grand_name,
-                grand.parent_id AS grand_parent_id,
-                grand.name_all AS grand_name_all,
-                child.id AS child_id,
-                child.name AS child_name,
-                child.parent_id AS child_parent_id,
-                child.name_all AS child_name_all,
-                parent.id AS parent_id,
-                parent.name AS parent_name,
-                parent.parent_id AS parent_parent_id,
-                parent.name_all AS parent_name_all
-            FROM
-                items AS i
-            LEFT OUTER JOIN
-                category AS grand
-            ON
-                i.category = grand.id
-            LEFT OUTER JOIN
-                category AS child
-            ON
-                grand.parent_id = child.id
-            LEFT OUTER JOIN
-                category AS parent
-            ON
-                child.parent_id = parent.id
             WHERE
                 i.del_flg = 0
                 AND (i.name LIKE :name)
@@ -207,44 +177,6 @@ public class ItemRepository {
 
     // idで検索を行うクエリ
     private static final String FIND_BY_ID_SQL = """
-            SELECT
-                i.id AS i_id,
-                i.name AS i_name,
-                i.condition AS i_condition,
-                i.category AS i_category,
-                i.brand AS i_brand,
-                i.price AS i_price,
-                i.stock AS i_stock,
-                i.shipping AS i_shipping,
-                i.description AS i_description,
-                i.update_time AS i_update_time,
-                i.del_flg AS i_del_flg,
-                grand.id AS grand_id,
-                grand.name AS grand_name,
-                grand.parent_id AS grand_parent_id,
-                grand.name_all AS grand_name_all,
-                child.id AS child_id,
-                child.name AS child_name,
-                child.parent_id AS child_parent_id,
-                child.name_all AS child_name_all,
-                parent.id AS parent_id,
-                parent.name AS parent_name,
-                parent.parent_id AS parent_parent_id,
-                parent.name_all AS parent_name_all
-            FROM
-                items AS i
-            LEFT OUTER JOIN
-                category AS grand
-            ON
-                i.category = grand.id
-            LEFT OUTER JOIN
-                category AS child
-            ON
-                grand.parent_id = child.id
-            LEFT OUTER JOIN
-                category AS parent
-            ON
-                child.parent_id = parent.id
             WHERE
                 i.id = :id
             ;
@@ -334,8 +266,12 @@ public class ItemRepository {
     public List<Item> findAllItems() {
         logger.debug("Started findAllItems");
 
+        StringBuilder sql = new StringBuilder();
+        sql.append(SELECT_TO_JOIN);
+        sql.append(FIND_ALL_SQL);
+
         SqlParameterSource param = new MapSqlParameterSource();
-        List<Item> items = template.query(FIND_ALL_SQL, param, ITEM_ROWMAPPER);
+        List<Item> items = template.query(sql.toString(), param, ITEM_ROWMAPPER);
 
         logger.debug("Finished findAllItems");
         return items;
@@ -352,22 +288,15 @@ public class ItemRepository {
         logger.debug("Started findItems");
         String sortCondition = "ORDER BY " + sort + " " + order;
 
-        // ソート機能の実装のため、動的にクエリを変更
-        String sql = "SELECT i.id AS i_id, i.name AS i_name, i.condition AS i_condition, i.category AS i_category, i.brand AS i_brand, i.price AS i_price, i.stock AS i_stock, i.shipping AS i_shipping, i.description AS i_description, i.update_time AS i_update_time, i.del_flg AS i_del_flg,"
-                +
-                " grand.id AS grand_id, grand.name AS grand_name, grand.parent_id AS grand_parent_id, grand.name_all AS grand_name_all, child.id AS child_id, child.name AS child_name, child.parent_id AS child_parent_id, child.name_all AS child_name_all, parent.id AS parent_id, parent.name AS parent_name, parent.parent_id AS parent_parent_id, parent.name_all AS parent_name_all"
-                +
-                " FROM items AS i" +
-                " LEFT OUTER JOIN category AS grand ON i.category = grand.id" +
-                " LEFT OUTER JOIN category AS child ON grand.parent_id = child.id" +
-                " LEFT OUTER JOIN category AS parent ON child.parent_id = parent.id" +
-                " WHERE i.del_flg = 0 " +
-                sortCondition +
-                " LIMIT 30" +
-                " OFFSET (:page - 1) * 30;";
+        StringBuilder sql = new StringBuilder();
+        sql.append(SELECT_TO_JOIN);
+        sql.append(" WHERE i.del_flg = 0 ");
+        sql.append(sortCondition);
+        sql.append(" LIMIT :pageSize");
+        sql.append(" OFFSET (:page - 1) * :pageSize;");
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
-        List<Item> itemList = template.query(sql, param, ITEM_ROWMAPPER);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("pageSize", pageSize).addValue("page", page);
+        List<Item> itemList = template.query(sql.toString(), param, ITEM_ROWMAPPER);
 
         logger.debug("Finished findItems");
         return itemList;
@@ -400,9 +329,13 @@ public class ItemRepository {
     public List<Item> searchAllItems(String name, String brand, String nameAll) {
         logger.debug("Started searchAllItems");
 
+        StringBuilder sql = new StringBuilder();
+        sql.append(SELECT_TO_JOIN);
+        sql.append(SEARCH_ALL_ITEMS_SQL);
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
                 .addValue("nameAll", nameAll);
-        List<Item> itemList = template.query(SEARCH_ALL_ITEMS_SQL, param, ITEM_ROWMAPPER);
+        List<Item> itemList = template.query(sql.toString(), param, ITEM_ROWMAPPER);
 
         logger.debug("Finished searchAllItems");
         return itemList;
@@ -423,23 +356,16 @@ public class ItemRepository {
         // ソート準備
         String sortCondition = "ORDER BY " + sort + " " + order;
 
-        // ソート機能の実装のため、動的にクエリを変更
-        String sql = "SELECT i.id AS i_id, i.name AS i_name, i.condition AS i_condition, i.category AS i_category, i.brand AS i_brand, i.price AS i_price, i.stock AS i_stock, i.shipping AS i_shipping, i.description AS i_description, i.update_time AS i_update_time, i.del_flg AS i_del_flg, "
-                +
-                "grand.id AS grand_id, grand.name AS grand_name, grand.parent_id AS grand_parent_id, grand.name_all AS grand_name_all, child.id AS child_id, child.name AS child_name, child.parent_id AS child_parent_id, child.name_all AS child_name_all, parent.id AS parent_id, parent.name AS parent_name, parent.parent_id AS parent_parent_id, parent.name_all AS parent_name_all "
-                +
-                "FROM items AS i " +
-                "LEFT OUTER JOIN category AS grand ON i.category = grand.id " +
-                "LEFT OUTER JOIN category AS child ON grand.parent_id = child.id " +
-                "LEFT OUTER JOIN category AS parent ON child.parent_id = parent.id " +
-                "WHERE i.del_flg = 0 AND (i.name LIKE :name) AND (i.brand LIKE :brand) AND  i.category IN (SELECT id FROM category WHERE name_all LIKE :nameAll) "
-                +
-                sortCondition +
-                " LIMIT 30 OFFSET (:page - 1) * 30;";
+        StringBuilder sql = new StringBuilder();
+        sql.append(SELECT_TO_JOIN);
+        sql.append(
+                "WHERE i.del_flg = 0 AND (i.name LIKE :name) AND (i.brand LIKE :brand) AND  i.category IN (SELECT id FROM category WHERE name_all LIKE :nameAll) ");
+        sql.append(sortCondition);
+        sql.append(" LIMIT :pageSize OFFSET (:page - 1) * :pageSize;");
 
         SqlParameterSource param = new MapSqlParameterSource().addValue("name", name).addValue("brand", brand)
-                .addValue("nameAll", nameAll).addValue("page", page);
-        List<Item> itemList = template.query(sql, param, ITEM_ROWMAPPER);
+                .addValue("nameAll", nameAll).addValue("pageSize", pageSize).addValue("page", page);
+        List<Item> itemList = template.query(sql.toString(), param, ITEM_ROWMAPPER);
 
         logger.debug("Finished searchItems");
         return itemList;
@@ -474,8 +400,12 @@ public class ItemRepository {
     public Item findById(int id) {
         logger.debug("Started findById");
 
+        StringBuilder sql = new StringBuilder();
+        sql.append(SELECT_TO_JOIN);
+        sql.append(FIND_BY_ID_SQL);
+
         SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
-        List<Item> itemList = template.query(FIND_BY_ID_SQL, param, ITEM_ROWMAPPER);
+        List<Item> itemList = template.query(sql.toString(), param, ITEM_ROWMAPPER);
         Item item = itemList.get(0);
 
         logger.debug("Finished findById");

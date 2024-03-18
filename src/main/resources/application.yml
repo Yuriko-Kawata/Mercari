@@ -11,3 +11,6 @@ spring:
 server:
   servlet:
     context-path: /product-management-ex
+
+# 1ページ内の表示数
+page-size: 30

@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +38,9 @@ public class CategoryController {
     private HttpSession session;
     @Autowired
     private MessageSource messageSource;
+
+    @Value("${page-size}")
+    private int pageSize;
 
     private static final Logger logger = LogManager.getLogger(CategoryController.class);
 
@@ -414,11 +418,11 @@ public class CategoryController {
     private int totalPageCount(int totalCategoryCount) {
         int totalPage = 0;
         // 表示の３０件で割り、ページ数を計算
-        if (totalCategoryCount % 30 == 0) {
-            totalPage = totalCategoryCount / 30;
+        if (totalCategoryCount % pageSize == 0) {
+            totalPage = totalCategoryCount / pageSize;
             return totalPage;
         } else {
-            totalPage = totalCategoryCount / 30 + 1;
+            totalPage = totalCategoryCount / pageSize + 1;
             return totalPage;
         }
     }

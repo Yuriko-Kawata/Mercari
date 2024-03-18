@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -23,6 +24,9 @@ public class CategoryRepository {
 
     @Autowired
     private NamedParameterJdbcTemplate template;
+
+    @Value("${page-size}")
+    private int pageSize;
 
     private static final Logger logger = LogManager.getLogger(CategoryRepository.class);
 
@@ -130,9 +134,9 @@ public class CategoryRepository {
             ORDER BY
                 id
             LIMIT
-                30
+                :pageSize
             OFFSET
-                (:page - 1)* 30
+                (:page - 1)* :pageSize
             ;
             """;
 
@@ -147,9 +151,9 @@ public class CategoryRepository {
             ORDER BY
                 parent_id, id
             LIMIT
-                30
+                :pageSize
             OFFSET
-                (:page - 1)* 30
+                (:page - 1)* :pageSize
             ;
             """;
 
@@ -164,9 +168,9 @@ public class CategoryRepository {
             ORDER BY
                 parent_id, id
             LIMIT
-                30
+                :pageSize
             OFFSET
-                (:page - 1)* 30
+                (:page - 1)* :pageSize
             ;
             """;
 
@@ -216,9 +220,9 @@ public class CategoryRepository {
             ORDER BY
                 id
             LIMIT
-                30
+                :pageSize
             OFFSET
-                (:page - 1) * 30
+                (:page - 1) * :pageSize
             ;
             """;
 
@@ -234,9 +238,9 @@ public class CategoryRepository {
             ORDER BY
                 parent_id, id
             LIMIT
-                30
+                :pageSize
             OFFSET
-                (:page - 1) * 30
+                (:page - 1) * :pageSize
             ;
             """;
 
@@ -252,9 +256,9 @@ public class CategoryRepository {
             ORDER BY
                 parent_id, id
             LIMIT
-                30
+                :pageSize
             OFFSET
-                (:page - 1) * 30
+                (:page - 1) * :pageSize
             ;
             """;
 
@@ -531,7 +535,7 @@ public class CategoryRepository {
     public List<Category> findAllParentCategory(int page) {
         logger.debug("Started findAllParentCategory");
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("pageSize", pageSize).addValue("page", page);
         List<Category> categoryList = template.query(FIND_PARENT_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished findAllParentCategory");
@@ -548,7 +552,7 @@ public class CategoryRepository {
     public List<Category> findAllChildCategory(int page) {
         logger.debug("Started findAllChildCategory");
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("pageSize", pageSize).addValue("page", page);
         List<Category> categoryList = template.query(FIND_CHILD_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished findAllChildCategory");
@@ -565,7 +569,7 @@ public class CategoryRepository {
     public List<Category> findAllGrandCategory(int page) {
         logger.debug("Started findAllGrandCategory");
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("page", page);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("pageSize", pageSize).addValue("page", page);
         List<Category> categoryList = template.query(FIND_GRAND_CATEGORY_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished findAllGrandCategory");
@@ -628,7 +632,7 @@ public class CategoryRepository {
     public List<Category> searchParentCategory(String nameLike, Integer page) {
         logger.debug("Started searchParentCategory");
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("pageSize", pageSize).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_PARENT_BY_NAME_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished searchParentCategory");
@@ -646,7 +650,7 @@ public class CategoryRepository {
     public List<Category> searchChildCategory(String nameLike, int page) {
         logger.debug("Started searchChildCategory");
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("pageSize", pageSize).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_CHILD_CATEGORY_BY_NAME_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished searchChildCategory");
@@ -664,7 +668,7 @@ public class CategoryRepository {
     public List<Category> searchGrandCategory(String nameLike, int page) {
         logger.debug("Started searchGrandCategory");
 
-        SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("page", page);
+        SqlParameterSource param = new MapSqlParameterSource().addValue("name", nameLike).addValue("pageSize", pageSize).addValue("page", page);
         List<Category> categoryList = template.query(SEARCH_GRAND_CATEGORY_BY_NAME_SQL, param, CATEGORY_ROWMAPPER);
 
         logger.debug("Finished searchGrandCategory");

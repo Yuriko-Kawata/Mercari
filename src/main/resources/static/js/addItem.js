@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var inputValue = parentSelect.value;
         
         document.getElementById('childCategory').disabled = inputValue.trim() === '';
-        
+
         childOptions.forEach(function(option) {
             if (option.getAttribute('data-child-parentId') === parentSelectedId) {
                 option.style.display = 'block'; // 親カテゴリに対応する子カテゴリを表示
@@ -19,7 +19,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // select要素の変更時に関数を実行
-    document.getElementById('parentCategory').addEventListener('change', updateChildCategories);
+    document.getElementById('parentCategory').addEventListener('change', function(){
+        updateChildCategories();
+        var childSelect = document.getElementById('childCategory');
+        var grandSelect = document.getElementById('grandCategory');
+
+        // childCategoryとgrandCategoryの現在の選択をクリア
+        childSelect.value = '';
+        grandSelect.value = '';
+        // grandCategoryが有効であれば無効に
+        if (!grandSelect.disabled) {
+            grandSelect.disabled = true;
+        }
+    });
 
     // ページ読み込み時にも関数を実行
     updateChildCategories();
@@ -32,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var childInputValue = childSelect.value;
         
         document.getElementById('grandCategory').disabled = childInputValue.trim() === '';
-        
+
         grandOptions.forEach(function(option) {
             if (option.getAttribute('data-grand-id') === childSelectedId) {
                 option.style.display = 'block'; // 親カテゴリに対応する子カテゴリを表示
@@ -43,7 +55,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // select要素の変更時に関数を実行
-    document.getElementById('childCategory').addEventListener('change', updateGrandCategories);
+    document.getElementById('childCategory').addEventListener('change', function(){
+        updateGrandCategories();
+        var grandSelect = document.getElementById('grandCategory');
+        grandSelect.value = '';
+    });
 
     // ページ読み込み時にも関数を実行
     updateGrandCategories();
