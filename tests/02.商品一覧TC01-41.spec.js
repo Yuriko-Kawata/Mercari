@@ -14,7 +14,6 @@ test('01商品一覧画面の表示テスト', async ({ page }) => {
 
 
 test("01レイアウト", async ({ page }) => {
-    // await page.goto('http://localhost:8080/product-management-ex/itemList');
     await expect(page).toHaveScreenshot("list.png", {
         fullPage: true
     });
