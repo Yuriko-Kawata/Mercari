@@ -1,0 +1,15 @@
+{
+  "cookies": [
+    {
+      "name": "JSESSIONID",
+      "value": "F5649B46D95C74A1D55ED079101709B3",
+      "domain": "localhost",
+      "path": "/product-management-ex",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
