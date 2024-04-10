@@ -1,0 +1,14 @@
+{
+  "name": "product-management-ex",
+  "version": "1.0.0",
+  "description": "![Static Badge](https://img.shields.io/badge/Java-version17-green)\r ![Static Badge](https://img.shields.io/badge/SQL-postgreSQL-blue)\r ![Static Badge](https://img.shields.io/badge/DB-pgAdmin-red)",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.30"
+  }
+}
