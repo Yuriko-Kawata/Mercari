@@ -1,11 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-// test.beforeEach(async ({ page }) => {
-//     await page.goto('http://localhost:8080/product-management-ex/itemList');
-//     await page.click('input.navbar-text.logout');
-//     await page.goto('http://localhost:8080/product-management-ex/Login');
-//   });
-
 test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:8080/product-management-ex/Login');
   });
